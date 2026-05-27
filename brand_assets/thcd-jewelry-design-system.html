@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THCD — Jewelry Brand Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ══════════════════════════════════════════════
+       DESIGN TOKENS
+    ══════════════════════════════════════════════ */
+    :root {
+      /* SIGNAL */
+      --acid:           #B8FF00;
+      --acid-dim:       rgba(184,255,0,.4);
+      --acid-ghost:     rgba(184,255,0,.07);
+      --acid-border:    rgba(184,255,0,.22);
+      --acid-glow:      0 0 40px rgba(184,255,0,.18);
+
+      /* DARK FOUNDATIONS */
+      --black:          #000000;
+      --pit:            #050504;
+      --void:           #0A0A08;
+      --charcoal:       #111110;
+      --ash:            #1A1A17;
+      --border:         rgba(255,255,255,.08);
+      --border-mid:     rgba(255,255,255,.14);
+
+      /* FOREGROUND */
+      --white:          #F2F0EB;
+      --white-dim:      rgba(242,240,235,.55);
+      --white-ghost:    rgba(242,240,235,.1);
+
+      /* INVERSE (Shark-heritage — concrete) */
+      --concrete:       #E6E6DF;
+      --dust:           #CFCFC6;
+
+      /* METALLIC ACCENTS — jewelry reference */
+      --gold:           #C8A96A;
+      --gold-dim:       rgba(200,169,106,.3);
+      --silver:         #B8B8B8;
+      --silver-dim:     rgba(184,184,184,.25);
+
+      /* TYPOGRAPHY */
+      --font-display:   'Anton', 'Arial Narrow', sans-serif;
+      --font-narrow:    'Barlow Condensed', sans-serif;
+      --font-mono:      'Space Mono', 'Courier New', monospace;
+
+      /* SCALE */
+      --t-2xs: .625rem;
+      --t-xs:  .75rem;
+      --t-sm:  .875rem;
+      --t-base:1rem;
+      --t-md:  1.25rem;
+      --t-lg:  1.75rem;
+      --t-xl:  2.5rem;
+      --t-2xl: 4rem;
+      --t-3xl: 6.5rem;
+      --t-4xl: 10rem;
+
+      /* SPACING */
+      --s1:4px; --s2:8px; --s3:12px; --s4:16px;
+      --s5:24px; --s6:32px; --s7:48px; --s8:64px; --s9:96px;
+
+      /* MOTION */
+      --ease-surge: cubic-bezier(0.23,1,.32,1);
+      --ease-snap:  cubic-bezier(0.87,0,.13,1);
+      --dur-f: 100ms;
+      --dur-m: 240ms;
+      --dur-s: 500ms;
+
+      --radius: 1px;
+    }
+
+    /* ══════════════════════════════════════════════
+       RESET
+    ══════════════════════════════════════════════ */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      background:var(--void);
+      color:var(--white);
+      font-family:var(--font-mono);
+      font-size:var(--t-base);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
+    ::selection{background:var(--acid);color:var(--black);}
+    a{text-decoration:none;color:inherit;}
+
+    /* ══════════════════════════════════════════════
+       UTILITY / LAYOUT
+    ══════════════════════════════════════════════ */
+    .wrap{max-width:1380px;margin:0 auto;padding:0 var(--s6);}
+
+    .ds-section{
+      padding:var(--s9) 0;
+      border-bottom:1px solid var(--border);
+    }
+    .ds-section:last-child{border-bottom:none;}
+
+    .sec-head{
+      display:flex;align-items:baseline;gap:var(--s5);
+      margin-bottom:var(--s8);
+    }
+    .sec-title{
+      font-family:var(--font-display);
+      font-size:var(--t-2xl);
+      letter-spacing:.05em;
+      line-height:1;
+      color:var(--white);
+    }
+    .sec-code{
+      font-family:var(--font-mono);
+      font-size:var(--t-xs);
+      color:var(--acid);
+      letter-spacing:.1em;
+    }
+    .sub-label{
+      font-family:var(--font-mono);
+      font-size:var(--t-xs);
+      color:var(--white-dim);
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      margin-bottom:var(--s4);
+      display:block;
+    }
+
+    .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s5);}
+    .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s5);}
+    .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s5);}
+    .g5{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--s4);}
+    @media(max-width:960px){
+      .g4,.g5{grid-template-columns:repeat(2,1fr);}
+      .g3{grid-template-columns:repeat(2,1fr);}
+    }
+
+    /* ══════════════════════════════════════════════
+       TICKER
+    ══════════════════════════════════════════════ */
+    .ticker-bar{
+      overflow:hidden;
+      border-bottom:1px solid var(--border);
+      background:var(--pit);
+    }
+    .ticker{
+      display:flex;
+      white-space:nowrap;
+      animation:scroll-ticker 22s linear infinite;
+    }
+    .ticker-item{
+      display:inline-flex;align-items:center;gap:var(--s5);
+      padding:var(--s3) var(--s6);
+      font-family:var(--font-mono);
+      font-size:var(--t-xs);
+      letter-spacing:.14em;text-transform:uppercase;
+      color:var(--white-dim);
+      flex-shrink:0;
+    }
+    .ticker-sep{color:var(--acid);}
+    @keyframes scroll-ticker{
+      from{transform:translateX(0);}
+      to{transform:translateX(-50%);}
+    }
+
+    /* ══════════════════════════════════════════════
+       MASTHEAD
+    ══════════════════════════════════════════════ */
+    .masthead{
+      position:relative;
+      padding:var(--s9) 0 var(--s8);
+      overflow:hidden;
+    }
+
+    /* Scattered annotation grid — Thcd heritage */
+    .scatter{
+      position:absolute;
+      top:0;left:0;right:0;
+      display:grid;
+      grid-template-columns:repeat(8,1fr);
+      pointer-events:none;
+      opacity:.28;
+    }
+    .scatter-w{
+      font-family:var(--font-mono);
+      font-size:var(--t-2xs);
+      letter-spacing:.1em;text-transform:uppercase;
+      color:var(--acid);
+      padding:var(--s2) var(--s3);
+      line-height:1.5;
+    }
+
+    /* Pixel corner — Shark heritage */
+    .corner{position:absolute;width:14px;height:14px;}
+    .corner::before,.corner::after{content:'';position:absolute;background:var(--acid);}
+    .corner::before{width:100%;height:1px;top:0;left:0;}
+    .corner::after{width:1px;height:100%;top:0;left:0;}
+    .corner.tr{transform:scaleX(-1);}
+    .corner.bl{transform:scaleY(-1);}
+    .corner.br{transform:scale(-1,-1);}
+
+    .masthead-label{
+      font-family:var(--font-mono);
+      font-size:var(--t-xs);
+      letter-spacing:.2em;text-transform:uppercase;
+      color:var(--acid);
+      margin-bottom:var(--s5);
+    }
+
+    /* THE LOGO — actual Thcd SVG paths, acid fill */
+    .logo-mark{
+      width:clamp(280px,50vw,680px);
+      display:block;
+      margin-bottom:var(--s6);
+      filter:drop-shadow(0 0 32px rgba(184,255,0,.22));
+    }
+    .logo-mark path{fill:var(--acid);}
+
+    /* Brutal condensed subtitle */
+    .masthead-brutal{
+      font-family:var(--font-display);
+      font-size:clamp(2rem,5vw,5.5rem);
+      letter-spacing:.06em;line-height:.95;
+      color:var(--white);text-transform:uppercase;
+      display:block;margin-bottom:var(--s6);
+    }
+
+    .masthead-sub{
+      font-family:var(--font-mono);
+      font-size:var(--t-sm);
+      color:var(--white-dim);
+      max-width:480px;line-height:1.75;
+      letter-spacing:.03em;
+    }
+
+    /* ══════════════════════════════════════════════
+       COLORS
+    ══════════════════════════════════════════════ */
+    .swatch{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+    .swatch-fill{height:80px;}
+    .swatch-info{padding:var(--s3);background:var(--charcoal);}
+    .swatch-name{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--white);letter-spacing:.06em;display:block;}
+    .swatch-hex{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);}
+    .swatch-token{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--acid);display:block;margin-top:2px;}
+    .swatch-info.inv{background:var(--dust);}
+    .swatch-info.inv .swatch-name{color:var(--black);}
+    .swatch-info.inv .swatch-hex{color:#555;}
+    .swatch-info.inv .swatch-token{color:#444;}
+
+    /* ══════════════════════════════════════════════
+       TYPOGRAPHY
+    ══════════════════════════════════════════════ */
+    .type-row{
+      padding:var(--s5) 0;
+      border-bottom:1px solid var(--border);
+      display:grid;grid-template-columns:180px 1fr;gap:var(--s5);align-items:center;
+    }
+    .type-row:last-child{border-bottom:none;}
+    .type-meta{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);letter-spacing:.1em;line-height:1.8;}
+    .type-meta strong{color:var(--acid);display:block;letter-spacing:.14em;}
+
+    /* Logo — SVG only, no font needed */
+    .t-logo-demo{display:flex;align-items:center;}
+    .t-logo-demo svg{width:180px;height:auto;}
+    .t-logo-demo svg path{fill:var(--acid);}
+
+    .t-display{font-family:var(--font-display);font-size:5rem;letter-spacing:.05em;line-height:.9;color:var(--white);}
+    .t-narrow-xl{font-family:var(--font-narrow);font-size:4rem;font-weight:900;letter-spacing:.03em;line-height:.95;text-transform:uppercase;color:var(--white);}
+    .t-narrow-lg{font-family:var(--font-narrow);font-size:2.2rem;font-weight:800;letter-spacing:.04em;line-height:1;text-transform:uppercase;color:var(--white);}
+    .t-mono-label{font-family:var(--font-mono);font-size:var(--t-xs);letter-spacing:.18em;text-transform:uppercase;color:var(--acid);}
+    .t-mono-body{font-family:var(--font-mono);font-size:var(--t-sm);color:var(--white-dim);letter-spacing:.03em;line-height:1.75;}
+    .t-mono-cap{font-family:var(--font-mono);font-size:var(--t-2xs);color:rgba(242,240,235,.35);letter-spacing:.12em;line-height:1.6;}
+    .t-price{font-family:var(--font-display);font-size:3rem;letter-spacing:.04em;line-height:1;color:var(--acid);}
+
+    /* ══════════════════════════════════════════════
+       BUTTONS
+    ══════════════════════════════════════════════ */
+    .comp-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s4);padding:var(--s5) 0;border-bottom:1px solid var(--border);}
+    .comp-row:last-child{border-bottom:none;}
+    .comp-label{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);letter-spacing:.1em;text-transform:uppercase;min-width:110px;}
+
+    .btn{
+      display:inline-flex;align-items:center;gap:var(--s2);
+      font-family:var(--font-mono);font-size:var(--t-xs);
+      letter-spacing:.14em;text-transform:uppercase;
+      cursor:pointer;border:none;outline:none;
+      border-radius:var(--radius);
+      transition:all var(--dur-m) var(--ease-snap);
+      position:relative;
+    }
+    .btn-primary{
+      background:var(--acid);color:var(--black);
+      padding:var(--s3) var(--s6);
+      font-family:var(--font-narrow);font-size:var(--t-sm);
+      font-weight:800;letter-spacing:.12em;
+    }
+    .btn-primary:hover{
+      background:#ccff1a;
+      transform:translateY(-2px);
+      box-shadow:0 8px 32px rgba(184,255,0,.28);
+    }
+    .btn-primary:active{transform:translateY(0);}
+
+    .btn-outline{
+      background:transparent;color:var(--white);
+      padding:var(--s3) var(--s5);
+      border:1px solid var(--border-mid);
+    }
+    .btn-outline:hover{border-color:var(--acid);color:var(--acid);}
+
+    .btn-ghost{
+      background:var(--acid-ghost);color:var(--acid);
+      padding:var(--s3) var(--s5);
+      border:1px solid var(--acid-border);
+    }
+    .btn-ghost:hover{background:rgba(184,255,0,.13);box-shadow:var(--acid-glow);}
+
+    .btn-gold{
+      background:transparent;color:var(--gold);
+      padding:var(--s3) var(--s5);
+      border:1px solid var(--gold-dim);
+    }
+    .btn-gold:hover{background:rgba(200,169,106,.1);}
+
+    .btn-arrow{
+      background:var(--charcoal);color:var(--white);
+      padding:var(--s3) var(--s5);
+      border:1px solid var(--border);gap:var(--s3);
+    }
+    .btn-arrow .arr{color:var(--acid);transition:transform var(--dur-f);}
+    .btn-arrow:hover .arr{transform:translate(2px,-2px);}
+    .btn-arrow:hover{border-color:var(--acid-border);}
+
+    .btn-sm{padding:var(--s2) var(--s4) !important;font-size:var(--t-2xs) !important;}
+    .btn-lg{padding:var(--s4) var(--s7) !important;font-size:var(--t-md) !important;}
+    .btn-icon{width:38px;height:38px;padding:0;justify-content:center;background:var(--charcoal);border:1px solid var(--border);color:var(--white-dim);}
+    .btn-icon:hover{border-color:var(--acid);color:var(--acid);}
+
+    /* ══════════════════════════════════════════════
+       SPEECH BUBBLES — Shark heritage adapted
+    ══════════════════════════════════════════════ */
+    .bubble{
+      position:relative;display:inline-block;
+      font-family:var(--font-display);
+      letter-spacing:.04em;text-transform:uppercase;
+      line-height:1.05;padding:var(--s3) var(--s5);
+    }
+    .bubble-acid{background:var(--acid);color:var(--black);}
+    .bubble-acid::after{
+      content:'';position:absolute;bottom:-10px;left:22px;
+      width:0;height:0;
+      border-left:10px solid transparent;
+      border-right:6px solid transparent;
+      border-top:11px solid var(--acid);
+    }
+    .bubble-dark{
+      background:var(--charcoal);color:var(--acid);
+      border:1px solid var(--acid-border);
+    }
+    .bubble-dark::after{
+      content:'';position:absolute;bottom:-11px;left:24px;
+      width:0;height:0;
+      border-left:10px solid transparent;
+      border-right:6px solid transparent;
+      border-top:11px solid var(--charcoal);
+    }
+    .bubble-outline{background:transparent;color:var(--white);border:1px solid var(--border-mid);}
+    .bubble-sm{font-size:var(--t-md);}
+    .bubble-md{font-size:var(--t-xl);}
+    .bubble-lg{font-size:var(--t-2xl);}
+
+    /* ══════════════════════════════════════════════
+       TAGS
+    ══════════════════════════════════════════════ */
+    .tag{
+      display:inline-flex;align-items:center;gap:var(--s2);
+      font-family:var(--font-mono);font-size:var(--t-2xs);
+      letter-spacing:.14em;text-transform:uppercase;
+      padding:4px 10px;border-radius:var(--radius);
+      line-height:1;border:1px solid transparent;
+    }
+    .tdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+    .tag-acid{background:var(--acid-ghost);color:var(--acid);border-color:var(--acid-border);}
+    .tag-acid .tdot{background:var(--acid);box-shadow:0 0 6px var(--acid);}
+    .tag-gold{background:rgba(200,169,106,.08);color:var(--gold);border-color:var(--gold-dim);}
+    .tag-gold .tdot{background:var(--gold);}
+    .tag-silver{background:rgba(184,184,184,.08);color:var(--silver);border-color:var(--silver-dim);}
+    .tag-silver .tdot{background:var(--silver);}
+    .tag-dim{background:var(--charcoal);color:var(--white-dim);border-color:var(--border);}
+    .tag-dim .tdot{background:var(--white-dim);}
+    .tag-inv{background:var(--black);color:var(--acid);}
+
+    /* ══════════════════════════════════════════════
+       PRODUCT CARDS
+    ══════════════════════════════════════════════ */
+
+    /* ── Jewelry dark card (hero product) ── */
+    .prod-card{
+      background:var(--charcoal);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      overflow:hidden;
+      transition:border-color var(--dur-m) var(--ease-snap),
+                  box-shadow var(--dur-m) var(--ease-snap);
+      cursor:pointer;
+    }
+    .prod-card:hover{
+      border-color:var(--acid-border);
+      box-shadow:0 0 0 1px rgba(184,255,0,.05), 0 24px 60px rgba(0,0,0,.5);
+    }
+    .prod-img{
+      aspect-ratio:3/4;
+      background:var(--pit);
+      position:relative;
+      overflow:hidden;
+      display:flex;align-items:center;justify-content:center;
+    }
+    /* decorative placeholder — product silhouette via CSS */
+    .prod-img::before{
+      content:'';
+      position:absolute;inset:0;
+      background:radial-gradient(ellipse 60% 70% at 50% 45%,
+        rgba(184,255,0,.05) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 30% 30%,
+        rgba(200,169,106,.06) 0%, transparent 60%);
+    }
+    .prod-img-glyph{
+      font-family:var(--font-display);
+      font-size:5rem;
+      color:var(--acid);
+      opacity:.08;
+      letter-spacing:.1em;
+      user-select:none;
+    }
+    .prod-img-tag{
+      position:absolute;top:var(--s4);left:var(--s4);
+    }
+    .prod-body{padding:var(--s5);}
+    .prod-name{
+      font-family:var(--font-narrow);
+      font-size:var(--t-lg);font-weight:800;
+      letter-spacing:.06em;text-transform:uppercase;
+      color:var(--white);line-height:1;
+      margin-bottom:var(--s2);
+    }
+    .prod-material{
+      font-family:var(--font-mono);font-size:var(--t-2xs);
+      color:var(--gold);letter-spacing:.12em;text-transform:uppercase;
+      margin-bottom:var(--s4);
+    }
+    .prod-footer{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:var(--s4) var(--s5);
+      border-top:1px solid var(--border);
+    }
+    .prod-price{
+      font-family:var(--font-display);
+      font-size:var(--t-xl);letter-spacing:.04em;
+      color:var(--acid);line-height:1;
+    }
+
+    /* ── Stat card (Shark-heritage, inverse concrete bg) ── */
+    .stat-card{
+      background:var(--concrete);
+      border-radius:var(--radius);
+      padding:var(--s6);
+      position:relative;overflow:hidden;
+      transition:transform var(--dur-m) var(--ease-surge);
+    }
+    .stat-card:hover{transform:translateY(-3px);}
+    /* corner marks black on concrete */
+    .stat-card .corner::before,.stat-card .corner::after{background:var(--black);}
+
+    .stat-bubble{
+      display:inline-block;
+      background:var(--acid);color:var(--black);
+      font-family:var(--font-display);
+      font-size:2.2rem;letter-spacing:.03em;
+      line-height:1;padding:var(--s2) var(--s4);
+      text-transform:uppercase;
+      margin-bottom:var(--s3);
+      position:relative;
+    }
+    .stat-bubble::after{
+      content:'';position:absolute;
+      bottom:-9px;left:14px;
+      width:0;height:0;
+      border-left:8px solid transparent;
+      border-right:5px solid transparent;
+      border-top:10px solid var(--acid);
+    }
+    .stat-lbl{
+      font-family:var(--font-mono);font-size:var(--t-xs);
+      color:var(--black);letter-spacing:.12em;text-transform:uppercase;
+      margin-top:var(--s3);
+    }
+    .stat-desc{
+      font-family:var(--font-mono);font-size:var(--t-2xs);
+      color:#444;letter-spacing:.08em;text-transform:uppercase;
+      line-height:1.65;margin-top:2px;
+    }
+
+    /* ── Feature card (dark atmospheric) ── */
+    .feature-card{
+      background:var(--charcoal);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:var(--s6);
+      position:relative;overflow:hidden;
+      transition:border-color var(--dur-m);
+    }
+    .feature-card::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 70% 60% at 80% 20%,
+        rgba(184,255,0,.04) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .feature-card:hover{border-color:var(--acid-border);}
+    .feature-icon{
+      font-family:var(--font-display);
+      font-size:3rem;color:var(--acid);
+      line-height:1;margin-bottom:var(--s4);
+      letter-spacing:.04em;
+    }
+    .feature-title{
+      font-family:var(--font-narrow);font-size:var(--t-lg);
+      font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+      color:var(--white);line-height:1;margin-bottom:var(--s3);
+    }
+    .feature-body{
+      font-family:var(--font-mono);font-size:var(--t-2xs);
+      color:var(--white-dim);letter-spacing:.06em;
+      text-transform:uppercase;line-height:1.75;
+    }
+    .feature-arrow{
+      position:absolute;top:var(--s5);right:var(--s5);
+      color:var(--acid);font-size:var(--t-md);
+      opacity:0;transform:translate(-4px,4px);
+      transition:all var(--dur-m) var(--ease-snap);
+    }
+    .feature-card:hover .feature-arrow{opacity:1;transform:translate(0,0);}
+
+    /* ══════════════════════════════════════════════
+       NAVIGATION
+    ══════════════════════════════════════════════ */
+    .nav{
+      background:rgba(5,5,4,.92);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--border);
+      padding:0 var(--s6);height:52px;
+      display:flex;align-items:center;justify-content:space-between;
+      border-radius:var(--radius);
+    }
+    /* Logo in nav — small SVG */
+    .nav-logo svg{height:22px;width:auto;}
+    .nav-logo svg path{fill:var(--acid);}
+
+    .nav-links{display:flex;align-items:center;gap:var(--s6);list-style:none;}
+    .nav-links a{
+      font-family:var(--font-mono);font-size:var(--t-2xs);
+      letter-spacing:.16em;text-transform:uppercase;
+      color:var(--white-dim);
+      transition:color var(--dur-f);position:relative;
+    }
+    .nav-links a::after{
+      content:'';position:absolute;bottom:-3px;left:0;right:0;
+      height:1px;background:var(--acid);
+      transform:scaleX(0);
+      transition:transform var(--dur-m) var(--ease-snap);
+    }
+    .nav-links a:hover{color:var(--white);}
+    .nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1);}
+    .nav-links a.active{color:var(--acid);}
+
+    /* ══════════════════════════════════════════════
+       INPUTS
+    ══════════════════════════════════════════════ */
+    .inp-group{display:flex;flex-direction:column;gap:var(--s2);}
+    .inp-label{font-family:var(--font-mono);font-size:var(--t-xs);letter-spacing:.14em;text-transform:uppercase;color:var(--white-dim);}
+    .inp{
+      background:var(--charcoal);
+      border:1px solid var(--border-mid);
+      border-radius:var(--radius);
+      padding:var(--s3) var(--s4);
+      font-family:var(--font-mono);font-size:var(--t-sm);
+      color:var(--white);outline:none;
+      transition:border-color var(--dur-m) var(--ease-snap),
+                  box-shadow var(--dur-m);
+      width:100%;letter-spacing:.04em;
+    }
+    .inp::placeholder{color:rgba(242,240,235,.25);}
+    .inp:focus{border-color:var(--acid);box-shadow:0 0 0 3px rgba(184,255,0,.09);}
+    .inp-hint{font-family:var(--font-mono);font-size:var(--t-2xs);color:rgba(242,240,235,.3);letter-spacing:.06em;}
+    .inp-row{display:flex;gap:0;}
+    .inp-row .inp{border-right:none;border-radius:var(--radius) 0 0 var(--radius);}
+    .inp-row .btn{border-radius:0 var(--radius) var(--radius) 0;white-space:nowrap;}
+    .sel{
+      appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8FF00' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 14px center;
+      padding-right:38px;cursor:pointer;
+    }
+
+    /* ══════════════════════════════════════════════
+       ALERTS
+    ══════════════════════════════════════════════ */
+    .alert{
+      display:flex;gap:var(--s3);
+      padding:var(--s4) var(--s5);
+      border-radius:var(--radius);
+      border-left:2px solid transparent;
+    }
+    .alert-ico{font-size:var(--t-base);flex-shrink:0;margin-top:1px;}
+    .alert-title{font-family:var(--font-mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;}
+    .alert-body{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);letter-spacing:.06em;line-height:1.65;}
+    .alert-acid{background:rgba(184,255,0,.05);border-left-color:var(--acid);}
+    .alert-acid .alert-ico,.alert-acid .alert-title{color:var(--acid);}
+    .alert-gold{background:rgba(200,169,106,.06);border-left-color:var(--gold);}
+    .alert-gold .alert-ico,.alert-gold .alert-title{color:var(--gold);}
+    .alert-err{background:rgba(255,60,40,.05);border-left-color:#ff3c28;}
+    .alert-err .alert-ico,.alert-err .alert-title{color:#ff3c28;}
+
+    /* ══════════════════════════════════════════════
+       PROGRESS / DATA
+    ══════════════════════════════════════════════ */
+    .prog{display:flex;flex-direction:column;gap:var(--s2);}
+    .prog-hd{display:flex;justify-content:space-between;align-items:baseline;}
+    .prog-name{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--white-dim);letter-spacing:.1em;text-transform:uppercase;}
+    .prog-val{font-family:var(--font-display);font-size:var(--t-xl);color:var(--white);line-height:1;}
+    .prog-track{height:2px;background:var(--border-mid);overflow:hidden;}
+    .prog-fill{height:100%;animation:grow var(--dur-s) var(--ease-surge) both;}
+    @keyframes grow{from{width:0}to{width:var(--w)}}
+    .pf-acid{background:var(--acid);}
+    .pf-gold{background:var(--gold);}
+
+    /* ══════════════════════════════════════════════
+       DIVIDERS
+    ══════════════════════════════════════════════ */
+    .div{display:flex;align-items:center;gap:var(--s4);}
+    .div-line{flex:1;height:1px;background:var(--border);}
+    .div-text{font-family:var(--font-mono);font-size:var(--t-2xs);letter-spacing:.16em;text-transform:uppercase;color:var(--white-dim);white-space:nowrap;}
+    .div.acid .div-line{background:linear-gradient(90deg,transparent,var(--acid),transparent);}
+    .div.acid .div-text{color:var(--acid);}
+    .div.gold .div-line{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+    .div.gold .div-text{color:var(--gold);}
+
+    /* ══════════════════════════════════════════════
+       INVERSE SECTION (Shark concrete)
+    ══════════════════════════════════════════════ */
+    .inv-block{
+      background:var(--concrete);
+      border-radius:var(--radius);
+      padding:var(--s7);
+      position:relative;overflow:hidden;
+    }
+    .inv-headline{
+      font-family:var(--font-display);
+      font-size:clamp(2rem,5vw,5.5rem);
+      letter-spacing:.04em;line-height:.92;
+      text-transform:uppercase;color:var(--black);
+    }
+
+    /* ══════════════════════════════════════════════
+       ANNOTATION FIELD (Thcd scatter)
+    ══════════════════════════════════════════════ */
+    .ann-field{
+      position:relative;
+      background:var(--pit);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      overflow:hidden;height:220px;
+    }
+    .ann-w{
+      position:absolute;
+      font-family:var(--font-mono);font-size:var(--t-2xs);
+      letter-spacing:.14em;text-transform:uppercase;
+      color:var(--acid);opacity:.55;line-height:1.4;
+    }
+
+    /* ══════════════════════════════════════════════
+       OUTLINE SVG FIGURES (Thcd contours)
+    ══════════════════════════════════════════════ */
+    .figure-wrap{
+      background:var(--pit);border:1px solid var(--border);
+      border-radius:var(--radius);padding:var(--s6);
+      display:flex;align-items:center;justify-content:center;
+      overflow:hidden;position:relative;min-height:200px;
+    }
+    .fig-svg{width:100%;max-width:280px;opacity:.5;}
+    .fig-svg path,.fig-svg ellipse,.fig-svg polyline,.fig-svg line{
+      stroke:var(--acid);fill:none;stroke-width:1;
+      vector-effect:non-scaling-stroke;
+      filter:drop-shadow(0 0 3px rgba(184,255,0,.38));
+    }
+
+    /* ══════════════════════════════════════════════
+       SPACING / MOTION SCALES
+    ══════════════════════════════════════════════ */
+    .sp-row{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) 0;border-bottom:1px solid var(--border);}
+    .sp-row:last-child{border:none;}
+    .sp-tok{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--acid);letter-spacing:.1em;width:56px;flex-shrink:0;}
+    .sp-bar-w{flex:1;}
+    .sp-bar{height:6px;background:var(--acid);border-radius:1px;opacity:.6;}
+    .sp-val{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);width:36px;text-align:right;flex-shrink:0;}
+
+    .mot-row{display:flex;align-items:center;gap:var(--s4);padding:var(--s4) 0;border-bottom:1px solid var(--border);cursor:pointer;}
+    .mot-row:last-child{border:none;}
+    .mot-pill{width:10px;height:10px;border-radius:50%;background:var(--acid);flex-shrink:0;transition-property:transform,box-shadow;}
+    .mot-row:hover .mot-pill{transform:translateX(22px) scale(1.4);box-shadow:0 0 12px var(--acid);}
+    .m-surge .mot-pill{transition-duration:var(--dur-s);transition-timing-function:var(--ease-surge);}
+    .m-snap .mot-pill{transition-duration:var(--dur-m);transition-timing-function:var(--ease-snap);}
+    .m-fast .mot-pill{transition-duration:var(--dur-f);transition-timing-function:linear;}
+    .mot-lbl{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--white-dim);letter-spacing:.1em;text-transform:uppercase;}
+    .mot-det{font-family:var(--font-mono);font-size:var(--t-2xs);color:rgba(242,240,235,.28);margin-top:2px;}
+    .mot-hint{font-family:var(--font-mono);font-size:var(--t-2xs);color:rgba(242,240,235,.2);margin-left:auto;letter-spacing:.06em;}
+
+    /* ══════════════════════════════════════════════
+       FADE-UP ENTRANCE
+    ══════════════════════════════════════════════ */
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(16px);}
+      to{opacity:1;transform:translateY(0);}
+    }
+    .fu{animation:fadeUp var(--dur-s) var(--ease-surge) both;}
+    .fu:nth-child(2){animation-delay:.08s}
+    .fu:nth-child(3){animation-delay:.16s}
+    .fu:nth-child(4){animation-delay:.24s}
+    .fu:nth-child(5){animation-delay:.32s}
+  </style>
+</head>
+
+<body>
+
+<!-- ───── TICKER ───── -->
+<div class="ticker-bar">
+  <div class="ticker">
+    <span class="ticker-item">THCD JEWELRY <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">HANDCRAFTED BRUTALISM <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">ACID SIGNAL <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">STERLING SILVER <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">18K GOLD VERMEIL <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">LIMITED EDITIONS <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">DARK WEARABLES <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">FREE SHIPPING ↗ <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">THCD JEWELRY <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">HANDCRAFTED BRUTALISM <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">ACID SIGNAL <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">STERLING SILVER <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">18K GOLD VERMEIL <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">LIMITED EDITIONS <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">DARK WEARABLES <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">FREE SHIPPING ↗ <span class="ticker-sep">◆</span></span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ══════════════════════════════════
+       MASTHEAD
+  ══════════════════════════════════ -->
+  <div class="masthead">
+    <!-- scattered annotation grid -->
+    <div class="scatter" aria-hidden="true">
+      <div class="scatter-w">THCD<br>A<br>BY</div>
+      <div class="scatter-w">NEW<br>DROP</div>
+      <div class="scatter-w">LEMONADE<br>MY</div>
+      <div class="scatter-w">LOGO<br>MARK</div>
+      <div class="scatter-w">에스파<br>OWN</div>
+      <div class="scatter-w">I</div>
+      <div class="scatter-w">DREW<br>SELF</div>
+      <div class="scatter-w">EVOLVE</div>
+    </div>
+
+    <!-- corner marks -->
+    <div class="corner" style="position:absolute;top:var(--s5);left:0"></div>
+    <div class="corner tr" style="position:absolute;top:var(--s5);right:0"></div>
+    <div class="corner bl" style="position:absolute;bottom:var(--s5);left:0"></div>
+    <div class="corner br" style="position:absolute;bottom:var(--s5);right:0"></div>
+
+    <p class="masthead-label fu">Design System — Jewelry — Acid #B8FF00 — Rev 1.0</p>
+
+    <!-- THE REAL LOGO SVG, recoloured acid -->
+    <svg class="logo-mark fu" viewBox="0 0 1999.98 1216.2" xmlns="http://www.w3.org/2000/svg" aria-label="THCD logotype">
+      <path d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/>
+      <path d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/>
+      <path d="M1969.89,1068.07c-53.28-50.91-118.58-129.74-140.79-199.21-11.25-35.21-6.92-46.08-1.51-79.29,1.78-10.91-2.23-23.12,2.47-33.53,4.72-10.44,36.95-29.82,37.9-34.15,2.23-10.2-17.88-12.19-23.64-16.25-45.74-32.26-23.61-75.32-24.02-119.73-.5-53.93-5.87-106.83-4.66-159.95.68-29.68,1.56-135.22,9.41-154.92,4.98-12.51,15.43-12.94,15.32-33.09-.07-12.68-6.74-18.52-8.15-28.18-7.1-48.55,32.27-127.45,62.1-165.46,12.44-15.85,30.23-27.53,41.66-44.29-26.27,3.57-74.63,33.72-93.98,51.98-30.99,29.24-53.01,82.46-80.02,115.9-10.96-9.18-10.7-22.72-10.02-35.9-3.99-4.77-19.01,12.3-20.96,17-7.09,17.01-25.01,100.98-26.98,121.02-4.49,45.58,12.68,90.98,7.65,135.64-2.05,18.15-14.46,32.45-3.72,54.32-58-41.12-93.05-113.46-162.12-136.18-41.16,7.16,10.62,13.65.3,52.29-7.56,28.3-43.17,69.19-50.08,101.93-6.73,9.15-10.83,10.27-21.67,6.74l-4.41,3.06c-10.94,21.36-6.04,58.21-14.96,77.19-6.93,14.74-25.65,18.87-30.74,49.26-4.67,27.85,6.1,17.93,15.25,32.19,17.52,27.3,26.96,136.28,14.47,165.53-6.04,14.14-25.24,23.29-24.99,37.44.34,19.38,51.76,18.71,63.2,33.42,13.78,17.72,11.52,62.8,19.84,85.13,5.71-.6,6.89-17.67,7.48-22.46,1.95-15.98-3.82-33.56,10.48-45.44,12.8-.15,30.63,53.59,36.01,59.91,3.98,4.68,17.49,5.08,25.85,10.15,27.19,16.48,36.1,39.55,46.07,65.93,4.45,11.77,10.2,18.87,15.89,3.88,3.84-10.12,4.33-21.99,8.27-31.87,13.97-35.03,38.54-59.37,65.87-84.08,4.28,40.42,26.37,29.74,50.88,43.16,31.18,17.08,44.27,64.18,51.86,69.1,15.52,10.06,25.06-3.87,33.59-2.42,10.15,1.72,64.4,41.55,82.21,49.66,7.27,3.31,50.55,19.2,53.49,16.47-1.74-15.47-20.09-22.32-30.09-31.87ZM1699.84,738.15c1.58,19.19,12.46,37.13,12.28,55.65-.05,5.47-4.65,38.65-6.18,42.11-3.96,8.97-37.43,32.6-47.59,32.12-28.12-1.31-50.87-55.88-54.41-80.06-15.46-4.05-1.9,15.02-11.89,15.96-8.94-19-20-40.27-20.36-61.99-.28-16.62,9.53-26.67,8.28-39.57-1.32-13.68-14.89-23.76-18.18-34.22-13.56-43.1,9.43-63.36,12-104.4l38.12-78c6.1-3.64,22.34,15.06,29.24,19.04,8.1,4.68,25.81,8.3,29.87,12.15,4.26,4.05,39.47,80.95,40.73,89.25,7.17,47.42-15.53,87.97-11.91,131.94Z"/>
+    </svg>
+
+    <span class="masthead-brutal fu">Dark Jewelry</span>
+    <p class="masthead-sub fu">
+      Brutalist forms. Gothic craft. Every piece engineered
+      from darkness — sterling silver, 18k gold vermeil,
+      and acid-bright oxidised finishes.
+    </p>
+  </div>
+
+  <!-- ══════════════════════════════════
+       01 — LOGO SYSTEM
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="logo">
+    <div class="sec-head">
+      <h2 class="sec-title">LOGO SYSTEM</h2>
+      <span class="sec-code">// 01</span>
+    </div>
+
+    <span class="sub-label" style="margin-bottom:var(--s5)">Primary — Acid on void</span>
+    <div style="background:var(--pit);border:1px solid var(--border);padding:var(--s7);margin-bottom:var(--s5);display:flex;align-items:center;justify-content:center;">
+      <svg style="width:clamp(200px,40vw,520px);height:auto;filter:drop-shadow(0 0 24px rgba(184,255,0,.18));" viewBox="0 0 1999.98 1216.2" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#B8FF00" d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/>
+        <path fill="#B8FF00" d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/>
+        <path fill="#B8FF00" d="M1969.89,1068.07c-53.28-50.91-118.58-129.74-140.79-199.21-11.25-35.21-6.92-46.08-1.51-79.29,1.78-10.91-2.23-23.12,2.47-33.53,4.72-10.44,36.95-29.82,37.9-34.15,2.23-10.2-17.88-12.19-23.64-16.25-45.74-32.26-23.61-75.32-24.02-119.73-.5-53.93-5.87-106.83-4.66-159.95.68-29.68,1.56-135.22,9.41-154.92,4.98-12.51,15.43-12.94,15.32-33.09-.07-12.68-6.74-18.52-8.15-28.18-7.1-48.55,32.27-127.45,62.1-165.46,12.44-15.85,30.23-27.53,41.66-44.29-26.27,3.57-74.63,33.72-93.98,51.98-30.99,29.24-53.01,82.46-80.02,115.9-10.96-9.18-10.7-22.72-10.02-35.9-3.99-4.77-19.01,12.3-20.96,17-7.09,17.01-25.01,100.98-26.98,121.02-4.49,45.58,12.68,90.98,7.65,135.64-2.05,18.15-14.46,32.45-3.72,54.32-58-41.12-93.05-113.46-162.12-136.18-41.16,7.16,10.62,13.65.3,52.29-7.56,28.3-43.17,69.19-50.08,101.93-6.73,9.15-10.83,10.27-21.67,6.74l-4.41,3.06c-10.94,21.36-6.04,58.21-14.96,77.19-6.93,14.74-25.65,18.87-30.74,49.26-4.67,27.85,6.1,17.93,15.25,32.19,17.52,27.3,26.96,136.28,14.47,165.53-6.04,14.14-25.24,23.29-24.99,37.44.34,19.38,51.76,18.71,63.2,33.42,13.78,17.72,11.52,62.8,19.84,85.13,5.71-.6,6.89-17.67,7.48-22.46,1.95-15.98-3.82-33.56,10.48-45.44,12.8-.15,30.63,53.59,36.01,59.91,3.98,4.68,17.49,5.08,25.85,10.15,27.19,16.48,36.1,39.55,46.07,65.93,4.45,11.77,10.2,18.87,15.89,3.88,3.84-10.12,4.33-21.99,8.27-31.87,13.97-35.03,38.54-59.37,65.87-84.08,4.28,40.42,26.37,29.74,50.88,43.16,31.18,17.08,44.27,64.18,51.86,69.1,15.52,10.06,25.06-3.87,33.59-2.42,10.15,1.72,64.4,41.55,82.21,49.66,7.27,3.31,50.55,19.2,53.49,16.47-1.74-15.47-20.09-22.32-30.09-31.87ZM1699.84,738.15c1.58,19.19,12.46,37.13,12.28,55.65-.05,5.47-4.65,38.65-6.18,42.11-3.96,8.97-37.43,32.6-47.59,32.12-28.12-1.31-50.87-55.88-54.41-80.06-15.46-4.05-1.9,15.02-11.89,15.96-8.94-19-20-40.27-20.36-61.99-.28-16.62,9.53-26.67,8.28-39.57-1.32-13.68-14.89-23.76-18.18-34.22-13.56-43.1,9.43-63.36,12-104.4l38.12-78c6.1-3.64,22.34,15.06,29.24,19.04,8.1,4.68,25.81,8.3,29.87,12.15,4.26,4.05,39.47,80.95,40.73,89.25,7.17,47.42-15.53,87.97-11.91,131.94Z"/>
+      </svg>
+    </div>
+
+    <div class="g3" style="margin-bottom:var(--s5)">
+      <!-- Acid on concrete -->
+      <div style="background:var(--concrete);padding:var(--s6);display:flex;align-items:center;justify-content:center;border:1px solid var(--border);">
+        <svg style="width:160px;height:auto;" viewBox="0 0 1999.98 1216.2" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#B8FF00" d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/>
+          <path fill="#B8FF00" d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/>
+          <path fill="#B8FF00" d="M1969.89,1068.07c-53.28-50.91-118.58-129.74-140.79-199.21-11.25-35.21-6.92-46.08-1.51-79.29,1.78-10.91-2.23-23.12,2.47-33.53,4.72-10.44,36.95-29.82,37.9-34.15,2.23-10.2-17.88-12.19-23.64-16.25-45.74-32.26-23.61-75.32-24.02-119.73-.5-53.93-5.87-106.83-4.66-159.95.68-29.68,1.56-135.22,9.41-154.92,4.98-12.51,15.43-12.94,15.32-33.09-.07-12.68-6.74-18.52-8.15-28.18-7.1-48.55,32.27-127.45,62.1-165.46,12.44-15.85,30.23-27.53,41.66-44.29-26.27,3.57-74.63,33.72-93.98,51.98-30.99,29.24-53.01,82.46-80.02,115.9-10.96-9.18-10.7-22.72-10.02-35.9-3.99-4.77-19.01,12.3-20.96,17-7.09,17.01-25.01,100.98-26.98,121.02-4.49,45.58,12.68,90.98,7.65,135.64-2.05,18.15-14.46,32.45-3.72,54.32-58-41.12-93.05-113.46-162.12-136.18-41.16,7.16,10.62,13.65.3,52.29-7.56,28.3-43.17,69.19-50.08,101.93-6.73,9.15-10.83,10.27-21.67,6.74l-4.41,3.06c-10.94,21.36-6.04,58.21-14.96,77.19-6.93,14.74-25.65,18.87-30.74,49.26-4.67,27.85,6.1,17.93,15.25,32.19,17.52,27.3,26.96,136.28,14.47,165.53-6.04,14.14-25.24,23.29-24.99,37.44.34,19.38,51.76,18.71,63.2,33.42,13.78,17.72,11.52,62.8,19.84,85.13,5.71-.6,6.89-17.67,7.48-22.46,1.95-15.98-3.82-33.56,10.48-45.44,12.8-.15,30.63,53.59,36.01,59.91,3.98,4.68,17.49,5.08,25.85,10.15,27.19,16.48,36.1,39.55,46.07,65.93,4.45,11.77,10.2,18.87,15.89,3.88,3.84-10.12,4.33-21.99,8.27-31.87,13.97-35.03,38.54-59.37,65.87-84.08,4.28,40.42,26.37,29.74,50.88,43.16,31.18,17.08,44.27,64.18,51.86,69.1,15.52,10.06,25.06-3.87,33.59-2.42,10.15,1.72,64.4,41.55,82.21,49.66,7.27,3.31,50.55,19.2,53.49,16.47-1.74-15.47-20.09-22.32-30.09-31.87ZM1699.84,738.15c1.58,19.19,12.46,37.13,12.28,55.65-.05,5.47-4.65,38.65-6.18,42.11-3.96,8.97-37.43,32.6-47.59,32.12-28.12-1.31-50.87-55.88-54.41-80.06-15.46-4.05-1.9,15.02-11.89,15.96-8.94-19-20-40.27-20.36-61.99-.28-16.62,9.53-26.67,8.28-39.57-1.32-13.68-14.89-23.76-18.18-34.22-13.56-43.1,9.43-63.36,12-104.4l38.12-78c6.1-3.64,22.34,15.06,29.24,19.04,8.1,4.68,25.81,8.3,29.87,12.15,4.26,4.05,39.47,80.95,40.73,89.25,7.17,47.42-15.53,87.97-11.91,131.94Z"/>
+        </svg>
+        <p style="font-family:var(--font-mono);font-size:var(--t-2xs);color:#555;letter-spacing:.1em;text-align:center;margin-top:var(--s3);text-transform:uppercase;">Acid on Concrete</p>
+      </div>
+      <!-- White on void -->
+      <div style="background:var(--void);padding:var(--s6);display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid var(--border);">
+        <svg style="width:160px;height:auto;opacity:.85;" viewBox="0 0 1999.98 1216.2" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#F2F0EB" d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/>
+          <path fill="#F2F0EB" d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/>
+          <path fill="#F2F0EB" d="M1969.89,1068.07c-53.28-50.91-118.58-129.74-140.79-199.21-11.25-35.21-6.92-46.08-1.51-79.29,1.78-10.91-2.23-23.12,2.47-33.53,4.72-10.44,36.95-29.82,37.9-34.15,2.23-10.2-17.88-12.19-23.64-16.25-45.74-32.26-23.61-75.32-24.02-119.73-.5-53.93-5.87-106.83-4.66-159.95.68-29.68,1.56-135.22,9.41-154.92,4.98-12.51,15.43-12.94,15.32-33.09-.07-12.68-6.74-18.52-8.15-28.18-7.1-48.55,32.27-127.45,62.1-165.46,12.44-15.85,30.23-27.53,41.66-44.29-26.27,3.57-74.63,33.72-93.98,51.98-30.99,29.24-53.01,82.46-80.02,115.9-10.96-9.18-10.7-22.72-10.02-35.9-3.99-4.77-19.01,12.3-20.96,17-7.09,17.01-25.01,100.98-26.98,121.02-4.49,45.58,12.68,90.98,7.65,135.64-2.05,18.15-14.46,32.45-3.72,54.32-58-41.12-93.05-113.46-162.12-136.18-41.16,7.16,10.62,13.65.3,52.29-7.56,28.3-43.17,69.19-50.08,101.93-6.73,9.15-10.83,10.27-21.67,6.74l-4.41,3.06c-10.94,21.36-6.04,58.21-14.96,77.19-6.93,14.74-25.65,18.87-30.74,49.26-4.67,27.85,6.1,17.93,15.25,32.19,17.52,27.3,26.96,136.28,14.47,165.53-6.04,14.14-25.24,23.29-24.99,37.44.34,19.38,51.76,18.71,63.2,33.42,13.78,17.72,11.52,62.8,19.84,85.13,5.71-.6,6.89-17.67,7.48-22.46,1.95-15.98-3.82-33.56,10.48-45.44,12.8-.15,30.63,53.59,36.01,59.91,3.98,4.68,17.49,5.08,25.85,10.15,27.19,16.48,36.1,39.55,46.07,65.93,4.45,11.77,10.2,18.87,15.89,3.88,3.84-10.12,4.33-21.99,8.27-31.87,13.97-35.03,38.54-59.37,65.87-84.08,4.28,40.42,26.37,29.74,50.88,43.16,31.18,17.08,44.27,64.18,51.86,69.1,15.52,10.06,25.06-3.87,33.59-2.42,10.15,1.72,64.4,41.55,82.21,49.66,7.27,3.31,50.55,19.2,53.49,16.47-1.74-15.47-20.09-22.32-30.09-31.87ZM1699.84,738.15c1.58,19.19,12.46,37.13,12.28,55.65-.05,5.47-4.65,38.65-6.18,42.11-3.96,8.97-37.43,32.6-47.59,32.12-28.12-1.31-50.87-55.88-54.41-80.06-15.46-4.05-1.9,15.02-11.89,15.96-8.94-19-20-40.27-20.36-61.99-.28-16.62,9.53-26.67,8.28-39.57-1.32-13.68-14.89-23.76-18.18-34.22-13.56-43.1,9.43-63.36,12-104.4l38.12-78c6.1-3.64,22.34,15.06,29.24,19.04,8.1,4.68,25.81,8.3,29.87,12.15,4.26,4.05,39.47,80.95,40.73,89.25,7.17,47.42-15.53,87.97-11.91,131.94Z"/>
+        </svg>
+        <p style="font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);letter-spacing:.1em;text-align:center;margin-top:var(--s3);text-transform:uppercase;">White on Void</p>
+      </div>
+      <!-- Do-not use -->
+      <div style="background:var(--charcoal);padding:var(--s6);border:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;">
+        <p style="font-family:var(--font-mono);font-size:var(--t-xs);color:var(--white-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:var(--s4)">Logo rules</p>
+        <div style="display:flex;flex-direction:column;gap:var(--s3)">
+          <p style="font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--acid);letter-spacing:.08em;text-transform:uppercase;">✓ Acid on dark</p>
+          <p style="font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--acid);letter-spacing:.08em;text-transform:uppercase;">✓ Acid on concrete</p>
+          <p style="font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--acid);letter-spacing:.08em;text-transform:uppercase;">✓ White on dark (reversed)</p>
+          <p style="font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);letter-spacing:.08em;text-transform:uppercase;">✗ No coloured backgrounds</p>
+          <p style="font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);letter-spacing:.08em;text-transform:uppercase;">✗ No rotation or distortion</p>
+          <p style="font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);letter-spacing:.08em;text-transform:uppercase;">✗ No outline / stroke fills</p>
+          <p style="font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);letter-spacing:.08em;text-transform:uppercase;">✗ Min width 80px digital</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       02 — COLORS
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="colors">
+    <div class="sec-head"><h2 class="sec-title">COLORS</h2><span class="sec-code">// 02</span></div>
+
+    <span class="sub-label">Dark foundations</span>
+    <div class="g5" style="margin-bottom:var(--s6)">
+      <div class="swatch"><div class="swatch-fill" style="background:#000000"></div><div class="swatch-info"><span class="swatch-name">Black</span><span class="swatch-hex">#000000</span><span class="swatch-token">--black</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#050504"></div><div class="swatch-info"><span class="swatch-name">Pit</span><span class="swatch-hex">#050504</span><span class="swatch-token">--pit</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#0A0A08"></div><div class="swatch-info"><span class="swatch-name">Void</span><span class="swatch-hex">#0A0A08</span><span class="swatch-token">--void</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#111110"></div><div class="swatch-info"><span class="swatch-name">Charcoal</span><span class="swatch-hex">#111110</span><span class="swatch-token">--charcoal</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#1A1A17"></div><div class="swatch-info"><span class="swatch-name">Ash</span><span class="swatch-hex">#1A1A17</span><span class="swatch-token">--ash</span></div></div>
+    </div>
+
+    <span class="sub-label">Signal</span>
+    <div class="g5" style="margin-bottom:var(--s6)">
+      <div class="swatch"><div class="swatch-fill" style="background:#B8FF00;box-shadow:0 0 24px rgba(184,255,0,.25) inset"></div><div class="swatch-info"><span class="swatch-name">Acid</span><span class="swatch-hex">#B8FF00</span><span class="swatch-token">--acid</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:rgba(184,255,0,.4)"></div><div class="swatch-info"><span class="swatch-name">Acid Dim</span><span class="swatch-hex">rgba(184,255,0,.4)</span><span class="swatch-token">--acid-dim</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:rgba(184,255,0,.07)"></div><div class="swatch-info"><span class="swatch-name">Acid Ghost</span><span class="swatch-hex">rgba(184,255,0,.07)</span><span class="swatch-token">--acid-ghost</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:rgba(184,255,0,.22)"></div><div class="swatch-info"><span class="swatch-name">Acid Border</span><span class="swatch-hex">rgba(184,255,0,.22)</span><span class="swatch-token">--acid-border</span></div></div>
+    </div>
+
+    <span class="sub-label">Metallic accents — jewelry</span>
+    <div class="g5" style="margin-bottom:var(--s6)">
+      <div class="swatch"><div class="swatch-fill" style="background:linear-gradient(135deg,#C8A96A,#e0c88a,#C8A96A)"></div><div class="swatch-info"><span class="swatch-name">Gold</span><span class="swatch-hex">#C8A96A</span><span class="swatch-token">--gold</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:rgba(200,169,106,.3)"></div><div class="swatch-info"><span class="swatch-name">Gold Dim</span><span class="swatch-hex">rgba(200,169,106,.3)</span><span class="swatch-token">--gold-dim</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:linear-gradient(135deg,#B8B8B8,#d8d8d8,#B8B8B8)"></div><div class="swatch-info"><span class="swatch-name">Silver</span><span class="swatch-hex">#B8B8B8</span><span class="swatch-token">--silver</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:rgba(184,184,184,.25)"></div><div class="swatch-info"><span class="swatch-name">Silver Dim</span><span class="swatch-hex">rgba(184,184,184,.25)</span><span class="swatch-token">--silver-dim</span></div></div>
+    </div>
+
+    <span class="sub-label">Inverse — Shark concrete</span>
+    <div class="g5">
+      <div class="swatch"><div class="swatch-fill" style="background:#E6E6DF"></div><div class="swatch-info inv"><span class="swatch-name">Concrete</span><span class="swatch-hex">#E6E6DF</span><span class="swatch-token">--concrete</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#CFCFC6"></div><div class="swatch-info inv"><span class="swatch-name">Dust</span><span class="swatch-hex">#CFCFC6</span><span class="swatch-token">--dust</span></div></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       03 — TYPOGRAPHY
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="type">
+    <div class="sec-head"><h2 class="sec-title">TYPOGRAPHY</h2><span class="sec-code">// 03</span></div>
+    <div class="type-row"><div class="type-meta"><strong>LOGOTYPE</strong>logothcd.svg<br>SVG — path-based<br>fill: --acid</div><div class="t-logo-demo"><svg style="width:200px;height:auto;" viewBox="0 0 1999.98 1216.2" xmlns="http://www.w3.org/2000/svg"><path fill="#B8FF00" d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/><path fill="#B8FF00" d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/><path fill="#B8FF00" d="M1969.89,1068.07c-53.28-50.91-118.58-129.74-140.79-199.21-11.25-35.21-6.92-46.08-1.51-79.29,1.78-10.91-2.23-23.12,2.47-33.53,4.72-10.44,36.95-29.82,37.9-34.15,2.23-10.2-17.88-12.19-23.64-16.25-45.74-32.26-23.61-75.32-24.02-119.73-.5-53.93-5.87-106.83-4.66-159.95.68-29.68,1.56-135.22,9.41-154.92,4.98-12.51,15.43-12.94,15.32-33.09-.07-12.68-6.74-18.52-8.15-28.18-7.1-48.55,32.27-127.45,62.1-165.46,12.44-15.85,30.23-27.53,41.66-44.29-26.27,3.57-74.63,33.72-93.98,51.98-30.99,29.24-53.01,82.46-80.02,115.9-10.96-9.18-10.7-22.72-10.02-35.9-3.99-4.77-19.01,12.3-20.96,17-7.09,17.01-25.01,100.98-26.98,121.02-4.49,45.58,12.68,90.98,7.65,135.64-2.05,18.15-14.46,32.45-3.72,54.32-58-41.12-93.05-113.46-162.12-136.18-41.16,7.16,10.62,13.65.3,52.29-7.56,28.3-43.17,69.19-50.08,101.93-6.73,9.15-10.83,10.27-21.67,6.74l-4.41,3.06c-10.94,21.36-6.04,58.21-14.96,77.19-6.93,14.74-25.65,18.87-30.74,49.26-4.67,27.85,6.1,17.93,15.25,32.19,17.52,27.3,26.96,136.28,14.47,165.53-6.04,14.14-25.24,23.29-24.99,37.44.34,19.38,51.76,18.71,63.2,33.42,13.78,17.72,11.52,62.8,19.84,85.13,5.71-.6,6.89-17.67,7.48-22.46,1.95-15.98-3.82-33.56,10.48-45.44,12.8-.15,30.63,53.59,36.01,59.91,3.98,4.68,17.49,5.08,25.85,10.15,27.19,16.48,36.1,39.55,46.07,65.93,4.45,11.77,10.2,18.87,15.89,3.88,3.84-10.12,4.33-21.99,8.27-31.87,13.97-35.03,38.54-59.37,65.87-84.08,4.28,40.42,26.37,29.74,50.88,43.16,31.18,17.08,44.27,64.18,51.86,69.1,15.52,10.06,25.06-3.87,33.59-2.42,10.15,1.72,64.4,41.55,82.21,49.66,7.27,3.31,50.55,19.2,53.49,16.47-1.74-15.47-20.09-22.32-30.09-31.87ZM1699.84,738.15c1.58,19.19,12.46,37.13,12.28,55.65-.05,5.47-4.65,38.65-6.18,42.11-3.96,8.97-37.43,32.6-47.59,32.12-28.12-1.31-50.87-55.88-54.41-80.06-15.46-4.05-1.9,15.02-11.89,15.96-8.94-19-20-40.27-20.36-61.99-.28-16.62,9.53-26.67,8.28-39.57-1.32-13.68-14.89-23.76-18.18-34.22-13.56-43.1,9.43-63.36,12-104.4l38.12-78c6.1-3.64,22.34,15.06,29.24,19.04,8.1,4.68,25.81,8.3,29.87,12.15,4.26,4.05,39.47,80.95,40.73,89.25,7.17,47.42-15.53,87.97-11.91,131.94Z"/></svg></div></div>
+    <div class="type-row"><div class="type-meta"><strong>DISPLAY</strong>Anton<br>clamp 5rem+<br>--font-display</div><div class="t-display">DARK WEARABLES</div></div>
+    <div class="type-row"><div class="type-meta"><strong>NARROW XL</strong>Barlow Condensed 900<br>4rem / 0.03em<br>--font-narrow</div><div class="t-narrow-xl">Handcrafted Brutalism</div></div>
+    <div class="type-row"><div class="type-meta"><strong>NARROW LG</strong>Barlow Condensed 800<br>2.2rem / 0.04em</div><div class="t-narrow-lg">Sterling Silver Ring — Edition 001</div></div>
+    <div class="type-row"><div class="type-meta"><strong>MONO LABEL</strong>Space Mono<br>12px / 0.18em</div><div class="t-mono-label">Acid Signal — 18K Gold Vermeil — Limited Drop</div></div>
+    <div class="type-row"><div class="type-meta"><strong>MONO BODY</strong>Space Mono<br>14px / 0.03em</div><div class="t-mono-body">Each piece is engineered from darkness — cast from sterling silver, oxidised with an acid wash, finished by hand in small batches.</div></div>
+    <div class="type-row"><div class="type-meta"><strong>PRICE</strong>Anton<br>3rem / 0.04em<br>color: --acid</div><div class="t-price">$480</div></div>
+    <div class="type-row"><div class="type-meta"><strong>CAPTION</strong>Space Mono<br>10px / 0.12em</div><div class="t-mono-cap">MATERIAL: 925 STERLING SILVER — HALLMARK: 925 — EDITION: 001 OF 040</div></div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       04 — BUTTONS
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="btns">
+    <div class="sec-head"><h2 class="sec-title">BUTTONS</h2><span class="sec-code">// 04</span></div>
+    <div class="comp-row"><span class="comp-label">Variants</span>
+      <button class="btn btn-primary">Add to Cart ↗</button>
+      <button class="btn btn-ghost">View Collection</button>
+      <button class="btn btn-outline">Learn More</button>
+      <button class="btn btn-gold">Gold Vermeil</button>
+      <button class="btn btn-arrow">View All Pieces <span class="arr">↗</span></button>
+    </div>
+    <div class="comp-row"><span class="comp-label">Sizes</span>
+      <button class="btn btn-primary btn-sm">Quick Add</button>
+      <button class="btn btn-primary">Add to Cart</button>
+      <button class="btn btn-primary btn-lg">SHOP NOW ↗</button>
+    </div>
+    <div class="comp-row"><span class="comp-label">Icon</span>
+      <button class="btn btn-icon">♡</button>
+      <button class="btn btn-icon">↗</button>
+      <button class="btn btn-icon">+</button>
+      <button class="btn btn-icon">◉</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       05 — SPEECH BUBBLES
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="bubbles">
+    <div class="sec-head"><h2 class="sec-title">SPEECH BUBBLES</h2><span class="sec-code">// 05 — Shark heritage</span></div>
+    <p style="font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:var(--s7)">Deployed for key claims, stats, and editorial moments.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--s6);align-items:flex-start;margin-bottom:var(--s7)">
+      <div class="bubble bubble-acid bubble-md">HANDCRAFTED<br>IN SMALL BATCHES</div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--s6);align-items:flex-start;margin-bottom:var(--s7)">
+      <div class="bubble bubble-dark bubble-md">40 PIECES<br>PER DROP</div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--s5);align-items:flex-start">
+      <div class="bubble bubble-acid bubble-sm">925 SILVER</div>
+      <div class="bubble bubble-dark bubble-sm">18K GOLD</div>
+      <div class="bubble bubble-outline bubble-sm">Free Shipping</div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       06 — TAGS
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="tags">
+    <div class="sec-head"><h2 class="sec-title">TAGS</h2><span class="sec-code">// 06</span></div>
+    <div class="comp-row"><span class="comp-label">Status</span>
+      <span class="tag tag-acid"><span class="tdot"></span>In Stock</span>
+      <span class="tag tag-gold"><span class="tdot"></span>Gold Vermeil</span>
+      <span class="tag tag-silver"><span class="tdot"></span>Sterling Silver</span>
+      <span class="tag tag-dim"><span class="tdot"></span>Sold Out</span>
+    </div>
+    <div class="comp-row"><span class="comp-label">Label</span>
+      <span class="tag tag-acid">Edition 001</span>
+      <span class="tag tag-gold">Limited Drop</span>
+      <span class="tag tag-dim">Archive</span>
+      <span class="tag tag-inv">New</span>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       07 — CARDS
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="cards">
+    <div class="sec-head"><h2 class="sec-title">CARDS</h2><span class="sec-code">// 07</span></div>
+
+    <span class="sub-label" style="margin-bottom:var(--s5)">Product cards — dark</span>
+    <div class="g4" style="margin-bottom:var(--s8)">
+      <div class="prod-card">
+        <div class="prod-img">
+          <div class="prod-img-glyph">THCD</div>
+          <div class="prod-img-tag"><span class="tag tag-acid">Edition 001</span></div>
+        </div>
+        <div class="prod-body">
+          <div class="prod-name">Drip Ring</div>
+          <div class="prod-material">925 Sterling Silver — Oxidised</div>
+        </div>
+        <div class="prod-footer">
+          <span class="prod-price">$280</span>
+          <button class="btn btn-primary btn-sm">Add ↗</button>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-img">
+          <div class="prod-img-glyph">THCD</div>
+          <div class="prod-img-tag"><span class="tag tag-gold">Gold Vermeil</span></div>
+        </div>
+        <div class="prod-body">
+          <div class="prod-name">Brutal Cuff</div>
+          <div class="prod-material">18K Gold Vermeil — Brushed</div>
+        </div>
+        <div class="prod-footer">
+          <span class="prod-price">$480</span>
+          <button class="btn btn-primary btn-sm">Add ↗</button>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-img">
+          <div class="prod-img-glyph">THCD</div>
+          <div class="prod-img-tag"><span class="tag tag-silver">Sterling</span></div>
+        </div>
+        <div class="prod-body">
+          <div class="prod-name">Signal Pendant</div>
+          <div class="prod-material">925 Sterling Silver — Polished</div>
+        </div>
+        <div class="prod-footer">
+          <span class="prod-price">$340</span>
+          <button class="btn btn-primary btn-sm">Add ↗</button>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-img">
+          <div class="prod-img-glyph">THCD</div>
+          <div class="prod-img-tag"><span class="tag tag-dim">Sold Out</span></div>
+        </div>
+        <div class="prod-body">
+          <div class="prod-name">Void Earrings</div>
+          <div class="prod-material">Blackened Silver — Limited</div>
+        </div>
+        <div class="prod-footer">
+          <span class="prod-price" style="color:var(--white-dim)">$220</span>
+          <button class="btn btn-outline btn-sm" style="opacity:.5;pointer-events:none">Notify</button>
+        </div>
+      </div>
+    </div>
+
+    <span class="sub-label" style="margin-bottom:var(--s5)">Stat cards — Shark inverse (concrete)</span>
+    <div class="g3" style="margin-bottom:var(--s8)">
+      <div class="stat-card">
+        <div class="corner" style="position:absolute;top:10px;left:10px;"></div>
+        <div class="corner tr" style="position:absolute;top:10px;right:10px;"></div>
+        <div class="corner bl" style="position:absolute;bottom:10px;left:10px;"></div>
+        <div class="corner br" style="position:absolute;bottom:10px;right:10px;"></div>
+        <div class="stat-bubble">040 PCS<br>PER DROP</div>
+        <div class="stat-lbl">Limited Editions</div>
+        <div class="stat-desc">Each design cast in batches<br>of forty — never restocked</div>
+      </div>
+      <div class="stat-card">
+        <div class="corner" style="position:absolute;top:10px;left:10px;"></div>
+        <div class="corner tr" style="position:absolute;top:10px;right:10px;"></div>
+        <div class="corner bl" style="position:absolute;bottom:10px;left:10px;"></div>
+        <div class="corner br" style="position:absolute;bottom:10px;right:10px;"></div>
+        <div class="stat-bubble">925 / 18K<br>ONLY</div>
+        <div class="stat-lbl">Material Standard</div>
+        <div class="stat-desc">Sterling silver and gold vermeil<br>exclusively — no brass, no plating</div>
+      </div>
+      <div class="stat-card">
+        <div class="corner" style="position:absolute;top:10px;left:10px;"></div>
+        <div class="corner tr" style="position:absolute;top:10px;right:10px;"></div>
+        <div class="corner bl" style="position:absolute;bottom:10px;left:10px;"></div>
+        <div class="corner br" style="position:absolute;bottom:10px;right:10px;"></div>
+        <div class="stat-bubble">HAND-<br>FINISHED</div>
+        <div class="stat-lbl">No machine finishing</div>
+        <div class="stat-desc">Each piece oxidised,<br>brushed, and sealed by hand</div>
+      </div>
+    </div>
+
+    <span class="sub-label" style="margin-bottom:var(--s5)">Feature cards — dark atmospheric</span>
+    <div class="g3">
+      <div class="feature-card">
+        <span class="feature-arrow">↗</span>
+        <div class="feature-icon">◈</div>
+        <div class="feature-title">Materials</div>
+        <div class="feature-body">925 Sterling Silver<br>and 18K Gold Vermeil<br>exclusively sourced</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-arrow">↗</span>
+        <div class="feature-icon">⌁</div>
+        <div class="feature-title">Craft</div>
+        <div class="feature-body">Lost-wax casting<br>hand-oxidised finishing<br>no mass production</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-arrow">↗</span>
+        <div class="feature-icon">◉</div>
+        <div class="feature-title">Editions</div>
+        <div class="feature-body">40 pieces per drop<br>numbered and hallmarked<br>never restocked</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       08 — NAVIGATION
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="nav">
+    <div class="sec-head"><h2 class="sec-title">NAVIGATION</h2><span class="sec-code">// 08</span></div>
+    <div class="nav">
+      <!-- Logo in nav — small acid SVG -->
+      <div class="nav-logo">
+        <svg style="height:22px;width:auto;" viewBox="0 0 1999.98 1216.2" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#B8FF00" d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/><path fill="#B8FF00" d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/><path fill="#B8FF00" d="M1969.89,1068.07c-53.28-50.91-118.58-129.74-140.79-199.21-11.25-35.21-6.92-46.08-1.51-79.29,1.78-10.91-2.23-23.12,2.47-33.53,4.72-10.44,36.95-29.82,37.9-34.15,2.23-10.2-17.88-12.19-23.64-16.25-45.74-32.26-23.61-75.32-24.02-119.73-.5-53.93-5.87-106.83-4.66-159.95.68-29.68,1.56-135.22,9.41-154.92,4.98-12.51,15.43-12.94,15.32-33.09-.07-12.68-6.74-18.52-8.15-28.18-7.1-48.55,32.27-127.45,62.1-165.46,12.44-15.85,30.23-27.53,41.66-44.29-26.27,3.57-74.63,33.72-93.98,51.98-30.99,29.24-53.01,82.46-80.02,115.9-10.96-9.18-10.7-22.72-10.02-35.9-3.99-4.77-19.01,12.3-20.96,17-7.09,17.01-25.01,100.98-26.98,121.02-4.49,45.58,12.68,90.98,7.65,135.64-2.05,18.15-14.46,32.45-3.72,54.32-58-41.12-93.05-113.46-162.12-136.18-41.16,7.16,10.62,13.65.3,52.29-7.56,28.3-43.17,69.19-50.08,101.93-6.73,9.15-10.83,10.27-21.67,6.74l-4.41,3.06c-10.94,21.36-6.04,58.21-14.96,77.19-6.93,14.74-25.65,18.87-30.74,49.26-4.67,27.85,6.1,17.93,15.25,32.19,17.52,27.3,26.96,136.28,14.47,165.53-6.04,14.14-25.24,23.29-24.99,37.44.34,19.38,51.76,18.71,63.2,33.42,13.78,17.72,11.52,62.8,19.84,85.13,5.71-.6,6.89-17.67,7.48-22.46,1.95-15.98-3.82-33.56,10.48-45.44,12.8-.15,30.63,53.59,36.01,59.91,3.98,4.68,17.49,5.08,25.85,10.15,27.19,16.48,36.1,39.55,46.07,65.93,4.45,11.77,10.2,18.87,15.89,3.88,3.84-10.12,4.33-21.99,8.27-31.87,13.97-35.03,38.54-59.37,65.87-84.08,4.28,40.42,26.37,29.74,50.88,43.16,31.18,17.08,44.27,64.18,51.86,69.1,15.52,10.06,25.06-3.87,33.59-2.42,10.15,1.72,64.4,41.55,82.21,49.66,7.27,3.31,50.55,19.2,53.49,16.47-1.74-15.47-20.09-22.32-30.09-31.87ZM1699.84,738.15c1.58,19.19,12.46,37.13,12.28,55.65-.05,5.47-4.65,38.65-6.18,42.11-3.96,8.97-37.43,32.6-47.59,32.12-28.12-1.31-50.87-55.88-54.41-80.06-15.46-4.05-1.9,15.02-11.89,15.96-8.94-19-20-40.27-20.36-61.99-.28-16.62,9.53-26.67,8.28-39.57-1.32-13.68-14.89-23.76-18.18-34.22-13.56-43.1,9.43-63.36,12-104.4l38.12-78c6.1-3.64,22.34,15.06,29.24,19.04,8.1,4.68,25.81,8.3,29.87,12.15,4.26,4.05,39.47,80.95,40.73,89.25,7.17,47.42-15.53,87.97-11.91,131.94Z"/></svg>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#" class="active">Shop</a></li>
+        <li><a href="#">Collections</a></li>
+        <li><a href="#">Craft</a></li>
+        <li><a href="#">About</a></li>
+      </ul>
+      <button class="btn btn-primary btn-sm">Cart (0) ↗</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       09 — INPUTS
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="inputs">
+    <div class="sec-head"><h2 class="sec-title">INPUTS</h2><span class="sec-code">// 09</span></div>
+    <div class="g3" style="margin-bottom:var(--s5)">
+      <div class="inp-group">
+        <label class="inp-label">Email for Drop Alerts</label>
+        <div class="inp-row">
+          <input class="inp" type="email" placeholder="your@email.com" />
+          <button class="btn btn-primary">Notify ↗</button>
+        </div>
+        <span class="inp-hint">You'll be first for the next drop</span>
+      </div>
+      <div class="inp-group">
+        <label class="inp-label">Ring Size</label>
+        <select class="inp sel">
+          <option>Select size</option>
+          <option>46 / XS</option>
+          <option>50 / S</option>
+          <option>54 / M</option>
+          <option>58 / L</option>
+          <option>62 / XL</option>
+        </select>
+      </div>
+      <div class="inp-group">
+        <label class="inp-label">Engraving (optional)</label>
+        <input class="inp" type="text" placeholder="Max 12 characters" maxlength="12" />
+        <span class="inp-hint">Inner surface only. +$40.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       10 — ALERTS
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="alerts">
+    <div class="sec-head"><h2 class="sec-title">ALERTS</h2><span class="sec-code">// 10</span></div>
+    <div style="display:flex;flex-direction:column;gap:var(--s3);max-width:600px">
+      <div class="alert alert-acid">
+        <span class="alert-ico">◉</span>
+        <div><div class="alert-title">Drop Active</div><div class="alert-body">Edition 001 is live — 40 pieces available. Orders ship within 5 business days from our workshop.</div></div>
+      </div>
+      <div class="alert alert-gold">
+        <span class="alert-ico">◈</span>
+        <div><div class="alert-title">Almost Gone</div><div class="alert-body">Only 4 Brutal Cuffs remain in Gold Vermeil. This edition will not be restocked once sold out.</div></div>
+      </div>
+      <div class="alert alert-err">
+        <span class="alert-ico">✕</span>
+        <div><div class="alert-title">Out of Stock</div><div class="alert-body">Void Earrings in Edition 001 are fully sold. Join the notify list to be first for Edition 002.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       11 — INVERSE (Shark CTA section)
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="inverse">
+    <div class="sec-head"><h2 class="sec-title">INVERSE</h2><span class="sec-code">// 11 — Shark concrete mode</span></div>
+    <div class="inv-block" style="position:relative">
+      <div class="corner" style="top:16px;left:16px;position:absolute;"></div>
+      <div class="corner tr" style="top:16px;right:16px;position:absolute;"></div>
+      <div class="corner bl" style="bottom:16px;left:16px;position:absolute;"></div>
+      <div class="corner br" style="bottom:16px;right:16px;position:absolute;"></div>
+      <p style="font-family:var(--font-mono);font-size:var(--t-xs);letter-spacing:.16em;text-transform:uppercase;color:#555;margin-bottom:var(--s5)">Why THCD</p>
+      <div class="inv-headline" style="margin-bottom:var(--s6)">
+        HANDCRAFTED IN SMALL BATCHES.<br>
+        WORN BY PEOPLE WHO<br>
+        DON'T COMPROMISE.
+      </div>
+      <div style="display:flex;gap:var(--s4);flex-wrap:wrap">
+        <button class="btn" style="background:var(--black);color:var(--acid);padding:var(--s3) var(--s5);font-family:var(--font-mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;border-radius:var(--radius)">Shop Silver ↗</button>
+        <button class="btn" style="background:var(--black);color:var(--acid);padding:var(--s3) var(--s5);font-family:var(--font-mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;border-radius:var(--radius)">Shop Gold ↗</button>
+        <button class="btn" style="background:var(--black);color:var(--acid);padding:var(--s3) var(--s5);font-family:var(--font-mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;border-radius:var(--radius)">All Collections ↗</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       12 — ANNOTATION FIELD
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="annotations">
+    <div class="sec-head"><h2 class="sec-title">ANNOTATIONS</h2><span class="sec-code">// 12 — Thcd scatter heritage</span></div>
+    <p style="font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--white-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:var(--s5)">Scattered word-grid at 0.28–0.55 opacity behind hero sections. Decorative — never primary information.</p>
+    <div class="ann-field">
+      <span class="ann-w" style="top:10%;left:2%">THCD<br>A<br>BY</span>
+      <span class="ann-w" style="top:10%;left:11%">NEW<br>DROP</span>
+      <span class="ann-w" style="top:10%;left:22%">LEMONADE<br>MY</span>
+      <span class="ann-w" style="top:10%;left:35%">LOGO</span>
+      <span class="ann-w" style="top:10%;left:46%">에스파<br>OWN</span>
+      <span class="ann-w" style="top:10%;left:56%">I</span>
+      <span class="ann-w" style="top:10%;left:66%">DREW<br>SELF</span>
+      <span class="ann-w" style="bottom:10%;left:2%">JUST<br>IT'S</span>
+      <span class="ann-w" style="bottom:10%;left:14%">CRAFT<br>HAND</span>
+      <span class="ann-w" style="bottom:10%;left:34%">SKETCH<br>FORM</span>
+      <span class="ann-w" style="bottom:10%;left:47%">GIVING</span>
+      <span class="ann-w" style="bottom:10%;left:57%">AND<br>WEARS</span>
+      <span class="ann-w" style="bottom:10%;left:71%">EXTRACT<br>SIGNAL<br>ACID</span>
+      <span class="ann-w" style="bottom:10%;right:2%">ABOUT<br>WHY<br>DARK</span>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+        <svg style="width:200px;height:auto;opacity:.25;filter:drop-shadow(0 0 20px rgba(184,255,0,.3));" viewBox="0 0 1999.98 1216.2" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#B8FF00" d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       13 — SPACING & MOTION
+  ══════════════════════════════════ -->
+  <section class="ds-section" id="tokens">
+    <div class="sec-head"><h2 class="sec-title">TOKENS</h2><span class="sec-code">// 13</span></div>
+    <div class="g2">
+      <div>
+        <span class="sub-label" style="margin-bottom:var(--s4)">Spacing</span>
+        <div style="max-width:480px">
+          <div class="sp-row"><span class="sp-tok">--s1</span><div class="sp-bar-w"><div class="sp-bar" style="width:4px"></div></div><span class="sp-val">4px</span></div>
+          <div class="sp-row"><span class="sp-tok">--s2</span><div class="sp-bar-w"><div class="sp-bar" style="width:8px"></div></div><span class="sp-val">8px</span></div>
+          <div class="sp-row"><span class="sp-tok">--s3</span><div class="sp-bar-w"><div class="sp-bar" style="width:12px"></div></div><span class="sp-val">12px</span></div>
+          <div class="sp-row"><span class="sp-tok">--s4</span><div class="sp-bar-w"><div class="sp-bar" style="width:16px"></div></div><span class="sp-val">16px</span></div>
+          <div class="sp-row"><span class="sp-tok">--s5</span><div class="sp-bar-w"><div class="sp-bar" style="width:24px"></div></div><span class="sp-val">24px</span></div>
+          <div class="sp-row"><span class="sp-tok">--s6</span><div class="sp-bar-w"><div class="sp-bar" style="width:32px"></div></div><span class="sp-val">32px</span></div>
+          <div class="sp-row"><span class="sp-tok">--s7</span><div class="sp-bar-w"><div class="sp-bar" style="width:48px"></div></div><span class="sp-val">48px</span></div>
+          <div class="sp-row"><span class="sp-tok">--s8</span><div class="sp-bar-w"><div class="sp-bar" style="width:64px"></div></div><span class="sp-val">64px</span></div>
+          <div class="sp-row"><span class="sp-tok">--s9</span><div class="sp-bar-w"><div class="sp-bar" style="width:96px"></div></div><span class="sp-val">96px</span></div>
+        </div>
+      </div>
+      <div>
+        <span class="sub-label" style="margin-bottom:var(--s4)">Motion — hover to preview</span>
+        <div style="max-width:480px">
+          <div class="mot-row m-surge"><div class="mot-pill"></div><div><div class="mot-lbl">Surge</div><div class="mot-det">cubic-bezier(0.23,1,0.32,1) — 500ms</div></div><span class="mot-hint">hover</span></div>
+          <div class="mot-row m-snap"><div class="mot-pill"></div><div><div class="mot-lbl">Snap</div><div class="mot-det">cubic-bezier(0.87,0,0.13,1) — 240ms</div></div><span class="mot-hint">hover</span></div>
+          <div class="mot-row m-fast"><div class="mot-pill"></div><div><div class="mot-lbl">Fast</div><div class="mot-det">linear — 100ms</div></div><span class="mot-hint">hover</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div style="height:var(--s9)"></div>
+</div>
+</body>
+</html>

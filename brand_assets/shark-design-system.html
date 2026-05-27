@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHARK — Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400&family=Cinzel:wght@400;600;700;800;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ══════════════════════════════════════════════
+       DESIGN TOKENS
+    ══════════════════════════════════════════════ */
+    :root {
+      /* COLORS */
+      --acid:          #B8FF00;
+      --acid-hover:    #ccff1a;
+      --acid-dim:      rgba(184,255,0,0.15);
+      --acid-border:   rgba(184,255,0,0.35);
+
+      --black:         #000000;
+      --near-black:    #0d0d0d;
+      --concrete:      #E2E2D8;
+      --dust:          #D0D0C4;
+      --bone:          #B8B8AA;
+      --white:         #F4F4EE;
+
+      --text-black:    #111111;
+      --text-mid:      #444444;
+      --text-dim:      #888888;
+
+      --border-dark:   rgba(0,0,0,0.12);
+      --border-light:  rgba(255,255,255,0.15);
+
+      /* TYPOGRAPHY */
+      --font-display:  'Cormorant Garamond', 'Palatino Linotype', serif;
+      --font-narrow:   'Cinzel', 'Trajan Pro', serif;
+      --font-mono:     'Courier Prime', 'Courier New', monospace;
+
+      /* TYPE SCALE */
+      --t-2xs: 0.625rem;   /* 10px */
+      --t-xs:  0.75rem;    /* 12px */
+      --t-sm:  0.875rem;   /* 14px */
+      --t-base:1rem;       /* 16px */
+      --t-md:  1.25rem;    /* 20px */
+      --t-lg:  1.75rem;    /* 28px */
+      --t-xl:  2.5rem;     /* 40px */
+      --t-2xl: 4rem;       /* 64px */
+      --t-3xl: 6.5rem;     /* 104px */
+      --t-4xl: 10rem;      /* 160px */
+      --t-hero:clamp(4.5rem, 14vw, 13rem);
+
+      /* SPACING */
+      --s1:4px;  --s2:8px;   --s3:12px;  --s4:16px;
+      --s5:24px; --s6:32px;  --s7:48px;  --s8:64px;
+      --s9:96px; --s10:128px;
+
+      /* MOTION */
+      --ease-sharp: cubic-bezier(0.87,0,0.13,1);
+      --ease-out:   cubic-bezier(0.23,1,0.32,1);
+      --dur-f: 80ms;
+      --dur-m: 200ms;
+      --dur-s: 420ms;
+
+      --radius: 0px;
+    }
+
+    /* ══════════════════════════════════════════════
+       RESET
+    ══════════════════════════════════════════════ */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      background:var(--concrete);
+      color:var(--text-black);
+      font-family:var(--font-mono);
+      font-size:var(--t-base);
+      line-height:1.55;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
+    ::selection{background:var(--acid);color:var(--black);}
+    a{text-decoration:none;color:inherit;}
+
+    /* ══════════════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════════════ */
+    .wrap{max-width:1400px;margin:0 auto;padding:0 var(--s6);}
+
+    .ds-section{
+      padding:var(--s9) 0;
+      border-bottom:1px solid var(--border-dark);
+    }
+    .ds-section:last-child{border-bottom:none;}
+
+    .sec-head{
+      display:flex;align-items:baseline;gap:var(--s5);
+      margin-bottom:var(--s8);
+    }
+    .sec-title{
+      font-family:var(--font-narrow);
+      font-size:var(--t-2xl);
+      font-weight:900;
+      letter-spacing:.16em;
+      line-height:1;
+      color:var(--text-black);
+    }
+    .sec-code{
+      font-family:var(--font-mono);
+      font-size:var(--t-xs);
+      color:var(--text-dim);
+      letter-spacing:.1em;
+    }
+
+    .sub-lbl{
+      font-family:var(--font-mono);
+      font-size:var(--t-xs);
+      color:var(--text-mid);
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      margin-bottom:var(--s4);
+      display:block;
+    }
+
+    .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s5);}
+    .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s5);}
+    .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s5);}
+    .g5{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--s4);}
+    @media(max-width:900px){
+      .g4,.g5{grid-template-columns:repeat(2,1fr);}
+      .g3{grid-template-columns:1fr;}
+    }
+
+    /* ══════════════════════════════════════════════
+       MASTHEAD
+    ══════════════════════════════════════════════ */
+    .masthead{
+      background:var(--black);
+      position:relative;
+      overflow:hidden;
+      padding-bottom:var(--s6);
+    }
+
+    /* Full-bleed logo bar — exact Shark style */
+    .logo-bar{
+      display:block;
+      width:100%;
+      background:var(--black);
+      padding:var(--s5) var(--s6) 0;
+    }
+
+    .logo-wordmark{
+      font-family:var(--font-display);
+      font-size:var(--t-hero);
+      font-weight:800;
+      letter-spacing:.12em;
+      line-height:0.88;
+      color:var(--white);
+      text-transform:uppercase;
+      display:block;
+      font-style:italic;
+    }
+
+    .hero-sub{
+      font-family:var(--font-display);
+      font-size:clamp(1.5rem,4vw,3.8rem);
+      font-weight:700;
+      font-style:italic;
+      letter-spacing:.1em;
+      color:var(--acid);
+      text-align:center;
+      margin-top:var(--s5);
+      line-height:1.05;
+      padding:0 var(--s6);
+    }
+
+    /* Acid drip / slash shape — simplified CSS polygon */
+    .drip-shape{
+      width:100%;
+      height:80px;
+      background:var(--acid);
+      clip-path:polygon(0 0, 100% 0, 88% 100%, 0 60%);
+      margin-top:var(--s5);
+      position:relative;
+    }
+
+    /* Service link pills — exact Shark style */
+    .service-pills{
+      display:flex;flex-wrap:wrap;gap:var(--s3);
+      padding:var(--s5) var(--s6) var(--s6);
+    }
+
+    .pill{
+      display:inline-flex;align-items:center;gap:var(--s3);
+      font-family:var(--font-mono);
+      font-size:var(--t-xs);
+      letter-spacing:.12em;text-transform:uppercase;
+      padding:var(--s3) var(--s5);
+      border:1px solid rgba(255,255,255,.2);
+      color:var(--white);
+      background:transparent;
+      cursor:pointer;
+      transition:all var(--dur-m) var(--ease-sharp);
+    }
+    .pill .arr{
+      color:var(--acid);
+      font-size:1em;
+      transition:transform var(--dur-f);
+    }
+    .pill:hover{border-color:var(--acid);background:rgba(184,255,0,.06);}
+    .pill:hover .arr{transform:translate(2px,-2px);}
+
+    /* DS header line */
+    .ds-masthead-label{
+      font-family:var(--font-mono);
+      font-size:var(--t-xs);
+      letter-spacing:.18em;text-transform:uppercase;
+      color:var(--text-dim);
+      padding:var(--s7) 0 0;
+      display:block;
+    }
+    .ds-masthead-title{
+      font-family:var(--font-display);
+      font-size:clamp(3rem,7vw,7rem);
+      font-weight:800;
+      font-style:italic;
+      letter-spacing:.1em;
+      line-height:.9;
+      color:var(--text-black);
+      margin:var(--s3) 0 var(--s5);
+    }
+    .ds-masthead-sub{
+      font-family:var(--font-mono);
+      font-size:var(--t-sm);
+      color:var(--text-mid);
+      max-width:500px;
+      line-height:1.7;
+      letter-spacing:.02em;
+    }
+
+    /* ══════════════════════════════════════════════
+       PIXEL CORNER MARKS
+    ══════════════════════════════════════════════ */
+    /* These appear on Shark's stat cards and section breaks */
+    .px{position:absolute;width:10px;height:10px;}
+    .px::before,.px::after{content:'';position:absolute;background:var(--black);}
+    .px::before{width:100%;height:2px;top:0;left:0;}
+    .px::after{width:2px;height:100%;top:0;left:0;}
+    .px.tr{transform:scaleX(-1);}
+    .px.bl{transform:scaleY(-1);}
+    .px.br{transform:scale(-1,-1);}
+
+    /* on acid bg: black marks */
+    .on-acid .px::before,.on-acid .px::after{background:var(--black);}
+    /* on black bg: acid marks */
+    .on-dark .px::before,.on-dark .px::after{background:var(--acid);}
+
+    /* ══════════════════════════════════════════════
+       COLORS
+    ══════════════════════════════════════════════ */
+    .swatch{overflow:hidden;border:1px solid var(--border-dark);}
+    .swatch-fill{height:80px;}
+    .swatch-info{padding:var(--s3);background:var(--white);}
+    .swatch-name{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--text-black);letter-spacing:.06em;display:block;}
+    .swatch-hex{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--text-mid);}
+    .swatch-token{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--text-dim);display:block;margin-top:2px;}
+
+    /* ══════════════════════════════════════════════
+       TYPOGRAPHY SPECIMENS
+    ══════════════════════════════════════════════ */
+    .type-row{
+      padding:var(--s5) 0;border-bottom:1px solid var(--border-dark);
+      display:grid;grid-template-columns:180px 1fr;gap:var(--s5);align-items:center;
+    }
+    .type-row:last-child{border-bottom:none;}
+    .type-meta{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--text-dim);letter-spacing:.1em;line-height:1.8;}
+    .type-meta strong{color:var(--text-black);display:block;letter-spacing:.14em;font-size:var(--t-xs);}
+
+    .t-hero-specimen{font-family:var(--font-display);font-size:6rem;font-weight:800;letter-spacing:.08em;line-height:.88;color:var(--text-black);text-transform:uppercase;}
+    .t-display{font-family:var(--font-display);font-size:4rem;font-weight:800;letter-spacing:.1em;line-height:.92;text-transform:uppercase;color:var(--text-black);}
+    .t-display-acid{font-family:var(--font-display);font-size:3rem;font-weight:700;letter-spacing:.08em;color:var(--acid);background:var(--black);padding:var(--s2) var(--s4);display:inline-block;font-style:italic;}
+    .t-narrow-xl{font-family:var(--font-narrow);font-size:3rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--text-black);line-height:.95;}
+    .t-narrow-lg{font-family:var(--font-narrow);font-size:1.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--text-black);}
+    .t-mono-label{font-family:var(--font-mono);font-size:var(--t-xs);letter-spacing:.16em;text-transform:uppercase;color:var(--text-mid);}
+    .t-mono-body{font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text-mid);line-height:1.75;letter-spacing:.03em;max-width:500px;}
+    .t-mono-cap{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;}
+
+    /* ══════════════════════════════════════════════
+       SPEECH BUBBLES — core Shark component
+    ══════════════════════════════════════════════ */
+    .bubble{
+      position:relative;display:inline-block;
+      font-family:var(--font-display);
+      font-weight:800;
+      font-style:italic;
+      letter-spacing:.1em;text-transform:uppercase;
+      line-height:1.05;
+      padding:var(--s3) var(--s5);
+    }
+
+    /* White bubble on acid bg — exact Shark style */
+    .bubble-white{
+      background:var(--white);
+      color:var(--text-black);
+    }
+    .bubble-white::after{
+      content:'';position:absolute;
+      bottom:-11px;left:24px;
+      width:0;height:0;
+      border-left:10px solid transparent;
+      border-right:6px solid transparent;
+      border-top:12px solid var(--white);
+    }
+
+    /* Acid bubble on black bg */
+    .bubble-acid{
+      background:var(--acid);
+      color:var(--black);
+    }
+    .bubble-acid::after{
+      content:'';position:absolute;
+      bottom:-11px;left:24px;
+      width:0;height:0;
+      border-left:10px solid transparent;
+      border-right:6px solid transparent;
+      border-top:12px solid var(--acid);
+    }
+
+    /* Black bubble on acid bg */
+    .bubble-black{
+      background:var(--black);
+      color:var(--acid);
+    }
+    .bubble-black::after{
+      content:'';position:absolute;
+      bottom:-11px;left:24px;
+      width:0;height:0;
+      border-left:10px solid transparent;
+      border-right:6px solid transparent;
+      border-top:12px solid var(--black);
+    }
+
+    .bubble-sm{font-size:var(--t-md);}
+    .bubble-md{font-size:var(--t-xl);}
+    .bubble-lg{font-size:var(--t-2xl);}
+
+    /* ══════════════════════════════════════════════
+       STAT SECTION — acid background with px marks
+    ══════════════════════════════════════════════ */
+    .stat-section{
+      background:var(--acid);
+      padding:var(--s7) var(--s6);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .stat-section-label{
+      font-family:var(--font-mono);
+      font-size:var(--t-xs);
+      letter-spacing:.16em;text-transform:uppercase;
+      color:var(--black);
+      margin-bottom:var(--s7);
+    }
+
+    .stat-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:var(--s6);
+    }
+    @media(max-width:700px){.stat-grid{grid-template-columns:1fr;}}
+
+    .stat-cell{position:relative;}
+
+    /* pixel square marker above each stat — exact Shark detail */
+    .stat-marker{
+      width:8px;height:8px;
+      background:var(--black);
+      margin-bottom:var(--s5);
+    }
+
+    .stat-bubble-val{
+      display:inline-block;
+      background:var(--acid);
+      border:2px solid var(--black);
+      color:var(--black);
+      font-family:var(--font-display);
+      font-weight:800;
+      font-style:italic;
+      font-size:2.2rem;letter-spacing:.08em;
+      line-height:1;
+      padding:var(--s2) var(--s4);
+      text-transform:uppercase;
+      margin-bottom:var(--s3);
+      position:relative;
+    }
+    .stat-bubble-val::after{
+      content:'';position:absolute;
+      bottom:-9px;left:14px;
+      width:0;height:0;
+      border-left:8px solid transparent;
+      border-right:5px solid transparent;
+      border-top:10px solid var(--black);
+    }
+
+    .stat-qualifier{
+      font-family:var(--font-mono);
+      font-size:var(--t-xs);
+      letter-spacing:.12em;text-transform:uppercase;
+      color:var(--black);
+      margin-top:var(--s3);
+    }
+    .stat-note{
+      font-family:var(--font-mono);
+      font-size:var(--t-2xs);
+      letter-spacing:.08em;text-transform:uppercase;
+      color:rgba(0,0,0,.55);
+      margin-top:var(--s1);
+      line-height:1.65;
+    }
+
+    /* ══════════════════════════════════════════════
+       SERVICE CARDS — bottom row
+    ══════════════════════════════════════════════ */
+    .service-card{
+      background:var(--concrete);
+      border:1px solid var(--border-dark);
+      padding:var(--s5);
+      position:relative;
+      transition:border-color var(--dur-m) var(--ease-sharp);
+      cursor:pointer;
+    }
+    .service-card:hover{border-color:var(--black);}
+
+    .service-tag{
+      display:inline-block;
+      background:var(--acid);
+      color:var(--black);
+      font-family:var(--font-narrow);
+      font-size:var(--t-base);
+      font-weight:900;
+      letter-spacing:.22em;text-transform:uppercase;
+      padding:var(--s1) var(--s3);
+      line-height:1;
+      margin-bottom:var(--s4);
+      position:relative;
+    }
+    /* small tail on service tag */
+    .service-tag::after{
+      content:'';position:absolute;
+      bottom:-7px;left:12px;
+      width:0;height:0;
+      border-left:7px solid transparent;
+      border-right:4px solid transparent;
+      border-top:8px solid var(--acid);
+    }
+
+    .service-title{
+      font-family:var(--font-narrow);
+      font-size:var(--t-lg);font-weight:800;
+      letter-spacing:.14em;text-transform:uppercase;
+      color:var(--text-black);
+      line-height:1;margin-bottom:var(--s3);
+    }
+
+    .service-body{
+      font-family:var(--font-mono);
+      font-size:var(--t-2xs);
+      color:var(--text-mid);
+      letter-spacing:.08em;text-transform:uppercase;
+      line-height:1.7;
+    }
+
+    .service-arrow{
+      position:absolute;top:var(--s4);right:var(--s4);
+      font-size:var(--t-md);color:var(--black);
+      opacity:0;
+      transform:translate(-4px,4px);
+      transition:all var(--dur-m) var(--ease-sharp);
+    }
+    .service-card:hover .service-arrow{opacity:1;transform:translate(0,0);}
+
+    /* ══════════════════════════════════════════════
+       BUTTONS
+    ══════════════════════════════════════════════ */
+    .comp-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s4);padding:var(--s5) 0;border-bottom:1px solid var(--border-dark);}
+    .comp-row:last-child{border-bottom:none;}
+    .comp-label{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;min-width:100px;}
+
+    .btn{
+      display:inline-flex;align-items:center;gap:var(--s2);
+      font-family:var(--font-mono);font-size:var(--t-xs);
+      letter-spacing:.14em;text-transform:uppercase;
+      cursor:pointer;border:none;outline:none;
+      transition:all var(--dur-m) var(--ease-sharp);
+      position:relative;
+    }
+
+    /* PRIMARY — black on acid */
+    .btn-primary{
+      background:var(--acid);color:var(--black);
+      padding:var(--s3) var(--s5);
+      font-family:var(--font-narrow);font-size:var(--t-sm);
+      font-weight:800;letter-spacing:.1em;
+    }
+    .btn-primary:hover{
+      background:var(--acid-hover);
+      transform:translateY(-2px);
+      box-shadow:0 6px 24px rgba(184,255,0,.3);
+    }
+
+    /* OUTLINE on light */
+    .btn-outline{
+      background:transparent;color:var(--text-black);
+      padding:var(--s3) var(--s5);
+      border:1px solid var(--border-dark);
+    }
+    .btn-outline:hover{border-color:var(--black);}
+
+    /* LINK pill — exact Shark nav service pills */
+    .btn-pill{
+      background:transparent;color:var(--white);
+      padding:var(--s3) var(--s5);
+      border:1px solid rgba(255,255,255,.2);
+      gap:var(--s3);
+    }
+    .btn-pill .arr{color:var(--acid);}
+    .btn-pill:hover{border-color:var(--acid);background:rgba(184,255,0,.06);}
+
+    /* BLACK */
+    .btn-black{
+      background:var(--black);color:var(--white);
+      padding:var(--s3) var(--s5);
+    }
+    .btn-black:hover{background:var(--near-black);}
+
+    .btn-sm{padding:var(--s2) var(--s4) !important;font-size:var(--t-2xs) !important;}
+    .btn-lg{padding:var(--s4) var(--s7) !important;font-size:var(--t-md) !important;}
+
+    .btn-icon{
+      width:38px;height:38px;padding:0;justify-content:center;
+      background:var(--concrete);border:1px solid var(--border-dark);
+      color:var(--text-black);
+    }
+    .btn-icon:hover{background:var(--acid);color:var(--black);}
+
+    /* ══════════════════════════════════════════════
+       TAGS
+    ══════════════════════════════════════════════ */
+    .tag{
+      display:inline-flex;align-items:center;gap:var(--s2);
+      font-family:var(--font-mono);font-size:var(--t-2xs);
+      letter-spacing:.12em;text-transform:uppercase;
+      padding:3px 10px;line-height:1;
+      border:1px solid transparent;
+    }
+    .tdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+    .tag-acid{background:var(--acid);color:var(--black);}
+    .tag-acid .tdot{background:var(--black);}
+    .tag-black{background:var(--black);color:var(--acid);}
+    .tag-black .tdot{background:var(--acid);}
+    .tag-outline{background:transparent;color:var(--text-black);border-color:var(--border-dark);}
+    .tag-outline .tdot{background:var(--text-black);}
+    .tag-dim{background:var(--dust);color:var(--text-mid);border-color:var(--border-dark);}
+    .tag-dim .tdot{background:var(--text-dim);}
+
+    /* ══════════════════════════════════════════════
+       NAV — Shark style
+    ══════════════════════════════════════════════ */
+    .nav{
+      background:var(--black);
+      padding:0 var(--s6);
+      height:46px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+
+    .nav-brand{
+      font-family:var(--font-narrow);
+      font-size:var(--t-base);
+      font-weight:700;
+      letter-spacing:.28em;
+      color:var(--white);
+      text-transform:uppercase;
+    }
+
+    .nav-links{display:flex;align-items:center;gap:var(--s6);list-style:none;}
+    .nav-links a{
+      font-family:var(--font-mono);font-size:var(--t-2xs);
+      letter-spacing:.16em;text-transform:uppercase;
+      color:rgba(255,255,255,.55);
+      transition:color var(--dur-f);
+    }
+    .nav-links a:hover,.nav-links a.active{color:var(--white);}
+
+    .nav-ctas{display:flex;align-items:center;gap:var(--s4);}
+    .nav-cta-link{
+      font-family:var(--font-mono);font-size:var(--t-2xs);
+      letter-spacing:.16em;text-transform:uppercase;
+      color:var(--acid);
+    }
+
+    /* ══════════════════════════════════════════════
+       BIG CLAIM — acid bg, centred text
+    ══════════════════════════════════════════════ */
+    .big-claim{
+      background:var(--acid);
+      padding:var(--s8) var(--s6);
+      position:relative;
+      text-align:center;
+    }
+
+    .big-claim-label{
+      font-family:var(--font-mono);
+      font-size:var(--t-xs);
+      letter-spacing:.16em;text-transform:uppercase;
+      color:rgba(0,0,0,.5);
+      margin-bottom:var(--s5);
+    }
+
+    .big-claim-text{
+      font-family:var(--font-display);
+      font-size:clamp(2rem,5vw,5rem);
+      font-weight:800;
+      font-style:italic;
+      letter-spacing:.08em;line-height:.95;
+      text-transform:uppercase;
+      color:var(--black);
+      position:relative;
+      display:inline-block;
+    }
+
+    /* white bubble wrap around text — exact Shark */
+    .claim-bubble{
+      background:var(--white);
+      padding:var(--s5) var(--s7);
+      position:relative;
+      display:inline-block;
+    }
+    .claim-bubble::after{
+      content:'';position:absolute;
+      bottom:-14px;left:50%;transform:translateX(-50%);
+      width:0;height:0;
+      border-left:14px solid transparent;
+      border-right:9px solid transparent;
+      border-top:15px solid var(--white);
+    }
+
+    /* ══════════════════════════════════════════════
+       INPUTS
+    ══════════════════════════════════════════════ */
+    .inp-group{display:flex;flex-direction:column;gap:var(--s2);}
+    .inp-label{font-family:var(--font-mono);font-size:var(--t-xs);letter-spacing:.14em;text-transform:uppercase;color:var(--text-mid);}
+    .inp{
+      background:var(--white);
+      border:1px solid var(--border-dark);
+      padding:var(--s3) var(--s4);
+      font-family:var(--font-mono);font-size:var(--t-sm);
+      color:var(--text-black);outline:none;
+      transition:border-color var(--dur-m) var(--ease-sharp);
+      width:100%;letter-spacing:.04em;
+    }
+    .inp::placeholder{color:var(--text-dim);}
+    .inp:focus{border-color:var(--black);box-shadow:2px 2px 0 var(--black);}
+
+    .inp-row{display:flex;}
+    .inp-row .inp{border-right:none;flex:1;}
+    .inp-row .btn{white-space:nowrap;}
+
+    .sel{
+      appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23111' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 14px center;
+      padding-right:38px;cursor:pointer;
+    }
+
+    /* ══════════════════════════════════════════════
+       ALERTS
+    ══════════════════════════════════════════════ */
+    .alert{
+      display:flex;gap:var(--s3);
+      padding:var(--s4) var(--s5);
+      border-left:3px solid transparent;
+      border:1px solid var(--border-dark);
+    }
+    .alert-ico{font-size:var(--t-base);flex-shrink:0;margin-top:1px;}
+    .alert-title{font-family:var(--font-mono);font-size:var(--t-xs);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+    .alert-body{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--text-mid);letter-spacing:.06em;line-height:1.65;}
+
+    .alert-acid{background:rgba(184,255,0,.12);border-left:3px solid var(--black);}
+    .alert-acid .alert-ico,.alert-acid .alert-title{color:var(--black);}
+    .alert-dark{background:var(--black);border:none;}
+    .alert-dark .alert-ico,.alert-dark .alert-title{color:var(--acid);}
+    .alert-dark .alert-body{color:rgba(255,255,255,.55);}
+    .alert-warn{background:var(--dust);border-left:3px solid var(--text-mid);}
+    .alert-warn .alert-ico,.alert-warn .alert-title{color:var(--text-black);}
+
+    /* ══════════════════════════════════════════════
+       PROGRESS
+    ══════════════════════════════════════════════ */
+    .prog{display:flex;flex-direction:column;gap:var(--s2);}
+    .prog-hd{display:flex;justify-content:space-between;align-items:baseline;}
+    .prog-name{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--text-mid);letter-spacing:.1em;text-transform:uppercase;}
+    .prog-val{font-family:var(--font-display);font-size:var(--t-xl);color:var(--text-black);line-height:1;}
+    .prog-track{height:3px;background:var(--border-dark);overflow:hidden;}
+    .prog-fill{height:100%;animation:grow var(--dur-s) var(--ease-out) both;}
+    @keyframes grow{from{width:0}to{width:var(--w)}}
+    .pf-black{background:var(--black);}
+    .pf-acid{background:var(--acid);}
+
+    /* ══════════════════════════════════════════════
+       DIVIDERS
+    ══════════════════════════════════════════════ */
+    .div{display:flex;align-items:center;gap:var(--s4);}
+    .div-line{flex:1;height:1px;background:var(--border-dark);}
+    .div-text{font-family:var(--font-mono);font-size:var(--t-2xs);letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim);white-space:nowrap;}
+    .div.acid .div-line{background:var(--black);}
+    .div.acid .div-text{color:var(--black);}
+
+    /* ══════════════════════════════════════════════
+       SPACING / MOTION
+    ══════════════════════════════════════════════ */
+    .sp-row{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) 0;border-bottom:1px solid var(--border-dark);}
+    .sp-row:last-child{border:none;}
+    .sp-tok{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--text-mid);letter-spacing:.1em;width:56px;flex-shrink:0;}
+    .sp-bw{flex:1;}
+    .sp-bar{height:6px;background:var(--black);opacity:.7;}
+    .sp-val{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--text-dim);width:36px;text-align:right;flex-shrink:0;}
+
+    .mot-row{display:flex;align-items:center;gap:var(--s4);padding:var(--s4) 0;border-bottom:1px solid var(--border-dark);cursor:pointer;}
+    .mot-row:last-child{border:none;}
+    .mot-pill{width:10px;height:10px;background:var(--black);flex-shrink:0;transition-property:transform;}
+    .mot-row:hover .mot-pill{transform:translateX(22px);}
+    .m-sharp .mot-pill{transition-duration:var(--dur-m);transition-timing-function:var(--ease-sharp);}
+    .m-out   .mot-pill{transition-duration:var(--dur-s);transition-timing-function:var(--ease-out);}
+    .m-fast  .mot-pill{transition-duration:var(--dur-f);transition-timing-function:linear;}
+    .mot-lbl{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--text-mid);letter-spacing:.1em;text-transform:uppercase;}
+    .mot-det{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--text-dim);margin-top:2px;}
+    .mot-hint{font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--text-dim);margin-left:auto;letter-spacing:.06em;}
+
+    /* ══════════════════════════════════════════════
+       FADE-UP
+    ══════════════════════════════════════════════ */
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(14px);}
+      to{opacity:1;transform:translateY(0);}
+    }
+    .fu{animation:fadeUp var(--dur-s) var(--ease-out) both;}
+    .fu:nth-child(2){animation-delay:.06s}
+    .fu:nth-child(3){animation-delay:.12s}
+    .fu:nth-child(4){animation-delay:.18s}
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════
+       HERO — Shark reference recreation
+  ══════════════════════════════════ -->
+  <div class="masthead">
+    <!-- Nav -->
+    <div class="nav">
+      <div class="nav-brand">SHARK</div>
+      <ul class="nav-links">
+        <li><a href="#" class="active">Why Shark</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Process</a></li>
+        <li><a href="#">Growth Factors</a></li>
+        <li><a href="#">Cases</a></li>
+      </ul>
+      <div class="nav-ctas">
+        <a class="nav-cta-link" href="#">Telegram</a>
+        <a class="nav-cta-link" href="#">WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- Full-bleed wordmark -->
+    <div class="logo-bar">
+      <span class="logo-wordmark">SHARK</span>
+    </div>
+
+    <!-- Acid drip shape -->
+    <div class="drip-shape"></div>
+
+    <!-- Hero subtitle -->
+    <p class="hero-sub">PERFORMANCE<br>AND TARGETING IN THE UAE</p>
+
+    <!-- Service pills -->
+    <div class="service-pills">
+      <div class="pill">SEO Optimisation <span class="arr">↗</span></div>
+      <div class="pill">Google Ads <span class="arr">↗</span></div>
+      <div class="pill">Social Media Ads <span class="arr">↗</span></div>
+      <div class="pill">LinkedIn Ads <span class="arr">↗</span></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- DS header -->
+    <div style="padding:var(--s8) 0 0">
+      <span class="ds-masthead-label fu">Design System — Revision 1.0</span>
+      <h1 class="ds-masthead-title fu">SHARK<br>DESIGN<br>SYSTEM</h1>
+      <p class="ds-masthead-sub fu">
+        Brutalist performance marketing language.
+        High-contrast, condensed, relentlessly direct.
+        Acid green on black and concrete.
+      </p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         01 — COLORS
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="colors">
+      <div class="sec-head">
+        <h2 class="sec-title">COLORS</h2>
+        <span class="sec-code">// 01</span>
+      </div>
+
+      <span class="sub-lbl">Signal</span>
+      <div class="g5" style="margin-bottom:var(--s6)">
+        <div class="swatch"><div class="swatch-fill" style="background:#B8FF00"></div><div class="swatch-info"><span class="swatch-name">Acid</span><span class="swatch-hex">#B8FF00</span><span class="swatch-token">--acid</span></div></div>
+        <div class="swatch"><div class="swatch-fill" style="background:#ccff1a"></div><div class="swatch-info"><span class="swatch-name">Acid Hover</span><span class="swatch-hex">#CCFF1A</span><span class="swatch-token">--acid-hover</span></div></div>
+        <div class="swatch"><div class="swatch-fill" style="background:rgba(184,255,0,0.15)"></div><div class="swatch-info"><span class="swatch-name">Acid Dim</span><span class="swatch-hex">rgba(184,255,0,.15)</span><span class="swatch-token">--acid-dim</span></div></div>
+      </div>
+
+      <span class="sub-lbl">Foundations</span>
+      <div class="g5" style="margin-bottom:var(--s6)">
+        <div class="swatch"><div class="swatch-fill" style="background:#000000"></div><div class="swatch-info" style="background:#111;"><span class="swatch-name" style="color:#fff">Black</span><span class="swatch-hex" style="color:#888">#000000</span><span class="swatch-token" style="color:#666">--black</span></div></div>
+        <div class="swatch"><div class="swatch-fill" style="background:#E2E2D8"></div><div class="swatch-info"><span class="swatch-name">Concrete</span><span class="swatch-hex">#E2E2D8</span><span class="swatch-token">--concrete</span></div></div>
+        <div class="swatch"><div class="swatch-fill" style="background:#D0D0C4"></div><div class="swatch-info"><span class="swatch-name">Dust</span><span class="swatch-hex">#D0D0C4</span><span class="swatch-token">--dust</span></div></div>
+        <div class="swatch"><div class="swatch-fill" style="background:#B8B8AA"></div><div class="swatch-info"><span class="swatch-name">Bone</span><span class="swatch-hex">#B8B8AA</span><span class="swatch-token">--bone</span></div></div>
+        <div class="swatch"><div class="swatch-fill" style="background:#F4F4EE"></div><div class="swatch-info"><span class="swatch-name">White</span><span class="swatch-hex">#F4F4EE</span><span class="swatch-token">--white</span></div></div>
+      </div>
+
+      <span class="sub-lbl">Text</span>
+      <div class="g5">
+        <div class="swatch"><div class="swatch-fill" style="background:#111111"></div><div class="swatch-info" style="background:#111"><span class="swatch-name" style="color:#fff">Text Black</span><span class="swatch-hex" style="color:#888">#111111</span><span class="swatch-token" style="color:#666">--text-black</span></div></div>
+        <div class="swatch"><div class="swatch-fill" style="background:#444444"></div><div class="swatch-info"><span class="swatch-name">Text Mid</span><span class="swatch-hex">#444444</span><span class="swatch-token">--text-mid</span></div></div>
+        <div class="swatch"><div class="swatch-fill" style="background:#888888"></div><div class="swatch-info"><span class="swatch-name">Text Dim</span><span class="swatch-hex">#888888</span><span class="swatch-token">--text-dim</span></div></div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         02 — TYPOGRAPHY
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="type">
+      <div class="sec-head">
+        <h2 class="sec-title">TYPOGRAPHY</h2>
+        <span class="sec-code">// 02</span>
+      </div>
+
+      <div class="type-row">
+        <div class="type-meta"><strong>DISPLAY HERO</strong>Cormorant Garamond 800i<br>clamp(4.5rem,14vw,13rem)<br>letter: .12em italic</div>
+        <div class="t-hero-specimen">SHARK</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><strong>DISPLAY LG</strong>Cormorant Garamond 800i<br>4rem / .1em uppercase</div>
+        <div class="t-display">RAPID GROWTH</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><strong>DISPLAY — ACID BG</strong>Cormorant 700i on black<br>3rem / .08em italic</div>
+        <div class="t-display-acid">200 SALES IN 3 WEEKS</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><strong>CINZEL XL</strong>Cinzel 900<br>3rem / .18em uppercase</div>
+        <div class="t-narrow-xl">Performance & Targeting</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><strong>CINZEL LG</strong>Cinzel 700<br>1.7rem / .16em uppercase</div>
+        <div class="t-narrow-lg">SEO Optimisation / Google Ads</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><strong>MONO LABEL</strong>Courier Prime<br>12px / 0.16em</div>
+        <div class="t-mono-label">Why Shark — Services — Cases — Growth Factors</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><strong>MONO BODY</strong>Courier Prime<br>14px / 0.03em</div>
+        <div class="t-mono-body">Achieve rapid sales by maximising audience reach, improving conversion rates and building your subscriber base across the UAE market.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><strong>MONO CAPTION</strong>Courier Prime<br>10px / 0.1em</div>
+        <div class="t-mono-cap">WITH A BUDGET OF ONLY AED 5500 — IN TOTAL CLIENT ADVERTISING BUDGETS MANAGED (2022–2024)</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         03 — SPEECH BUBBLES
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="bubbles">
+      <div class="sec-head">
+        <h2 class="sec-title">SPEECH BUBBLES</h2>
+        <span class="sec-code">// 03 — Signature Component</span>
+      </div>
+      <p class="t-mono-body" style="margin-bottom:var(--s7)">The core Shark component — used for all key claims, stat callouts, and CTAs. Three variants across two background contexts.</p>
+
+      <!-- White on acid bg -->
+      <span class="sub-lbl">On Acid background</span>
+      <div style="background:var(--acid);padding:var(--s7) var(--s6);margin-bottom:var(--s6);display:flex;flex-wrap:wrap;gap:var(--s8);align-items:flex-start;">
+        <div>
+          <div class="bubble bubble-white bubble-lg">YOUR GO-TO PARTNER<br>FOR RAPID GROWTH<br>IN A FAST-PACED WORLD</div>
+        </div>
+        <div style="margin-top:var(--s7)">
+          <div class="bubble bubble-white bubble-md">ACHIEVE RAPID<br>SALES</div>
+        </div>
+        <div style="margin-top:var(--s7)">
+          <div class="bubble bubble-white bubble-sm">Trusted by Clients</div>
+        </div>
+      </div>
+
+      <!-- Acid on black bg -->
+      <span class="sub-lbl">On Black background</span>
+      <div style="background:var(--black);padding:var(--s7) var(--s6);margin-bottom:var(--s6);display:flex;flex-wrap:wrap;gap:var(--s8);align-items:flex-start;">
+        <div>
+          <div class="bubble bubble-acid bubble-lg">200 SALES<br>IN 3 WEEKS</div>
+        </div>
+        <div style="margin-top:var(--s7)">
+          <div class="bubble bubble-acid bubble-md">40+<br>INDUSTRIES</div>
+        </div>
+        <div style="margin-top:var(--s7)">
+          <div class="bubble bubble-black bubble-sm">Diverse Expertise</div>
+        </div>
+      </div>
+
+      <!-- On concrete -->
+      <span class="sub-lbl">On Concrete background</span>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--s8);align-items:flex-start;padding:var(--s6) 0">
+        <div>
+          <div class="bubble bubble-acid bubble-md">OVER<br>$1 000 000</div>
+        </div>
+        <div style="margin-top:var(--s5)">
+          <div class="bubble bubble-black bubble-sm">Results-Driven</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         04 — STAT SECTION
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="stats">
+      <div class="sec-head">
+        <h2 class="sec-title">STAT SECTION</h2>
+        <span class="sec-code">// 04</span>
+      </div>
+
+      <div class="stat-section">
+        <!-- pixel corner marks on acid -->
+        <div class="px on-acid" style="position:absolute;top:12px;left:12px;"></div>
+        <div class="px tr on-acid" style="position:absolute;top:12px;right:12px;"></div>
+        <div class="px bl on-acid" style="position:absolute;bottom:12px;left:12px;"></div>
+        <div class="px br on-acid" style="position:absolute;bottom:12px;right:12px;"></div>
+
+        <p class="stat-section-label">WHY SHARK</p>
+
+        <div class="stat-grid">
+          <div class="stat-cell">
+            <div class="stat-marker"></div>
+            <p style="font-family:var(--font-mono);font-size:var(--t-2xs);letter-spacing:.12em;text-transform:uppercase;color:rgba(0,0,0,.55);margin-bottom:var(--s3)">DIVERSE EXPERTISE</p>
+            <div class="stat-bubble-val">40+<br>INDUSTRIES</div>
+            <p class="stat-qualifier">Covered by Our<br>Experienced Team</p>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-marker"></div>
+            <p style="font-family:var(--font-mono);font-size:var(--t-2xs);letter-spacing:.12em;text-transform:uppercase;color:rgba(0,0,0,.55);margin-bottom:var(--s3)">RESULTS-DRIVEN</p>
+            <div class="stat-bubble-val">200 SALES<br>IN 3 WEEKS</div>
+            <p class="stat-qualifier">With a Budget of<br>Only AED 5500</p>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-marker"></div>
+            <p style="font-family:var(--font-mono);font-size:var(--t-2xs);letter-spacing:.12em;text-transform:uppercase;color:rgba(0,0,0,.55);margin-bottom:var(--s3)">TRUSTED BY CLIENTS</p>
+            <div class="stat-bubble-val">OVER<br>$1 000 000</div>
+            <p class="stat-qualifier">In Total Client Advertising<br>Budgets Managed (2022–2024)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         05 — SERVICE CARDS
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="services">
+      <div class="sec-head">
+        <h2 class="sec-title">SERVICE CARDS</h2>
+        <span class="sec-code">// 05</span>
+      </div>
+      <div class="g4">
+        <div class="service-card">
+          <span class="service-arrow">↗</span>
+          <div class="service-tag">SEO</div>
+          <div class="service-title">SEO<br>Optimisation</div>
+          <div class="service-body">Improve website visibility<br>and rankings</div>
+        </div>
+        <div class="service-card">
+          <span class="service-arrow">↗</span>
+          <div class="service-tag">ADS</div>
+          <div class="service-title">Google<br>Ads</div>
+          <div class="service-body">Reach more customers<br>at lower cost</div>
+        </div>
+        <div class="service-card">
+          <span class="service-arrow">↗</span>
+          <div class="service-tag">SOCIAL</div>
+          <div class="service-title">Social Media<br>Advertising</div>
+          <div class="service-body">Grow your audience<br>across platforms</div>
+        </div>
+        <div class="service-card">
+          <span class="service-arrow">↗</span>
+          <div class="service-tag">B2B</div>
+          <div class="service-title">LinkedIn<br>Ads</div>
+          <div class="service-body">Target business<br>professionals</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         06 — BIG CLAIM
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="claim">
+      <div class="sec-head">
+        <h2 class="sec-title">BIG CLAIM</h2>
+        <span class="sec-code">// 06 — Acid CTA block</span>
+      </div>
+      <div class="big-claim">
+        <div class="px on-acid" style="position:absolute;top:12px;left:12px;"></div>
+        <div class="px tr on-acid" style="position:absolute;top:12px;right:12px;"></div>
+        <p class="big-claim-label">SERVICES</p>
+        <div class="claim-bubble">
+          <div class="big-claim-text">
+            ACHIEVE RAPID SALES BY<br>
+            MAXIMISING AUDIENCE REACH,<br>
+            IMPROVING CONVERSION RATES<br>
+            AND BUILDING YOUR SUBSCRIBER BASE
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         07 — BUTTONS
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="buttons">
+      <div class="sec-head">
+        <h2 class="sec-title">BUTTONS</h2>
+        <span class="sec-code">// 07</span>
+      </div>
+      <div class="comp-row"><span class="comp-label">Variants</span>
+        <button class="btn btn-primary">Get Started ↗</button>
+        <button class="btn btn-black">Learn More</button>
+        <button class="btn btn-outline">View Cases</button>
+        <button class="btn btn-pill">Social Media Ads <span class="arr">↗</span></button>
+      </div>
+      <div class="comp-row"><span class="comp-label">Sizes</span>
+        <button class="btn btn-primary btn-sm">Quick ↗</button>
+        <button class="btn btn-primary">Default</button>
+        <button class="btn btn-primary btn-lg">GROW NOW ↗</button>
+      </div>
+      <div class="comp-row"><span class="comp-label">Icon</span>
+        <button class="btn btn-icon">↗</button>
+        <button class="btn btn-icon">+</button>
+        <button class="btn btn-icon">◉</button>
+        <button class="btn btn-icon">✕</button>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         08 — TAGS
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="tags">
+      <div class="sec-head">
+        <h2 class="sec-title">TAGS</h2>
+        <span class="sec-code">// 08</span>
+      </div>
+      <div class="comp-row"><span class="comp-label">Variants</span>
+        <span class="tag tag-acid"><span class="tdot"></span>Active</span>
+        <span class="tag tag-black"><span class="tdot"></span>UAE Market</span>
+        <span class="tag tag-outline"><span class="tdot"></span>Case Study</span>
+        <span class="tag tag-dim"><span class="tdot"></span>Archive</span>
+      </div>
+      <div class="comp-row"><span class="comp-label">Labels</span>
+        <span class="tag tag-acid">SEO</span>
+        <span class="tag tag-acid">Google Ads</span>
+        <span class="tag tag-black">LinkedIn</span>
+        <span class="tag tag-outline">Social</span>
+        <span class="tag tag-dim">Completed</span>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         09 — NAVIGATION
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="nav-section">
+      <div class="sec-head">
+        <h2 class="sec-title">NAVIGATION</h2>
+        <span class="sec-code">// 09</span>
+      </div>
+      <div class="nav" style="border-radius:0">
+        <div class="nav-brand">SHARK</div>
+        <ul class="nav-links">
+          <li><a href="#" class="active">Why Shark</a></li>
+          <li><a href="#">Services</a></li>
+          <li><a href="#">Process</a></li>
+          <li><a href="#">Cases</a></li>
+        </ul>
+        <div class="nav-ctas">
+          <a class="nav-cta-link" href="#">Telegram</a>
+          <a class="nav-cta-link" href="#">WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         10 — INPUTS
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="inputs">
+      <div class="sec-head">
+        <h2 class="sec-title">INPUTS</h2>
+        <span class="sec-code">// 10</span>
+      </div>
+      <div class="g3">
+        <div class="inp-group">
+          <label class="inp-label">Company Name</label>
+          <input class="inp" type="text" placeholder="Your brand" />
+          <span style="font-family:var(--font-mono);font-size:var(--t-2xs);color:var(--text-dim);letter-spacing:.06em">Required for audit</span>
+        </div>
+        <div class="inp-group">
+          <label class="inp-label">Target Market</label>
+          <select class="inp sel">
+            <option>UAE — Dubai</option>
+            <option>UAE — Abu Dhabi</option>
+            <option>KSA</option>
+            <option>GCC — All</option>
+          </select>
+        </div>
+        <div class="inp-group">
+          <label class="inp-label">Monthly Budget (AED)</label>
+          <div class="inp-row">
+            <input class="inp" type="text" placeholder="e.g. 5500" />
+            <button class="btn btn-primary">Audit ↗</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         11 — ALERTS
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="alerts">
+      <div class="sec-head">
+        <h2 class="sec-title">ALERTS</h2>
+        <span class="sec-code">// 11</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--s3);max-width:600px">
+        <div class="alert alert-acid">
+          <span class="alert-ico">◉</span>
+          <div><div class="alert-title">Campaign Active</div><div class="alert-body">Your Google Ads campaign is live. 200 leads tracked in the first 3 weeks at AED 5500 budget.</div></div>
+        </div>
+        <div class="alert alert-dark">
+          <span class="alert-ico">⌁</span>
+          <div><div class="alert-title">Optimisation Pending</div><div class="alert-body">LinkedIn Ads CTR below benchmark. Review audience targeting in sector B2B — Finance.</div></div>
+        </div>
+        <div class="alert alert-warn">
+          <span class="alert-ico">✕</span>
+          <div><div class="alert-title">Budget Threshold</div><div class="alert-body">Monthly spend reaching 90% of allocated budget. Consider reallocation before end of cycle.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         12 — DATA
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="data">
+      <div class="sec-head">
+        <h2 class="sec-title">DATA</h2>
+        <span class="sec-code">// 12</span>
+      </div>
+      <div style="max-width:480px;display:flex;flex-direction:column;gap:var(--s5)">
+        <div class="prog">
+          <div class="prog-hd"><span class="prog-name">Audience Reach</span><span class="prog-val">94</span></div>
+          <div class="prog-track"><div class="prog-fill pf-black" style="--w:94%"></div></div>
+        </div>
+        <div class="prog">
+          <div class="prog-hd"><span class="prog-name">Conversion Rate</span><span class="prog-val">67</span></div>
+          <div class="prog-track"><div class="prog-fill pf-acid" style="--w:67%"></div></div>
+        </div>
+        <div class="prog">
+          <div class="prog-hd"><span class="prog-name">Budget Used</span><span class="prog-val">41</span></div>
+          <div class="prog-track"><div class="prog-fill pf-black" style="--w:41%"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         13 — DIVIDERS
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="dividers">
+      <div class="sec-head">
+        <h2 class="sec-title">DIVIDERS</h2>
+        <span class="sec-code">// 13</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--s5);max-width:600px">
+        <div class="div"><div class="div-line"></div><span class="div-text">Standard</span><div class="div-line"></div></div>
+        <div class="div acid"><div class="div-line"></div><span class="div-text">Bold</span><div class="div-line"></div></div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         14 — TOKENS
+    ══════════════════════════════════ -->
+    <section class="ds-section" id="tokens">
+      <div class="sec-head">
+        <h2 class="sec-title">TOKENS</h2>
+        <span class="sec-code">// 14</span>
+      </div>
+      <div class="g2">
+        <div>
+          <span class="sub-lbl" style="margin-bottom:var(--s4)">Spacing</span>
+          <div style="max-width:420px">
+            <div class="sp-row"><span class="sp-tok">--s1</span><div class="sp-bw"><div class="sp-bar" style="width:4px"></div></div><span class="sp-val">4px</span></div>
+            <div class="sp-row"><span class="sp-tok">--s2</span><div class="sp-bw"><div class="sp-bar" style="width:8px"></div></div><span class="sp-val">8px</span></div>
+            <div class="sp-row"><span class="sp-tok">--s3</span><div class="sp-bw"><div class="sp-bar" style="width:12px"></div></div><span class="sp-val">12px</span></div>
+            <div class="sp-row"><span class="sp-tok">--s4</span><div class="sp-bw"><div class="sp-bar" style="width:16px"></div></div><span class="sp-val">16px</span></div>
+            <div class="sp-row"><span class="sp-tok">--s5</span><div class="sp-bw"><div class="sp-bar" style="width:24px"></div></div><span class="sp-val">24px</span></div>
+            <div class="sp-row"><span class="sp-tok">--s6</span><div class="sp-bw"><div class="sp-bar" style="width:32px"></div></div><span class="sp-val">32px</span></div>
+            <div class="sp-row"><span class="sp-tok">--s7</span><div class="sp-bw"><div class="sp-bar" style="width:48px"></div></div><span class="sp-val">48px</span></div>
+            <div class="sp-row"><span class="sp-tok">--s8</span><div class="sp-bw"><div class="sp-bar" style="width:64px"></div></div><span class="sp-val">64px</span></div>
+            <div class="sp-row"><span class="sp-tok">--s9</span><div class="sp-bw"><div class="sp-bar" style="width:96px"></div></div><span class="sp-val">96px</span></div>
+          </div>
+        </div>
+        <div>
+          <span class="sub-lbl" style="margin-bottom:var(--s4)">Motion — hover to preview</span>
+          <div style="max-width:420px">
+            <div class="mot-row m-sharp"><div class="mot-pill"></div><div><div class="mot-lbl">Sharp</div><div class="mot-det">cubic-bezier(0.87,0,0.13,1) — 200ms</div></div><span class="mot-hint">hover</span></div>
+            <div class="mot-row m-out"><div class="mot-pill"></div><div><div class="mot-lbl">Ease Out</div><div class="mot-det">cubic-bezier(0.23,1,0.32,1) — 420ms</div></div><span class="mot-hint">hover</span></div>
+            <div class="mot-row m-fast"><div class="mot-pill"></div><div><div class="mot-lbl">Fast</div><div class="mot-det">linear — 80ms</div></div><span class="mot-hint">hover</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div style="height:var(--s9)"></div>
+  </div>
+</body>
+</html>
