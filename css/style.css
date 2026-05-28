@@ -359,6 +359,10 @@ input,select,textarea{font:inherit}
   .footer__grid{grid-template-columns:1fr}
   .cart-layout{grid-template-columns:1fr}
   .hero__ctas{flex-direction:column;align-items:center}
+  .product-card__body{padding:var(--s4)}
+  .product-card__footer{padding:var(--s3) var(--s4);gap:var(--s2)}
+  .product-card .t-price{font-size:1.4rem}
+  .t-card{font-size:.875rem;letter-spacing:.1em}
 }
 @media(max-width:480px){
   .products-grid{grid-template-columns:1fr}
