@@ -195,7 +195,7 @@ input,select,textarea{font:inherit}
 
 /* ── PRODUCT PAGE ────────────────────────────────────────── */
 .product-layout{display:grid;grid-template-columns:1fr 1fr;gap:var(--s9);align-items:start;padding-top:var(--s8)}
-@media(max-width:900px){.product-layout{grid-template-columns:1fr}}
+@media(max-width:900px){.product-layout{grid-template-columns:1fr}.gallery{position:static}}
 
 .gallery{position:sticky;top:80px}
 .gallery__main{aspect-ratio:3/4;overflow:hidden;background:var(--black);border:1px solid var(--border-dark);margin-bottom:var(--s3);position:relative}
