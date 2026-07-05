@@ -35,7 +35,7 @@
     .sizer__method-card p{font-family:var(--font-m);font-size:.78rem;color:var(--text-mid);line-height:1.6;letter-spacing:.03em}
     .sizer__instr{font-family:var(--font-m);font-size:.82rem;color:var(--text-mid);line-height:1.7;letter-spacing:.03em;margin-bottom:var(--s5)}
     .sizer__note{font-family:var(--font-m);font-size:.7rem;color:var(--text-dim);letter-spacing:.04em;margin:var(--s3) 0 var(--s5)}
-    .calib-stage{background:var(--concrete);border:1px dashed var(--border-mid);display:flex;align-items:center;justify-content:center;padding:var(--s7) var(--s5);min-height:220px;overflow-x:auto}
+    .calib-stage{background:var(--concrete);border:1px dashed var(--border-mid);display:flex;align-items:center;justify-content:center;padding:var(--s7) var(--s5);min-height:220px;max-height:70vh;overflow:auto}
     .calib-card{background:var(--dust);border:2px solid var(--text-black);border-radius:6%/10%;flex-shrink:0}
     .ring-circle{border:3px solid var(--black);outline:3px solid var(--acid);outline-offset:-6px;border-radius:50%;background:transparent;flex-shrink:0}
     .sizer__slider-row{display:flex;align-items:center;gap:var(--s4);margin:var(--s5) 0}
@@ -208,7 +208,7 @@
 
       <!-- STEP: calibrate screen -->
       <div class="sizer__step" data-step="calibrate" hidden>
-        <p class="sizer__instr">Take a regular bank card (not a SIM card) and compare it to the rectangle below — on a phone or tablet, lay it flat and rest the card on top; on a laptop or desktop monitor, just hold the card flat against the screen instead. Move the slider until the rectangle exactly matches the card's width and height — a card is always 85.6 × 54 mm, an international standard shared by every bank.</p>
+        <p class="sizer__instr">Take a regular bank card (not a SIM card) and hold it upright against the screen, long edge vertical, next to the tall rectangle below — no need to rotate your phone, the rectangle is drawn to fit any screen this way. On a laptop or desktop monitor, just hold the card flat against the screen instead. Move the slider until the rectangle exactly matches the card's width and height — a card is always 85.6 × 54 mm, an international standard shared by every bank.</p>
         <p class="sizer__note">Calibration is saved for this device and browser — you'll only need to do it once per screen.</p>
         <div class="calib-stage"><div class="calib-card" id="calibCard"></div></div>
         <div class="sizer__slider-row">

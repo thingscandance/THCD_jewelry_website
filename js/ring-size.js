@@ -68,10 +68,13 @@ const calibSlider = document.getElementById('calibSlider');
 calibSlider.value = Math.min(220, Math.max(40, Math.round((pxPerMm / BASE_PX_PER_MM) * 100)));
 
 function renderCalibCard() {
+  // Rendered portrait (short edge as width) so the rectangle fits phone
+  // screens in portrait mode — a card's long edge (85.6mm) is wider than
+  // most phones, but its short edge (54mm) fits virtually any screen.
   const factor = calibSlider.value / 100;
   const ppm = BASE_PX_PER_MM * factor;
-  calibCard.style.width = (CARD_W_MM * ppm) + 'px';
-  calibCard.style.height = (CARD_H_MM * ppm) + 'px';
+  calibCard.style.width = (CARD_H_MM * ppm) + 'px';
+  calibCard.style.height = (CARD_W_MM * ppm) + 'px';
   calibCard.dataset.ppm = ppm;
 }
 calibSlider.addEventListener('input', renderCalibCard);
