@@ -111,9 +111,10 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero__bg">
-    <video class="hero__video" autoplay muted loop playsinline>
+    <video class="hero__video" autoplay muted loop playsinline poster="brand_assets/Backgrounds/Generated Image 2.png">
       <source src="brand_assets/Backgrounds/kling_20260524_%E4%BD%9C%E5%93%81__813_0_1_rhea1.mp4" type="video/mp4"/>
     </video>
+    <img src="brand_assets/Backgrounds/Generated Image 2.png" alt="" aria-hidden="true"/>
   </div>
 
   <div class="container" style="position:relative;z-index:2">
@@ -135,20 +136,6 @@
   <div class="hero__scroll" aria-hidden="true">
     <div class="hero__scroll-line"></div>
     <span class="hero__scroll-label">Scroll</span>
-  </div>
-</section>
-
-<!-- FEATURED PRODUCTS -->
-<section class="section" id="featured">
-  <div class="container">
-    <div class="section-header fade-up">
-      <div class="section-eyebrow"><span>Edition 001</span></div>
-      <h2 class="section-title">Featured<br><span class="acid" style="display:inline-block;background:#000;color:#B8FF00;padding:.05em .15em;line-height:1.05">Pieces</span></h2>
-    </div>
-    <div class="products-grid" id="featuredGrid"></div>
-    <div style="margin-top:var(--s7);text-align:center" class="fade-up">
-      <a href="#shop" class="btn btn-outline btn-lg">View All 23 Pieces ↗</a>
-    </div>
   </div>
 </section>
 
@@ -428,8 +415,6 @@ const observer = new IntersectionObserver((entries) => {
     if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 60); observer.unobserve(e.target); }
   });
 }, { threshold: 0.08 });
-
-document.getElementById('featuredGrid').innerHTML = PRODUCTS.filter(p => p.featured).map(renderCard).join('');
 
 function renderGrid() {
   const filtered = currentCat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category === currentCat);
