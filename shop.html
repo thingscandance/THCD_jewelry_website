@@ -3,16 +3,75 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Shop — THCD Edition 001</title>
+  <title>THCD — Dark Jewelry. Edition 001.</title>
+  <meta name="description" content="THCD — Handcrafted sterling silver jewelry. Small-batch, numbered editions."/>
   <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
   <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    /* ── RING SIZE SECTION ─────────────────────────────────── */
+    .size-guide{padding:var(--s9) 0;background:var(--concrete)}
+    .size-method__steps{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
+    .size-method__steps li{display:grid;grid-template-columns:20px 1fr;gap:var(--s3);font-family:var(--font-m);font-size:.78rem;color:var(--text-mid);line-height:1.6;letter-spacing:.03em}
+    .size-method__steps li::before{content:attr(data-n);font-family:var(--font-n);font-size:.75rem;color:var(--text-dim);line-height:1.6}
+    .size-chart-wrap{overflow-x:auto;border:1px solid var(--border-dark)}
+    .size-chart{width:100%;border-collapse:collapse;font-family:var(--font-m);font-size:.78rem}
+    .size-chart th{background:var(--black);color:var(--acid);padding:10px var(--s5);text-align:left;letter-spacing:.14em;text-transform:uppercase;font-size:.625rem;white-space:nowrap}
+    .size-chart td{padding:9px var(--s5);border-bottom:1px solid var(--border-dark);color:var(--text-mid);letter-spacing:.06em}
+    .size-chart tr:nth-child(even) td{background:var(--dust)}
+    .size-chart tr:nth-child(odd) td{background:var(--white)}
+    .size-chart tr:hover td{background:var(--concrete);color:var(--text-black)}
+    .size-chart td:first-child{color:var(--text-black);font-weight:700;font-size:.85rem}
+
+    /* ── RING SIZER TOOL ───────────────────────────────────── */
+    .sizer{background:var(--white);border:1px solid var(--border-dark);padding:var(--s7) var(--s6);margin-bottom:var(--s7)}
+    @media(max-width:700px){.sizer{padding:var(--s6) var(--s4)}}
+    .sizer__step[hidden]{display:none}
+    .sizer__methods{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5)}
+    @media(max-width:700px){.sizer__methods{grid-template-columns:1fr}}
+    .sizer__method-card{background:var(--concrete);border:1px solid var(--border-dark);padding:var(--s6);text-align:left;cursor:pointer;font-family:inherit;position:relative;overflow:hidden;transition:border-color var(--dur-m) var(--ease-sharp)}
+    .sizer__method-card:hover{border-color:var(--black)}
+    .sizer__method-num{display:block;font-family:var(--font-d);font-style:italic;font-size:2.75rem;color:var(--dust);line-height:1;margin-bottom:var(--s4)}
+    .sizer__method-card h3{font-family:var(--font-n);font-weight:700;text-transform:uppercase;font-size:.95rem;letter-spacing:.1em;color:var(--text-black);margin-bottom:var(--s3)}
+    .sizer__method-card p{font-family:var(--font-m);font-size:.78rem;color:var(--text-mid);line-height:1.6;letter-spacing:.03em}
+    .sizer__instr{font-family:var(--font-m);font-size:.82rem;color:var(--text-mid);line-height:1.7;letter-spacing:.03em;margin-bottom:var(--s5)}
+    .sizer__note{font-family:var(--font-m);font-size:.7rem;color:var(--text-dim);letter-spacing:.04em;margin:var(--s3) 0 var(--s5)}
+    .calib-stage{background:var(--concrete);border:1px dashed var(--border-mid);display:flex;align-items:center;justify-content:center;padding:var(--s7) var(--s5);min-height:220px;max-height:70vh;overflow:auto}
+    .calib-card{background:var(--dust);border:2px solid var(--text-black);border-radius:6%/10%;flex-shrink:0}
+    .ring-circle{border:3px solid var(--black);outline:3px solid var(--acid);outline-offset:-6px;border-radius:50%;background:transparent;flex-shrink:0}
+    .sizer__slider-row{display:flex;align-items:center;gap:var(--s4);margin:var(--s5) 0}
+    .sizer__slider-row input[type=range]{flex:1;accent-color:var(--black)}
+    .nudge-btn{width:36px;height:36px;flex-shrink:0;border:1px solid var(--border-mid);background:var(--white);color:var(--text-black);font-family:var(--font-m);font-size:1rem;cursor:pointer;transition:border-color var(--dur-m)}
+    .nudge-btn:hover{border-color:var(--black)}
+    .sizer__readout{text-align:center;font-family:var(--font-d);font-style:italic;font-weight:800;font-size:1.6rem;color:var(--text-black);margin-bottom:var(--s2)}
+    .sizer__actions{display:flex;justify-content:space-between;align-items:center;gap:var(--s4);margin-top:var(--s6);flex-wrap:wrap}
+    .sizer__link{font-family:var(--font-m);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);cursor:pointer;background:none;border:none;padding:0;text-decoration:underline;text-underline-offset:3px}
+    .sizer__link:hover{color:var(--text-black)}
+    .sizer__result-main{text-align:center;padding:var(--s6) 0;border-bottom:1px solid var(--border-dark);margin-bottom:var(--s6)}
+    .sizer__result-mm{display:block;font-family:var(--font-d);font-style:italic;font-weight:800;font-size:clamp(3rem,8vw,4.5rem);color:var(--text-black);line-height:1}
+    .sizer__result-label{font-family:var(--font-m);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
+    .sizer__result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s4);margin-bottom:var(--s4)}
+    .sizer__result-stat{background:var(--black);padding:var(--s5) var(--s3);text-align:center}
+    .sizer__result-stat-label{display:block;font-family:var(--font-m);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--acid);margin-bottom:var(--s2)}
+    .sizer__result-stat-value{font-family:var(--font-d);font-style:italic;font-weight:800;font-size:2rem;color:var(--white)}
+    @media(max-width:480px){.sizer__result-stat{padding:var(--s4) var(--s2)}.sizer__result-stat-value{font-size:1.5rem}}
+    .sizer__tips{display:flex;flex-direction:column;gap:var(--s3);margin-bottom:var(--s6)}
+    .sizer__tip{display:grid;grid-template-columns:16px 1fr;gap:var(--s3);font-family:var(--font-m);font-size:.75rem;color:var(--text-mid);line-height:1.6;letter-spacing:.03em}
+    .sizer__tip::before{content:"—";color:var(--text-dim)}
+    .sizer__send{border-top:1px solid var(--border-dark);padding-top:var(--s6)}
+    .sizer__send textarea{width:100%;resize:vertical;margin:var(--s3) 0 var(--s5)}
+    .size-chart-details summary{cursor:pointer;font-family:var(--font-n);font-weight:700;text-transform:uppercase;font-size:.8rem;letter-spacing:.12em;color:var(--text-black);padding:var(--s4) 0;list-style:none}
+    .size-chart-details summary::-webkit-details-marker{display:none}
+    .size-chart-details summary::before{content:"+ ";color:var(--text-dim)}
+    .size-chart-details[open] summary::before{content:"– "}
+    .size-chart-details{margin-top:var(--s6)}
+  </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav class="nav">
   <div class="nav__inner">
-    <a href="index.html" class="nav__logo" aria-label="THCD Home">
+    <a href="shop.html" class="nav__logo" aria-label="THCD Home">
       <svg viewBox="0 0 1999.98 1216.2" aria-hidden="true">
         <path d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/>
         <path d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/>
@@ -20,11 +79,14 @@
       </svg>
     </a>
     <ul class="nav__links">
-      <li><a href="index.html" class="nav__link">Home</a></li>
-      <li><a href="shop.html" class="nav__link active">Shop</a></li>
-      <li><a href="index.html#craft" class="nav__link">Craft</a></li>
+      <li><a href="#shop" class="nav__link active">Shop</a></li>
+      <li><a href="#craft" class="nav__link">Craft</a></li>
+      <li><a href="#ring-size" class="nav__link">Ring Size</a></li>
     </ul>
     <div class="nav__right">
+      <a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener" class="nav__link" aria-label="Instagram" style="display:flex;align-items:center">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+      </a>
       <a href="cart.html" class="nav__cart">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
         Cart
@@ -40,19 +102,214 @@
 <!-- MOBILE NAV -->
 <div class="mobile-nav" id="mobileNav">
   <button class="mobile-nav__close" id="mobileClose">✕</button>
-  <a href="index.html" class="mobile-nav__link">Home</a>
-  <a href="shop.html" class="mobile-nav__link">Shop</a>
+  <a href="#shop" class="mobile-nav__link" onclick="document.getElementById('mobileNav').classList.remove('open')">Shop</a>
+  <a href="#craft" class="mobile-nav__link" onclick="document.getElementById('mobileNav').classList.remove('open')">Craft</a>
+  <a href="#ring-size" class="mobile-nav__link" onclick="document.getElementById('mobileNav').classList.remove('open')">Ring Size</a>
   <a href="cart.html" class="mobile-nav__link">Cart</a>
 </div>
 
-<!-- SHOP HEADER -->
-<div class="shop-header">
+<!-- HERO -->
+<section class="hero">
+  <div class="hero__bg">
+    <video class="hero__video" autoplay muted loop playsinline>
+      <source src="brand_assets/Backgrounds/kling_20260524_%E4%BD%9C%E5%93%81__813_0_1_rhea1.mp4" type="video/mp4"/>
+    </video>
+  </div>
+
+  <div class="container" style="position:relative;z-index:2">
+    <div class="hero__content">
+      <div class="hero__logo-wrap">
+        <svg viewBox="0 0 1999.98 1216.2" aria-label="THCD">
+          <path d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/>
+          <path d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/>
+          <path d="M1969.89,1068.07c-53.28-50.91-118.58-129.74-140.79-199.21-11.25-35.21-6.92-46.08-1.51-79.29,1.78-10.91-2.23-23.12,2.47-33.53,4.72-10.44,36.95-29.82,37.9-34.15,2.23-10.2-17.88-12.19-23.64-16.25-45.74-32.26-23.61-75.32-24.02-119.73-.5-53.93-5.87-106.83-4.66-159.95.68-29.68,1.56-135.22,9.41-154.92,4.98-12.51,15.43-12.94,15.32-33.09-.07-12.68-6.74-18.52-8.15-28.18-7.1-48.55,32.27-127.45,62.1-165.46,12.44-15.85,30.23-27.53,41.66-44.29-26.27,3.57-74.63,33.72-93.98,51.98-30.99,29.24-53.01,82.46-80.02,115.9-10.96-9.18-10.7-22.72-10.02-35.9-3.99-4.77-19.01,12.3-20.96,17-7.09,17.01-25.01,100.98-26.98,121.02-4.49,45.58,12.68,90.98,7.65,135.64-2.05,18.15-14.46,32.45-3.72,54.32-58-41.12-93.05-113.46-162.12-136.18-41.16,7.16,10.62,13.65.3,52.29-7.56,28.3-43.17,69.19-50.08,101.93-6.73,9.15-10.83,10.27-21.67,6.74l-4.41,3.06c-10.94,21.36-6.04,58.21-14.96,77.19-6.93,14.74-25.65,18.87-30.74,49.26-4.67,27.85,6.1,17.93,15.25,32.19,17.52,27.3,26.96,136.28,14.47,165.53-6.04,14.14-25.24,23.29-24.99,37.44.34,19.38,51.76,18.71,63.2,33.42,13.78,17.72,11.52,62.8,19.84,85.13,5.71-.6,6.89-17.67,7.48-22.46,1.95-15.98-3.82-33.56,10.48-45.44,12.8-.15,30.63,53.59,36.01,59.91,3.98,4.68,17.49,5.08,25.85,10.15,27.19,16.48,36.1,39.55,46.07,65.93,4.45,11.77,10.2,18.87,15.89,3.88,3.84-10.12,4.33-21.99,8.27-31.87,13.97-35.03,38.54-59.37,65.87-84.08,4.28,40.42,26.37,29.74,50.88,43.16,31.18,17.08,44.27,64.18,51.86,69.1,15.52,10.06,25.06-3.87,33.59-2.42,10.15,1.72,64.4,41.55,82.21,49.66,7.27,3.31,50.55,19.2,53.49,16.47-1.74-15.47-20.09-22.32-30.09-31.87ZM1699.84,738.15c1.58,19.19,12.46,37.13,12.28,55.65-.05,5.47-4.65,38.65-6.18,42.11-3.96,8.97-37.43,32.6-47.59,32.12-28.12-1.31-50.87-55.88-54.41-80.06-15.46-4.05-1.9,15.02-11.89,15.96-8.94-19-20-40.27-20.36-61.99-.28-16.62,9.53-26.67,8.28-39.57-1.32-13.68-14.89-23.76-18.18-34.22-13.56-43.1,9.43-63.36,12-104.4l38.12-78c6.1-3.64,22.34,15.06,29.24,19.04,8.1,4.68,25.81,8.3,29.87,12.15,4.26,4.05,39.47,80.95,40.73,89.25,7.17,47.42-15.53,87.97-11.91,131.94Z"/>
+        </svg>
+      </div>
+      <p class="hero__tagline">Thingscandance<br>From inner symbol to form</p>
+      <div class="hero__ctas">
+        <a href="#shop" class="btn btn-primary btn-lg">Shop Edition 001 ↗</a>
+        <a href="#ring-size" class="btn btn-outline btn-lg">Ring Size</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero__scroll" aria-hidden="true">
+    <div class="hero__scroll-line"></div>
+    <span class="hero__scroll-label">Scroll</span>
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+<section class="section" id="featured">
   <div class="container">
-    <nav class="breadcrumb">
-      <a href="index.html">Home</a>
-      <span class="breadcrumb__sep">/</span>
-      <span>Shop</span>
-    </nav>
+    <div class="section-header fade-up">
+      <div class="section-eyebrow"><span>Edition 001</span></div>
+      <h2 class="section-title">Featured<br><span class="acid" style="display:inline-block;background:#000;color:#B8FF00;padding:.05em .15em;line-height:1.05">Pieces</span></h2>
+    </div>
+    <div class="products-grid" id="featuredGrid"></div>
+    <div style="margin-top:var(--s7);text-align:center" class="fade-up">
+      <a href="#shop" class="btn btn-outline btn-lg">View All 23 Pieces ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- CRAFT SECTION -->
+<section class="section" id="craft">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s9);align-items:center" class="craft-layout">
+      <div>
+        <div class="section-eyebrow fade-up"><span>The Craft</span></div>
+        <p class="t-body fade-up" style="margin-bottom:var(--s6)">THCD works in sterling silver. Every piece in Edition 001 begins as a wax model—hand-shaped, never 3D printed. The irregularities are the design.</p>
+        <p class="t-body fade-up" style="margin-bottom:var(--s6)">Small batches. Numbered editions. No restocks. When Edition 001 is gone, it's gone.</p>
+        <p class="t-body fade-up" style="margin-bottom:var(--s5)">Need a specific size or have a question? Reach out — every order can be made to your size.</p>
+        <div class="fade-up" style="margin-bottom:var(--s5);font-family:var(--font-m);font-size:.78rem;letter-spacing:.06em;color:rgba(244,244,238,.5);line-height:1.8">
+          <div>Shipping worldwide — €10</div>
+          <div>Sakartvelo — free shipping</div>
+        </div>
+        <div class="fade-up" style="margin-bottom:var(--s7);display:flex;flex-direction:column;gap:var(--s3)">
+          <a href="mailto:marina.marbl@gmail.com" class="footer__link" style="font-family:var(--font-m);font-size:.8rem;letter-spacing:.06em;color:var(--acid)">marina.marbl@gmail.com</a>
+          <a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener" class="footer__link" style="font-family:var(--font-m);font-size:.8rem;letter-spacing:.06em;color:var(--acid)">@th_c_d on Instagram ↗</a>
+        </div>
+        <a href="#shop" class="btn btn-primary btn-lg fade-up">Shop Edition 001 ↗</a>
+      </div>
+      <div class="craft-img-frame fade-up">
+        <img src="brand_assets/Backgrounds/Generated Image 1.png" alt="THCD Craft" style="width:100%;aspect-ratio:4/5;object-fit:cover;opacity:.9"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RING SIZE GUIDE -->
+<section class="size-guide" id="ring-size">
+  <div class="container">
+    <div class="section-header fade-up" style="margin-bottom:var(--s6)">
+      <div class="section-eyebrow"><span>Sizing Tool</span></div>
+      <h2 class="section-title">Find<br><span class="acid" style="display:inline-block;background:#000;color:#B8FF00;padding:.05em .15em;line-height:1.05">Your Ring Size</span></h2>
+    </div>
+    <p class="t-body fade-up" style="max-width:640px;margin-bottom:var(--s7)">Everything is calculated right in your browser, on your screen — works on a phone, tablet, laptop or desktop. No camera or app needed, and nothing is ever sent anywhere — unless you choose to click "Send" at the end.</p>
+
+    <div class="sizer fade-up" id="sizer">
+
+      <!-- STEP: choose method -->
+      <div class="sizer__step" data-step="method">
+        <div class="sizer__methods">
+          <button type="button" class="sizer__method-card" data-method="ring">
+            <span class="sizer__method-num">01</span>
+            <h3>I have a ring that fits well</h3>
+            <p>The most accurate method. We'll first calibrate your screen against a bank card, then measure the ring right on it.</p>
+          </button>
+          <button type="button" class="sizer__method-card" data-method="finger">
+            <span class="sizer__method-num">02</span>
+            <h3>No ring — measure my finger</h3>
+            <p>Wrap a paper strip around the base of your finger and enter the length in millimeters.</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP: calibrate screen -->
+      <div class="sizer__step" data-step="calibrate" hidden>
+        <p class="sizer__instr">Take a regular bank card (not a SIM card) and hold it upright against the screen, long edge vertical, next to the tall rectangle below — no need to rotate your phone, the rectangle is drawn to fit any screen this way. On a laptop or desktop monitor, just hold the card flat against the screen instead. Move the slider until the rectangle exactly matches the card's width and height — a card is always 85.6 × 54 mm, an international standard shared by every bank.</p>
+        <p class="sizer__note">Calibration is saved for this device and browser — you'll only need to do it once per screen.</p>
+        <div class="calib-stage"><div class="calib-card" id="calibCard"></div></div>
+        <div class="sizer__slider-row">
+          <button type="button" class="nudge-btn" id="calibMinus" aria-label="Decrease">−</button>
+          <input type="range" id="calibSlider" min="40" max="220" value="100" step="0.2" aria-label="Calibration size">
+          <button type="button" class="nudge-btn" id="calibPlus" aria-label="Increase">+</button>
+        </div>
+        <div class="sizer__actions">
+          <button type="button" class="btn btn-outline" id="calibBackBtn">← Back</button>
+          <button type="button" class="btn btn-primary" id="calibDoneBtn">Done, it matches</button>
+        </div>
+      </div>
+
+      <!-- STEP: measure ring on screen -->
+      <div class="sizer__step" data-step="measure-ring" hidden>
+        <p class="sizer__instr">Place the ring on the screen, the side that goes on your finger facing down. Move the slider until the circle exactly matches the ring's INNER edge — not the outer one.</p>
+        <div class="calib-stage"><div class="ring-circle" id="ringCircle"></div></div>
+        <div class="sizer__readout" id="ringReadout">17.0 mm</div>
+        <div class="sizer__slider-row">
+          <button type="button" class="nudge-btn" id="ringMinus" aria-label="Decrease">−</button>
+          <input type="range" id="ringSlider" min="80" max="260" value="170" step="1" aria-label="Ring diameter">
+          <button type="button" class="nudge-btn" id="ringPlus" aria-label="Increase">+</button>
+        </div>
+        <button type="button" class="sizer__link" id="recalibrateBtn" style="display:block;margin:0 auto var(--s3)">Recalibrate screen</button>
+        <div class="sizer__actions">
+          <button type="button" class="btn btn-outline" id="ringBackBtn">← Back</button>
+          <button type="button" class="btn btn-primary" id="ringDoneBtn">Done →</button>
+        </div>
+      </div>
+
+      <!-- STEP: measure finger with paper strip -->
+      <div class="sizer__step" data-step="measure-finger" hidden>
+        <div class="sizer__tip" style="margin-bottom:var(--s5)">Measure in the evening if you can — fingers are slightly larger by evening than in the morning, so an evening measurement fits more reliably.</div>
+        <ol class="size-method__steps" style="margin-bottom:var(--s6)">
+          <li data-n="1">Cut a strip of paper about 10cm long and 1cm wide.</li>
+          <li data-n="2">Wrap it around the base of the finger you'll wear the ring on.</li>
+          <li data-n="3">Mark where it overlaps — snug against the skin, but not tight.</li>
+          <li data-n="4">Lay it flat and measure the distance to the mark in mm — that's your finger's circumference.</li>
+        </ol>
+        <label class="form-label" for="circInput">Finger circumference, mm</label>
+        <input type="number" id="circInput" class="form-input" placeholder="e.g. 54" min="30" max="90" step="0.1" style="width:100%;margin-top:var(--s3)">
+        <div class="sizer__actions">
+          <button type="button" class="btn btn-outline" id="fingerBackBtn">← Back</button>
+          <button type="button" class="btn btn-primary" id="fingerDoneBtn">Done →</button>
+        </div>
+      </div>
+
+      <!-- STEP: result -->
+      <div class="sizer__step" data-step="result" hidden>
+        <div class="sizer__result-main">
+          <span class="sizer__result-mm" id="resultMm">17.3 mm</span>
+          <span class="sizer__result-label">Inner diameter</span>
+        </div>
+        <div class="sizer__result-grid">
+          <div class="sizer__result-stat"><span class="sizer__result-stat-label">RU size</span><span class="sizer__result-stat-value" id="resultRu">17.5</span></div>
+          <div class="sizer__result-stat"><span class="sizer__result-stat-label">EU / ISO</span><span class="sizer__result-stat-value" id="resultEu">54</span></div>
+          <div class="sizer__result-stat"><span class="sizer__result-stat-label">US ≈</span><span class="sizer__result-stat-value" id="resultUs">7</span></div>
+        </div>
+        <p class="sizer__note" style="text-align:center">US is approximate — the US system has no single international standard, so an exact conversion isn't possible.</p>
+
+        <div class="sizer__tips">
+          <div class="sizer__tip">If your result falls between two sizes, round up.</div>
+          <div class="sizer__tip">For wide-band models (from ~6 mm), add a quarter to half a size: a wide band sits objectively tighter than a narrow one at the same inner diameter.</div>
+        </div>
+
+        <div class="sizer__send">
+          <label class="form-label" for="sendComment">Comment (optional) — your name, the ring model, any preferences</label>
+          <textarea id="sendComment" class="form-input" rows="3" placeholder="e.g. Maria, Vein model, narrow band"></textarea>
+          <button type="button" class="btn btn-primary btn-full" id="sendResultBtn">Email me the result ↗</button>
+        </div>
+
+        <div class="sizer__actions" style="justify-content:center;margin-top:var(--s6)">
+          <button type="button" class="sizer__link" id="restartBtn">Measure again</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Reference chart -->
+    <details class="size-chart-details fade-up">
+      <summary>Size chart — for reference</summary>
+      <div class="size-chart-wrap" style="margin-top:var(--s4)">
+        <table class="size-chart">
+          <thead>
+            <tr>
+              <th>RU</th>
+              <th>EU / ISO</th>
+              <th>US</th>
+              <th>Diameter (mm)</th>
+              <th>Circumference (mm)</th>
+            </tr>
+          </thead>
+          <tbody id="refChartBody"></tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- SHOP HEADER -->
+<div class="shop-header" id="shop">
+  <div class="container">
     <h1 class="section-title" style="margin-bottom:var(--s5)">Edition <span class="acid">001</span></h1>
     <p class="t-meta">23 pieces — Small batch, numbered, no restocks</p>
     <div class="filter-bar" id="filterBar">
@@ -74,25 +331,66 @@
 <!-- FOOTER -->
 <footer class="footer">
   <div class="container">
-    <div style="padding:var(--s6) 0 var(--s5);border-top:1px solid var(--border);font-family:var(--font-m);font-size:.75rem;letter-spacing:.06em;color:var(--text-dim);line-height:2">
-      Shipping worldwide — €10 &nbsp;·&nbsp; Sakartvelo — free &nbsp;·&nbsp; Write directly: <a href="mailto:marina.marbl@gmail.com" style="color:var(--text-mid)">marina.marbl@gmail.com</a> or <a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener" style="color:var(--text-mid)">@th_c_d</a>
+    <div class="footer__grid">
+      <div>
+        <div class="footer__brand-logo">
+          <svg viewBox="0 0 1999.98 1216.2" aria-label="THCD">
+            <path d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/>
+            <path d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/>
+            <path d="M1969.89,1068.07c-53.28-50.91-118.58-129.74-140.79-199.21-11.25-35.21-6.92-46.08-1.51-79.29,1.78-10.91-2.23-23.12,2.47-33.53,4.72-10.44,36.95-29.82,37.9-34.15,2.23-10.2-17.88-12.19-23.64-16.25-45.74-32.26-23.61-75.32-24.02-119.73-.5-53.93-5.87-106.83-4.66-159.95.68-29.68,1.56-135.22,9.41-154.92,4.98-12.51,15.43-12.94,15.32-33.09-.07-12.68-6.74-18.52-8.15-28.18-7.1-48.55,32.27-127.45,62.1-165.46,12.44-15.85,30.23-27.53,41.66-44.29-26.27,3.57-74.63,33.72-93.98,51.98-30.99,29.24-53.01,82.46-80.02,115.9-10.96-9.18-10.7-22.72-10.02-35.9-3.99-4.77-19.01,12.3-20.96,17-7.09,17.01-25.01,100.98-26.98,121.02-4.49,45.58,12.68,90.98,7.65,135.64-2.05,18.15-14.46,32.45-3.72,54.32-58-41.12-93.05-113.46-162.12-136.18-41.16,7.16,10.62,13.65.3,52.29-7.56,28.3-43.17,69.19-50.08,101.93-6.73,9.15-10.83,10.27-21.67,6.74l-4.41,3.06c-10.94,21.36-6.04,58.21-14.96,77.19-6.93,14.74-25.65,18.87-30.74,49.26-4.67,27.85,6.1,17.93,15.25,32.19,17.52,27.3,26.96,136.28,14.47,165.53-6.04,14.14-25.24,23.29-24.99,37.44.34,19.38,51.76,18.71,63.2,33.42,13.78,17.72,11.52,62.8,19.84,85.13,5.71-.6,6.89-17.67,7.48-22.46,1.95-15.98-3.82-33.56,10.48-45.44,12.8-.15,30.63,53.59,36.01,59.91,3.98,4.68,17.49,5.08,25.85,10.15,27.19,16.48,36.1,39.55,46.07,65.93,4.45,11.77,10.2,18.87,15.89,3.88,3.84-10.12,4.33-21.99,8.27-31.87,13.97-35.03,38.54-59.37,65.87-84.08,4.28,40.42,26.37,29.74,50.88,43.16,31.18,17.08,44.27,64.18,51.86,69.1,15.52,10.06,25.06-3.87,33.59-2.42,10.15,1.72,64.4,41.55,82.21,49.66,7.27,3.31,50.55,19.2,53.49,16.47-1.74-15.47-20.09-22.32-30.09-31.87ZM1699.84,738.15c1.58,19.19,12.46,37.13,12.28,55.65-.05,5.47-4.65,38.65-6.18,42.11-3.96,8.97-37.43,32.6-47.59,32.12-28.12-1.31-50.87-55.88-54.41-80.06-15.46-4.05-1.9,15.02-11.89,15.96-8.94-19-20-40.27-20.36-61.99-.28-16.62,9.53-26.67,8.28-39.57-1.32-13.68-14.89-23.76-18.18-34.22-13.56-43.1,9.43-63.36,12-104.4l38.12-78c6.1-3.64,22.34,15.06,29.24,19.04,8.1,4.68,25.81,8.3,29.87,12.15,4.26,4.05,39.47,80.95,40.73,89.25,7.17,47.42-15.53,87.97-11.91,131.94Z"/>
+          </svg>
+        </div>
+        <p class="footer__desc">Dark jewelry. Sterling silver. Small-batch numbered editions. From inner symbol to form.</p>
+      </div>
+      <div>
+        <p class="footer__col-title">Shop</p>
+        <ul class="footer__links">
+          <li><a href="#shop" class="footer__link">All Pieces</a></li>
+          <li><a href="shop.html?cat=rings#shop" class="footer__link">Rings</a></li>
+          <li><a href="shop.html?cat=pendants#shop" class="footer__link">Pendants</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer__col-title">Info</p>
+        <ul class="footer__links">
+          <li><a href="#craft" class="footer__link">The Craft</a></li>
+          <li><a href="#ring-size" class="footer__link">Ring Size Guide</a></li>
+          <li><a href="cart.html" class="footer__link">Cart</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer__col-title">Shipping</p>
+        <ul class="footer__links">
+          <li class="footer__link" style="cursor:default">Worldwide — €10</li>
+          <li class="footer__link" style="cursor:default">Sakartvelo — free</li>
+          <li class="footer__link" style="cursor:default;margin-top:var(--s3);color:var(--text-dim)">Write me directly to order</li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer__col-title">Contact</p>
+        <ul class="footer__links">
+          <li><a href="mailto:marina.marbl@gmail.com" class="footer__link">marina.marbl@gmail.com</a></li>
+          <li><a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener" class="footer__link">Instagram ↗</a></li>
+        </ul>
+        <div style="margin-top:var(--s6)">
+          <span class="tag tag-silver">925 Sterling</span>
+        </div>
+      </div>
     </div>
-    <div class="footer__bottom" style="padding-top:var(--s4);border-top:1px solid var(--border)">
+    <div class="footer__bottom">
       <p class="footer__copy">© 2026 THCD — All rights reserved</p>
-      <p class="footer__hallmark">Edition 001 — 925 Sterling Silver</p>
+      <p class="footer__hallmark">Edition 001 — Handcrafted</p>
     </div>
   </div>
 </footer>
 
-<!-- TOAST -->
 <div class="toast-container" id="toastContainer"></div>
 
 <script src="js/products.js"></script>
 <script src="js/cart.js"></script>
+<script src="js/ring-size.js"></script>
 <script>
 let currentCat = 'all';
-
-// Read URL param
 const urlCat = new URLSearchParams(location.search).get('cat');
 if (urlCat) currentCat = urlCat;
 
@@ -124,13 +422,20 @@ function renderCard(product) {
     </article>`;
 }
 
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 60); observer.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+
+document.getElementById('featuredGrid').innerHTML = PRODUCTS.filter(p => p.featured).map(renderCard).join('');
+
 function renderGrid() {
   const filtered = currentCat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category === currentCat);
   const grid = document.getElementById('shopGrid');
   grid.innerHTML = filtered.map(renderCard).join('');
   document.getElementById('shopMeta').textContent = `Showing ${filtered.length} piece${filtered.length !== 1 ? 's' : ''}`;
-
-  // Re-observe new fade-up elements
   document.querySelectorAll('#shopGrid .fade-up').forEach(el => observer.observe(el));
 }
 
@@ -141,8 +446,7 @@ function handleAddToCart(id, size, btn) {
     location.href = `product.html?id=${id}`;
     return;
   }
-  const ok = addToCart(id, size);
-  if (ok) {
+  if (addToCart(id, size)) {
     showToast(`${product.name} — Added to cart`);
     btn && btn.classList.add('add-success');
     setTimeout(() => btn && btn.classList.remove('add-success'), 400);
@@ -150,12 +454,10 @@ function handleAddToCart(id, size, btn) {
 }
 
 function showToast(msg) {
-  const container = document.getElementById('toastContainer');
-  if (!container) return;
+  const c = document.getElementById('toastContainer');
   const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  container.appendChild(t);
+  t.className = 'toast'; t.textContent = msg;
+  c.appendChild(t);
   requestAnimationFrame(() => t.classList.add('show'));
   setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
 }
@@ -169,18 +471,6 @@ document.getElementById('filterBar').addEventListener('click', e => {
   currentCat = btn.dataset.cat;
   renderGrid();
 });
-
-// Scroll reveal
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 40);
-      observer.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.05 });
-
-// Init
 if (urlCat) {
   const btn = document.querySelector(`[data-cat="${urlCat}"]`);
   if (btn) {
@@ -188,15 +478,18 @@ if (urlCat) {
     btn.classList.add('active');
   }
 }
-
 renderGrid();
 
-// Mobile nav
-document.getElementById('hamburger')?.addEventListener('click', () => {
-  document.getElementById('mobileNav').classList.add('open');
-});
-document.getElementById('mobileClose')?.addEventListener('click', () => {
-  document.getElementById('mobileNav').classList.remove('open');
+document.getElementById('hamburger')?.addEventListener('click', () => document.getElementById('mobileNav').classList.add('open'));
+document.getElementById('mobileClose')?.addEventListener('click', () => document.getElementById('mobileNav').classList.remove('open'));
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// responsive craft layout
+if (window.innerWidth < 768) document.querySelector('.craft-layout') && (document.querySelector('.craft-layout').style.gridTemplateColumns = '1fr');
+window.addEventListener('resize', () => {
+  const cl = document.querySelector('.craft-layout');
+  if (cl) cl.style.gridTemplateColumns = window.innerWidth < 768 ? '1fr' : '1fr 1fr';
 });
 </script>
 </body>
