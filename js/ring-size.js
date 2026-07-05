@@ -96,7 +96,7 @@ function renderRingCircle() {
   const px = mm * pxPerMm;
   ringCircle.style.width = px + 'px';
   ringCircle.style.height = px + 'px';
-  ringReadout.textContent = mm.toFixed(1) + ' мм';
+  ringReadout.textContent = mm.toFixed(1) + ' mm';
 }
 ringSlider.addEventListener('input', renderRingCircle);
 document.getElementById('ringMinus').addEventListener('click', () => { ringSlider.value = Math.max(+ringSlider.min, +ringSlider.value - 1); renderRingCircle(); });
@@ -113,7 +113,7 @@ document.getElementById('recalibrateBtn').addEventListener('click', () => goToSt
 document.getElementById('fingerDoneBtn').addEventListener('click', () => {
   const circ = parseFloat(document.getElementById('circInput').value);
   if (!circ || circ < 30 || circ > 90) {
-    showToast('Введите окружность пальца в мм (обычно 40–75)');
+    showToast('Enter your finger circumference in mm (usually 40–75)');
     return;
   }
   state.diameterMm = circ / Math.PI;
@@ -136,7 +136,7 @@ document.querySelectorAll('.sizer__method-card').forEach(card => {
 // ── Result ────────────────────────────────────────────────
 function showResult() {
   const d = state.diameterMm;
-  document.getElementById('resultMm').textContent = d.toFixed(1) + ' мм';
+  document.getElementById('resultMm').textContent = d.toFixed(1) + ' mm';
   document.getElementById('resultRu').textContent = diameterToRu(d);
   document.getElementById('resultEu').textContent = diameterToEu(d);
   document.getElementById('resultUs').textContent = interpolateUs(d);
@@ -151,21 +151,21 @@ document.getElementById('otherSystemsToggle').addEventListener('click', () => {
 
 document.getElementById('sendResultBtn').addEventListener('click', () => {
   const d = state.diameterMm;
-  const methodLabel = state.method === 'ring' ? 'По кольцу (калибровка экрана банковской картой)' : 'По окружности пальца (бумажная полоска)';
+  const methodLabel = state.method === 'ring' ? 'Ring on screen (calibrated with a bank card)' : 'Finger circumference (paper strip)';
   const comment = document.getElementById('sendComment').value.trim();
   const body = [
-    `Метод измерения: ${methodLabel}`,
-    `Диаметр: ${d.toFixed(1)} мм`,
-    `RU размер: ${diameterToRu(d)}`,
-    `EU / ISO размер: ${diameterToEu(d)}`,
-    `US (приблизительно): ${interpolateUs(d)}`,
+    `Method: ${methodLabel}`,
+    `Diameter: ${d.toFixed(1)} mm`,
+    `RU size: ${diameterToRu(d)}`,
+    `EU / ISO size: ${diameterToEu(d)}`,
+    `US (approximate): ${interpolateUs(d)}`,
     '',
-    'Комментарий:',
-    comment || '(нет)',
+    'Comment:',
+    comment || '(none)',
   ].join('\n');
-  const url = `mailto:marina.marbl@gmail.com?subject=${encodeURIComponent('THCD — результат замера размера кольца')}&body=${encodeURIComponent(body)}`;
+  const url = `mailto:marina.marbl@gmail.com?subject=${encodeURIComponent('THCD — ring size measurement result')}&body=${encodeURIComponent(body)}`;
   window.location.href = url;
-  showToast('Открываю почтовый клиент…');
+  showToast('Opening your email client…');
 });
 
 document.getElementById('restartBtn').addEventListener('click', () => {

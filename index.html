@@ -188,7 +188,7 @@
       <div class="section-eyebrow"><span>Sizing Tool</span></div>
       <h2 class="section-title">Find<br><span class="acid" style="display:inline-block;background:#000;color:#B8FF00;padding:.05em .15em;line-height:1.05">Your Ring Size</span></h2>
     </div>
-    <p class="t-body fade-up" style="max-width:640px;margin-bottom:var(--s7)">Всё считается прямо в браузере, на вашем экране. Камера и приложения не нужны, ничего никуда не отправляется — если только вы сами не нажмёте «Отправить» в конце.</p>
+    <p class="t-body fade-up" style="max-width:640px;margin-bottom:var(--s7)">Everything is calculated right in your browser, on your screen. No camera or app needed, and nothing is ever sent anywhere — unless you choose to click "Send" at the end.</p>
 
     <div class="sizer fade-up" id="sizer">
 
@@ -197,92 +197,92 @@
         <div class="sizer__methods">
           <button type="button" class="sizer__method-card" data-method="ring">
             <span class="sizer__method-num">01</span>
-            <h3>Есть кольцо, которое хорошо сидит</h3>
-            <p>Самый точный способ. Сначала откалибруем ваш экран по банковской карте, затем измерим кольцо прямо на нём.</p>
+            <h3>I have a ring that fits well</h3>
+            <p>The most accurate method. We'll first calibrate your screen against a bank card, then measure the ring right on it.</p>
           </button>
           <button type="button" class="sizer__method-card" data-method="finger">
             <span class="sizer__method-num">02</span>
-            <h3>Кольца нет — измеряю палец</h3>
-            <p>Обернём полоску бумаги вокруг основания пальца и введём длину в миллиметрах.</p>
+            <h3>No ring — measure my finger</h3>
+            <p>Wrap a paper strip around the base of your finger and enter the length in millimeters.</p>
           </button>
         </div>
       </div>
 
       <!-- STEP: calibrate screen -->
       <div class="sizer__step" data-step="calibrate" hidden>
-        <p class="sizer__instr">Положите обычную банковскую карту (не SIM-карту) на экран поверх прямоугольника ниже. Двигайте ползунок, пока прямоугольник на экране точно не совпадёт с картой по ширине и высоте — карта всегда 85.6 × 54 мм, это международный стандарт, одинаковый у всех банков.</p>
+        <p class="sizer__instr">Place a regular bank card (not a SIM card) on your screen over the rectangle below. Move the slider until the rectangle exactly matches the card's width and height — a card is always 85.6 × 54 mm, an international standard shared by every bank.</p>
         <div class="calib-stage"><div class="calib-card" id="calibCard"></div></div>
         <div class="sizer__slider-row">
-          <button type="button" class="nudge-btn" id="calibMinus" aria-label="Уменьшить">−</button>
-          <input type="range" id="calibSlider" min="40" max="220" value="100" step="0.2" aria-label="Калибровка размера">
-          <button type="button" class="nudge-btn" id="calibPlus" aria-label="Увеличить">+</button>
+          <button type="button" class="nudge-btn" id="calibMinus" aria-label="Decrease">−</button>
+          <input type="range" id="calibSlider" min="40" max="220" value="100" step="0.2" aria-label="Calibration size">
+          <button type="button" class="nudge-btn" id="calibPlus" aria-label="Increase">+</button>
         </div>
         <div class="sizer__actions">
-          <button type="button" class="sizer__link" id="calibBackBtn">← Назад</button>
-          <button type="button" class="btn btn-primary" id="calibDoneBtn">Готово, совпадает</button>
+          <button type="button" class="btn btn-outline" id="calibBackBtn">← Back</button>
+          <button type="button" class="btn btn-primary" id="calibDoneBtn">Done, it matches</button>
         </div>
       </div>
 
       <!-- STEP: measure ring on screen -->
       <div class="sizer__step" data-step="measure-ring" hidden>
-        <p class="sizer__instr">Положите кольцо на экран той стороной, которой оно надевается на палец. Двигайте ползунок, пока круг точно не совпадёт с ВНУТРЕННИМ краем кольца — не с внешним.</p>
+        <p class="sizer__instr">Place the ring on the screen, the side that goes on your finger facing down. Move the slider until the circle exactly matches the ring's INNER edge — not the outer one.</p>
         <div class="calib-stage"><div class="ring-circle" id="ringCircle"></div></div>
-        <div class="sizer__readout" id="ringReadout">17.0 мм</div>
+        <div class="sizer__readout" id="ringReadout">17.0 mm</div>
         <div class="sizer__slider-row">
-          <button type="button" class="nudge-btn" id="ringMinus" aria-label="Уменьшить">−</button>
-          <input type="range" id="ringSlider" min="80" max="260" value="170" step="1" aria-label="Диаметр кольца">
-          <button type="button" class="nudge-btn" id="ringPlus" aria-label="Увеличить">+</button>
+          <button type="button" class="nudge-btn" id="ringMinus" aria-label="Decrease">−</button>
+          <input type="range" id="ringSlider" min="80" max="260" value="170" step="1" aria-label="Ring diameter">
+          <button type="button" class="nudge-btn" id="ringPlus" aria-label="Increase">+</button>
         </div>
-        <button type="button" class="sizer__link" id="recalibrateBtn" style="display:block;margin:0 auto var(--s3)">Перекалибровать экран</button>
+        <button type="button" class="sizer__link" id="recalibrateBtn" style="display:block;margin:0 auto var(--s3)">Recalibrate screen</button>
         <div class="sizer__actions">
-          <button type="button" class="sizer__link" id="ringBackBtn">← Назад</button>
-          <button type="button" class="btn btn-primary" id="ringDoneBtn">Готово →</button>
+          <button type="button" class="btn btn-outline" id="ringBackBtn">← Back</button>
+          <button type="button" class="btn btn-primary" id="ringDoneBtn">Done →</button>
         </div>
       </div>
 
       <!-- STEP: measure finger with paper strip -->
       <div class="sizer__step" data-step="measure-finger" hidden>
         <ol class="size-method__steps" style="margin-bottom:var(--s6)">
-          <li data-n="1">Отрежьте полоску бумаги ~10 см длиной и ~1 см шириной.</li>
-          <li data-n="2">Оберните её вокруг основания пальца, на котором будете носить кольцо.</li>
-          <li data-n="3">Отметьте место нахлёста — снаружи должно быть плотно, но не туго.</li>
-          <li data-n="4">Разложите полоску и измерьте линейкой расстояние до отметки в мм — это окружность пальца.</li>
+          <li data-n="1">Cut a strip of paper about 10cm long and 1cm wide.</li>
+          <li data-n="2">Wrap it around the base of the finger you'll wear the ring on.</li>
+          <li data-n="3">Mark where it overlaps — snug against the skin, but not tight.</li>
+          <li data-n="4">Lay it flat and measure the distance to the mark in mm — that's your finger's circumference.</li>
         </ol>
-        <label class="form-label" for="circInput">Окружность пальца, мм</label>
-        <input type="number" id="circInput" class="form-input" placeholder="Например, 54" min="30" max="90" step="0.1" style="width:100%;margin-top:var(--s3)">
+        <label class="form-label" for="circInput">Finger circumference, mm</label>
+        <input type="number" id="circInput" class="form-input" placeholder="e.g. 54" min="30" max="90" step="0.1" style="width:100%;margin-top:var(--s3)">
         <div class="sizer__actions">
-          <button type="button" class="sizer__link" id="fingerBackBtn">← Назад</button>
-          <button type="button" class="btn btn-primary" id="fingerDoneBtn">Готово →</button>
+          <button type="button" class="btn btn-outline" id="fingerBackBtn">← Back</button>
+          <button type="button" class="btn btn-primary" id="fingerDoneBtn">Done →</button>
         </div>
       </div>
 
       <!-- STEP: result -->
       <div class="sizer__step" data-step="result" hidden>
         <div class="sizer__result-main">
-          <span class="sizer__result-mm" id="resultMm">17.3 мм</span>
-          <span class="sizer__result-label">Внутренний диаметр</span>
+          <span class="sizer__result-mm" id="resultMm">17.3 mm</span>
+          <span class="sizer__result-label">Inner diameter</span>
         </div>
         <div class="sizer__result-grid">
-          <div class="sizer__result-stat"><span class="sizer__result-stat-label">RU размер</span><span class="sizer__result-stat-value" id="resultRu">17.5</span></div>
+          <div class="sizer__result-stat"><span class="sizer__result-stat-label">RU size</span><span class="sizer__result-stat-value" id="resultRu">17.5</span></div>
           <div class="sizer__result-stat"><span class="sizer__result-stat-label">EU / ISO</span><span class="sizer__result-stat-value" id="resultEu">54</span></div>
         </div>
-        <button type="button" class="sizer__other-toggle" id="otherSystemsToggle">Другие системы ≈</button>
-        <div class="sizer__other-systems" id="otherSystemsBox" hidden>US ≈ <strong id="resultUs">7</strong> — приблизительно: у американской системы нет единого международного стандарта, поэтому точный перевод невозможен.</div>
+        <button type="button" class="sizer__other-toggle" id="otherSystemsToggle">Other systems ≈</button>
+        <div class="sizer__other-systems" id="otherSystemsBox" hidden>US ≈ <strong id="resultUs">7</strong> — approximate: the US system has no single international standard, so an exact conversion isn't possible.</div>
 
         <div class="sizer__tips">
-          <div class="sizer__tip">Меряйте вечером — к вечеру палец чуть крупнее, чем утром.</div>
-          <div class="sizer__tip">Если результат между двумя размерами — округляйте в бо́льшую сторону.</div>
-          <div class="sizer__tip">Для моделей с широким ободком (от ~6 мм) прибавьте четверть–пол размера: широкий ободок объективно сидит теснее узкого при том же внутреннем диаметре.</div>
+          <div class="sizer__tip">Measure in the evening — fingers are slightly larger by evening than in the morning.</div>
+          <div class="sizer__tip">If your result falls between two sizes, round up.</div>
+          <div class="sizer__tip">For wide-band models (from ~6 mm), add a quarter to half a size: a wide band sits objectively tighter than a narrow one at the same inner diameter.</div>
         </div>
 
         <div class="sizer__send">
-          <label class="form-label" for="sendComment">Комментарий (необязательно) — имя, модель кольца, пожелания</label>
-          <textarea id="sendComment" class="form-input" rows="3" placeholder="Например: Мария, модель Vein, узкий ободок"></textarea>
-          <button type="button" class="btn btn-primary btn-full" id="sendResultBtn">Отправить результат мне на почту ↗</button>
+          <label class="form-label" for="sendComment">Comment (optional) — your name, the ring model, any preferences</label>
+          <textarea id="sendComment" class="form-input" rows="3" placeholder="e.g. Maria, Vein model, narrow band"></textarea>
+          <button type="button" class="btn btn-primary btn-full" id="sendResultBtn">Email me the result ↗</button>
         </div>
 
         <div class="sizer__actions" style="justify-content:center;margin-top:var(--s6)">
-          <button type="button" class="sizer__link" id="restartBtn">Измерить заново</button>
+          <button type="button" class="sizer__link" id="restartBtn">Measure again</button>
         </div>
       </div>
 
@@ -290,7 +290,7 @@
 
     <!-- Reference chart -->
     <details class="size-chart-details fade-up">
-      <summary>Таблица размеров — справочно</summary>
+      <summary>Size chart — for reference</summary>
       <div class="size-chart-wrap" style="margin-top:var(--s4)">
         <table class="size-chart">
           <thead>
@@ -298,8 +298,8 @@
               <th>RU</th>
               <th>EU / ISO</th>
               <th>US</th>
-              <th>Диаметр (мм)</th>
-              <th>Окружность (мм)</th>
+              <th>Diameter (mm)</th>
+              <th>Circumference (mm)</th>
             </tr>
           </thead>
           <tbody id="refChartBody"></tbody>
