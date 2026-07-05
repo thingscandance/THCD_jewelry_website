@@ -10,11 +10,6 @@
   <style>
     /* ── RING SIZE SECTION ─────────────────────────────────── */
     .size-guide{padding:var(--s9) 0;background:var(--concrete)}
-    .size-methods{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5);margin-bottom:var(--s8)}
-    @media(max-width:700px){.size-methods{grid-template-columns:1fr}}
-    .size-method{background:var(--white);border:1px solid var(--border-dark);padding:var(--s6);position:relative;overflow:hidden}
-    .size-method__num{font-family:var(--font-d);font-style:italic;font-size:3.5rem;color:var(--bone);line-height:1;margin-bottom:var(--s4);opacity:.6;position:absolute;top:var(--s4);right:var(--s5)}
-    .size-method__title{font-family:var(--font-n);font-weight:700;text-transform:uppercase;font-size:1rem;letter-spacing:.14em;color:var(--text-black);margin-bottom:var(--s5)}
     .size-method__steps{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
     .size-method__steps li{display:grid;grid-template-columns:20px 1fr;gap:var(--s3);font-family:var(--font-m);font-size:.78rem;color:var(--text-mid);line-height:1.6;letter-spacing:.03em}
     .size-method__steps li::before{content:attr(data-n);font-family:var(--font-n);font-size:.75rem;color:var(--text-dim);line-height:1.6}
@@ -26,6 +21,51 @@
     .size-chart tr:nth-child(odd) td{background:var(--white)}
     .size-chart tr:hover td{background:var(--concrete);color:var(--text-black)}
     .size-chart td:first-child{color:var(--text-black);font-weight:700;font-size:.85rem}
+
+    /* ── RING SIZER TOOL ───────────────────────────────────── */
+    .sizer{background:var(--white);border:1px solid var(--border-dark);padding:var(--s7) var(--s6);margin-bottom:var(--s7)}
+    @media(max-width:700px){.sizer{padding:var(--s6) var(--s4)}}
+    .sizer__step[hidden]{display:none}
+    .sizer__methods{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5)}
+    @media(max-width:700px){.sizer__methods{grid-template-columns:1fr}}
+    .sizer__method-card{background:var(--concrete);border:1px solid var(--border-dark);padding:var(--s6);text-align:left;cursor:pointer;font-family:inherit;position:relative;overflow:hidden;transition:border-color var(--dur-m) var(--ease-sharp)}
+    .sizer__method-card:hover{border-color:var(--black)}
+    .sizer__method-num{display:block;font-family:var(--font-d);font-style:italic;font-size:2.75rem;color:var(--dust);line-height:1;margin-bottom:var(--s4)}
+    .sizer__method-card h3{font-family:var(--font-n);font-weight:700;text-transform:uppercase;font-size:.95rem;letter-spacing:.1em;color:var(--text-black);margin-bottom:var(--s3)}
+    .sizer__method-card p{font-family:var(--font-m);font-size:.78rem;color:var(--text-mid);line-height:1.6;letter-spacing:.03em}
+    .sizer__instr{font-family:var(--font-m);font-size:.82rem;color:var(--text-mid);line-height:1.7;letter-spacing:.03em;margin-bottom:var(--s5)}
+    .sizer__note{font-family:var(--font-m);font-size:.7rem;color:var(--text-dim);letter-spacing:.04em;margin:var(--s3) 0 var(--s5)}
+    .calib-stage{background:var(--concrete);border:1px dashed var(--border-mid);display:flex;align-items:center;justify-content:center;padding:var(--s7) var(--s5);min-height:220px;overflow-x:auto}
+    .calib-card{background:var(--dust);border:2px solid var(--text-black);border-radius:6%/10%;flex-shrink:0}
+    .ring-circle{border:3px solid var(--black);outline:3px solid var(--acid);outline-offset:-6px;border-radius:50%;background:transparent;flex-shrink:0}
+    .sizer__slider-row{display:flex;align-items:center;gap:var(--s4);margin:var(--s5) 0}
+    .sizer__slider-row input[type=range]{flex:1;accent-color:var(--black)}
+    .nudge-btn{width:36px;height:36px;flex-shrink:0;border:1px solid var(--border-mid);background:var(--white);color:var(--text-black);font-family:var(--font-m);font-size:1rem;cursor:pointer;transition:border-color var(--dur-m)}
+    .nudge-btn:hover{border-color:var(--black)}
+    .sizer__readout{text-align:center;font-family:var(--font-d);font-style:italic;font-weight:800;font-size:1.6rem;color:var(--text-black);margin-bottom:var(--s2)}
+    .sizer__actions{display:flex;justify-content:space-between;align-items:center;gap:var(--s4);margin-top:var(--s6);flex-wrap:wrap}
+    .sizer__link{font-family:var(--font-m);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);cursor:pointer;background:none;border:none;padding:0;text-decoration:underline;text-underline-offset:3px}
+    .sizer__link:hover{color:var(--text-black)}
+    .sizer__result-main{text-align:center;padding:var(--s6) 0;border-bottom:1px solid var(--border-dark);margin-bottom:var(--s6)}
+    .sizer__result-mm{display:block;font-family:var(--font-d);font-style:italic;font-weight:800;font-size:clamp(3rem,8vw,4.5rem);color:var(--text-black);line-height:1}
+    .sizer__result-label{font-family:var(--font-m);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
+    .sizer__result-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5);margin-bottom:var(--s5)}
+    .sizer__result-stat{background:var(--black);padding:var(--s5);text-align:center}
+    .sizer__result-stat-label{display:block;font-family:var(--font-m);font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--acid);margin-bottom:var(--s2)}
+    .sizer__result-stat-value{font-family:var(--font-d);font-style:italic;font-weight:800;font-size:2.2rem;color:var(--white)}
+    .sizer__other-toggle{display:block;margin:0 auto var(--s5);background:none;border:none;font-family:var(--font-m);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+    .sizer__other-toggle:hover{color:var(--text-black)}
+    .sizer__other-systems{background:var(--concrete);border:1px solid var(--border-dark);padding:var(--s4) var(--s5);margin-bottom:var(--s6);font-family:var(--font-m);font-size:.78rem;color:var(--text-mid);letter-spacing:.03em}
+    .sizer__tips{display:flex;flex-direction:column;gap:var(--s3);margin-bottom:var(--s6)}
+    .sizer__tip{display:grid;grid-template-columns:16px 1fr;gap:var(--s3);font-family:var(--font-m);font-size:.75rem;color:var(--text-mid);line-height:1.6;letter-spacing:.03em}
+    .sizer__tip::before{content:"—";color:var(--text-dim)}
+    .sizer__send{border-top:1px solid var(--border-dark);padding-top:var(--s6)}
+    .sizer__send textarea{width:100%;resize:vertical;margin:var(--s3) 0 var(--s5)}
+    .size-chart-details summary{cursor:pointer;font-family:var(--font-n);font-weight:700;text-transform:uppercase;font-size:.8rem;letter-spacing:.12em;color:var(--text-black);padding:var(--s4) 0;list-style:none}
+    .size-chart-details summary::-webkit-details-marker{display:none}
+    .size-chart-details summary::before{content:"+ ";color:var(--text-dim)}
+    .size-chart-details[open] summary::before{content:"– "}
+    .size-chart-details{margin-top:var(--s6)}
   </style>
 </head>
 <body>
@@ -144,80 +184,128 @@
 <!-- RING SIZE GUIDE -->
 <section class="size-guide" id="ring-size">
   <div class="container">
-    <div class="section-header fade-up" style="margin-bottom:var(--s7)">
-      <div class="section-eyebrow"><span>Sizing</span></div>
-      <h2 class="section-title">How to Find<br><span class="acid" style="display:inline-block;background:#000;color:#B8FF00;padding:.05em .15em;line-height:1.05">Your Ring Size</span></h2>
+    <div class="section-header fade-up" style="margin-bottom:var(--s6)">
+      <div class="section-eyebrow"><span>Sizing Tool</span></div>
+      <h2 class="section-title">Find<br><span class="acid" style="display:inline-block;background:#000;color:#B8FF00;padding:.05em .15em;line-height:1.05">Your Ring Size</span></h2>
     </div>
+    <p class="t-body fade-up" style="max-width:640px;margin-bottom:var(--s7)">Всё считается прямо в браузере, на вашем экране. Камера и приложения не нужны, ничего никуда не отправляется — если только вы сами не нажмёте «Отправить» в конце.</p>
 
-    <div class="size-methods">
-      <!-- Option 1 -->
-      <div class="size-method fade-up">
-        <span class="size-method__num">01</span>
-        <h3 class="size-method__title">Option 1 — Paper Strip</h3>
-        <ol class="size-method__steps">
-          <li data-n="1">Cut a strip of paper about 10cm long and 1cm wide.</li>
-          <li data-n="2">Wrap it around the finger you want to size, where the ring will sit.</li>
-          <li data-n="3">Mark where the ends meet, snug but not too tight.</li>
-          <li data-n="4">Lay it flat and measure the length in mm. This is your finger circumference.</li>
-          <li data-n="5">Match it to the size chart below.</li>
-        </ol>
+    <div class="sizer fade-up" id="sizer">
+
+      <!-- STEP: choose method -->
+      <div class="sizer__step" data-step="method">
+        <div class="sizer__methods">
+          <button type="button" class="sizer__method-card" data-method="ring">
+            <span class="sizer__method-num">01</span>
+            <h3>Есть кольцо, которое хорошо сидит</h3>
+            <p>Самый точный способ. Сначала откалибруем ваш экран по банковской карте, затем измерим кольцо прямо на нём.</p>
+          </button>
+          <button type="button" class="sizer__method-card" data-method="finger">
+            <span class="sizer__method-num">02</span>
+            <h3>Кольца нет — измеряю палец</h3>
+            <p>Обернём полоску бумаги вокруг основания пальца и введём длину в миллиметрах.</p>
+          </button>
+        </div>
       </div>
 
-      <!-- Option 2 -->
-      <div class="size-method fade-up">
-        <span class="size-method__num">02</span>
-        <h3 class="size-method__title">Option 2 — Use a Ring You Own</h3>
-        <ol class="size-method__steps">
-          <li data-n="1">Grab a ring that fits the finger you're sizing.</li>
-          <li data-n="2">Place it flat on a ruler.</li>
-          <li data-n="3">Take a clear photo from directly above — not at an angle.</li>
-          <li data-n="4">Measure the inner diameter in mm.</li>
-          <li data-n="5">Match it to the chart below.</li>
-        </ol>
+      <!-- STEP: calibrate screen -->
+      <div class="sizer__step" data-step="calibrate" hidden>
+        <p class="sizer__instr">Положите обычную банковскую карту (не SIM-карту) на экран поверх прямоугольника ниже. Двигайте ползунок, пока прямоугольник на экране точно не совпадёт с картой по ширине и высоте — карта всегда 85.6 × 54 мм, это международный стандарт, одинаковый у всех банков.</p>
+        <div class="calib-stage"><div class="calib-card" id="calibCard"></div></div>
+        <div class="sizer__slider-row">
+          <button type="button" class="nudge-btn" id="calibMinus" aria-label="Уменьшить">−</button>
+          <input type="range" id="calibSlider" min="40" max="220" value="100" step="0.2" aria-label="Калибровка размера">
+          <button type="button" class="nudge-btn" id="calibPlus" aria-label="Увеличить">+</button>
+        </div>
+        <div class="sizer__actions">
+          <button type="button" class="sizer__link" id="calibBackBtn">← Назад</button>
+          <button type="button" class="btn btn-primary" id="calibDoneBtn">Готово, совпадает</button>
+        </div>
       </div>
+
+      <!-- STEP: measure ring on screen -->
+      <div class="sizer__step" data-step="measure-ring" hidden>
+        <p class="sizer__instr">Положите кольцо на экран той стороной, которой оно надевается на палец. Двигайте ползунок, пока круг точно не совпадёт с ВНУТРЕННИМ краем кольца — не с внешним.</p>
+        <div class="calib-stage"><div class="ring-circle" id="ringCircle"></div></div>
+        <div class="sizer__readout" id="ringReadout">17.0 мм</div>
+        <div class="sizer__slider-row">
+          <button type="button" class="nudge-btn" id="ringMinus" aria-label="Уменьшить">−</button>
+          <input type="range" id="ringSlider" min="80" max="260" value="170" step="1" aria-label="Диаметр кольца">
+          <button type="button" class="nudge-btn" id="ringPlus" aria-label="Увеличить">+</button>
+        </div>
+        <button type="button" class="sizer__link" id="recalibrateBtn" style="display:block;margin:0 auto var(--s3)">Перекалибровать экран</button>
+        <div class="sizer__actions">
+          <button type="button" class="sizer__link" id="ringBackBtn">← Назад</button>
+          <button type="button" class="btn btn-primary" id="ringDoneBtn">Готово →</button>
+        </div>
+      </div>
+
+      <!-- STEP: measure finger with paper strip -->
+      <div class="sizer__step" data-step="measure-finger" hidden>
+        <ol class="size-method__steps" style="margin-bottom:var(--s6)">
+          <li data-n="1">Отрежьте полоску бумаги ~10 см длиной и ~1 см шириной.</li>
+          <li data-n="2">Оберните её вокруг основания пальца, на котором будете носить кольцо.</li>
+          <li data-n="3">Отметьте место нахлёста — снаружи должно быть плотно, но не туго.</li>
+          <li data-n="4">Разложите полоску и измерьте линейкой расстояние до отметки в мм — это окружность пальца.</li>
+        </ol>
+        <label class="form-label" for="circInput">Окружность пальца, мм</label>
+        <input type="number" id="circInput" class="form-input" placeholder="Например, 54" min="30" max="90" step="0.1" style="width:100%;margin-top:var(--s3)">
+        <div class="sizer__actions">
+          <button type="button" class="sizer__link" id="fingerBackBtn">← Назад</button>
+          <button type="button" class="btn btn-primary" id="fingerDoneBtn">Готово →</button>
+        </div>
+      </div>
+
+      <!-- STEP: result -->
+      <div class="sizer__step" data-step="result" hidden>
+        <div class="sizer__result-main">
+          <span class="sizer__result-mm" id="resultMm">17.3 мм</span>
+          <span class="sizer__result-label">Внутренний диаметр</span>
+        </div>
+        <div class="sizer__result-grid">
+          <div class="sizer__result-stat"><span class="sizer__result-stat-label">RU размер</span><span class="sizer__result-stat-value" id="resultRu">17.5</span></div>
+          <div class="sizer__result-stat"><span class="sizer__result-stat-label">EU / ISO</span><span class="sizer__result-stat-value" id="resultEu">54</span></div>
+        </div>
+        <button type="button" class="sizer__other-toggle" id="otherSystemsToggle">Другие системы ≈</button>
+        <div class="sizer__other-systems" id="otherSystemsBox" hidden>US ≈ <strong id="resultUs">7</strong> — приблизительно: у американской системы нет единого международного стандарта, поэтому точный перевод невозможен.</div>
+
+        <div class="sizer__tips">
+          <div class="sizer__tip">Меряйте вечером — к вечеру палец чуть крупнее, чем утром.</div>
+          <div class="sizer__tip">Если результат между двумя размерами — округляйте в бо́льшую сторону.</div>
+          <div class="sizer__tip">Для моделей с широким ободком (от ~6 мм) прибавьте четверть–пол размера: широкий ободок объективно сидит теснее узкого при том же внутреннем диаметре.</div>
+        </div>
+
+        <div class="sizer__send">
+          <label class="form-label" for="sendComment">Комментарий (необязательно) — имя, модель кольца, пожелания</label>
+          <textarea id="sendComment" class="form-input" rows="3" placeholder="Например: Мария, модель Vein, узкий ободок"></textarea>
+          <button type="button" class="btn btn-primary btn-full" id="sendResultBtn">Отправить результат мне на почту ↗</button>
+        </div>
+
+        <div class="sizer__actions" style="justify-content:center;margin-top:var(--s6)">
+          <button type="button" class="sizer__link" id="restartBtn">Измерить заново</button>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Size Chart -->
-    <div class="size-chart-wrap fade-up">
-      <table class="size-chart">
-        <thead>
-          <tr>
-            <th>Ring Size</th>
-            <th>Inner Diameter (mm)</th>
-            <th>Inner Circumference (mm)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>0</td><td>11.6</td><td>36.4</td></tr>
-          <tr><td>0.5</td><td>11.8</td><td>37.1</td></tr>
-          <tr><td>1</td><td>12.4</td><td>39.0</td></tr>
-          <tr><td>1.5</td><td>12.7</td><td>39.9</td></tr>
-          <tr><td>2</td><td>13.1</td><td>41.2</td></tr>
-          <tr><td>2.5</td><td>13.6</td><td>42.7</td></tr>
-          <tr><td>3</td><td>14.0</td><td>44.0</td></tr>
-          <tr><td>3.5</td><td>14.3</td><td>44.9</td></tr>
-          <tr><td>4</td><td>14.6</td><td>45.9</td></tr>
-          <tr><td>4.5</td><td>15.1</td><td>47.4</td></tr>
-          <tr><td>5</td><td>15.7</td><td>49.3</td></tr>
-          <tr><td>5.5</td><td>16.0</td><td>50.3</td></tr>
-          <tr><td>6</td><td>16.4</td><td>51.5</td></tr>
-          <tr><td>6.5</td><td>16.9</td><td>53.1</td></tr>
-          <tr><td>7</td><td>17.2</td><td>54.0</td></tr>
-          <tr><td>7.5</td><td>17.6</td><td>55.3</td></tr>
-          <tr><td>8</td><td>18.0</td><td>56.5</td></tr>
-          <tr><td>8.5</td><td>18.4</td><td>57.8</td></tr>
-          <tr><td>9</td><td>18.9</td><td>59.4</td></tr>
-          <tr><td>9.5</td><td>19.3</td><td>60.6</td></tr>
-          <tr><td>10</td><td>19.8</td><td>62.2</td></tr>
-          <tr><td>10.5</td><td>20.1</td><td>63.1</td></tr>
-          <tr><td>11</td><td>20.4</td><td>64.1</td></tr>
-          <tr><td>11.5</td><td>20.8</td><td>65.3</td></tr>
-          <tr><td>12</td><td>21.2</td><td>66.6</td></tr>
-          <tr><td>12.5</td><td>21.7</td><td>68.2</td></tr>
-          <tr><td>13</td><td>22.2</td><td>69.7</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <!-- Reference chart -->
+    <details class="size-chart-details fade-up">
+      <summary>Таблица размеров — справочно</summary>
+      <div class="size-chart-wrap" style="margin-top:var(--s4)">
+        <table class="size-chart">
+          <thead>
+            <tr>
+              <th>RU</th>
+              <th>EU / ISO</th>
+              <th>US</th>
+              <th>Диаметр (мм)</th>
+              <th>Окружность (мм)</th>
+            </tr>
+          </thead>
+          <tbody id="refChartBody"></tbody>
+        </table>
+      </div>
+    </details>
   </div>
 </section>
 
@@ -280,6 +368,7 @@
 
 <script src="js/products.js"></script>
 <script src="js/cart.js"></script>
+<script src="js/ring-size.js"></script>
 <script>
 function renderCard(product) {
   const img = getImagePath(product.id, product.images[0]);
