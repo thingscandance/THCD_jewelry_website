@@ -138,7 +138,7 @@ const PRODUCTS = [
     hallmark: "925",
     description: "With Peach Pink Baguette Morganite.",
     sizeNote: "Made to order — specify your size at checkout",
-    inStock: true,
+    inStock: false,
     featured: true,
     paypalLink: null,
     images: ["1.jpg", "IMG_20260525_134141.jpg", "IMG_20260525_134148.jpg", "IMG_20260525_134158.jpg"]
@@ -154,7 +154,7 @@ const PRODUCTS = [
     hallmark: "925",
     description: "925 Sterling Silver.",
     sizeNote: "Made to order — specify your size at checkout",
-    inStock: true,
+    inStock: false,
     featured: false,
     paypalLink: null,
     images: ["1.jpg", "IMG_20260525_134052.jpg", "IMG_20260525_134059.jpg", "IMG_20260525_134106.jpg", "IMG_20260525_134115.jpg"]
@@ -170,7 +170,7 @@ const PRODUCTS = [
     hallmark: "925",
     description: "With black zirconia.",
     sizeNote: "Made to order — specify your size at checkout",
-    inStock: true,
+    inStock: false,
     featured: true,
     paypalLink: null,
     images: ["1.jpg", "IMG_20260525_133742.jpg", "IMG_20260525_133746.jpg", "IMG_20260525_133756.jpg", "IMG_20260525_133805.jpg"]
@@ -330,7 +330,7 @@ const PRODUCTS = [
     hallmark: "925",
     description: "925 Sterling Silver.",
     sizeNote: "Made to order — specify your size at checkout",
-    inStock: true,
+    inStock: false,
     featured: false,
     paypalLink: null,
     images: ["IMG_20260525_135043.jpg", "IMG_20260525_135100.jpg", "IMG_20260525_135103.jpg", "IMG_20260525_135106.jpg", "IMG_20260525_135128.jpg", "IMG_20260525_135239.jpg"]
