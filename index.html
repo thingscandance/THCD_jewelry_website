@@ -49,13 +49,11 @@
     .sizer__result-main{text-align:center;padding:var(--s6) 0;border-bottom:1px solid var(--border-dark);margin-bottom:var(--s6)}
     .sizer__result-mm{display:block;font-family:var(--font-d);font-style:italic;font-weight:800;font-size:clamp(3rem,8vw,4.5rem);color:var(--text-black);line-height:1}
     .sizer__result-label{font-family:var(--font-m);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
-    .sizer__result-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5);margin-bottom:var(--s5)}
-    .sizer__result-stat{background:var(--black);padding:var(--s5);text-align:center}
-    .sizer__result-stat-label{display:block;font-family:var(--font-m);font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--acid);margin-bottom:var(--s2)}
-    .sizer__result-stat-value{font-family:var(--font-d);font-style:italic;font-weight:800;font-size:2.2rem;color:var(--white)}
-    .sizer__other-toggle{display:block;margin:0 auto var(--s5);background:none;border:none;font-family:var(--font-m);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-    .sizer__other-toggle:hover{color:var(--text-black)}
-    .sizer__other-systems{background:var(--concrete);border:1px solid var(--border-dark);padding:var(--s4) var(--s5);margin-bottom:var(--s6);font-family:var(--font-m);font-size:.78rem;color:var(--text-mid);letter-spacing:.03em}
+    .sizer__result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s4);margin-bottom:var(--s4)}
+    .sizer__result-stat{background:var(--black);padding:var(--s5) var(--s3);text-align:center}
+    .sizer__result-stat-label{display:block;font-family:var(--font-m);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--acid);margin-bottom:var(--s2)}
+    .sizer__result-stat-value{font-family:var(--font-d);font-style:italic;font-weight:800;font-size:2rem;color:var(--white)}
+    @media(max-width:480px){.sizer__result-stat{padding:var(--s4) var(--s2)}.sizer__result-stat-value{font-size:1.5rem}}
     .sizer__tips{display:flex;flex-direction:column;gap:var(--s3);margin-bottom:var(--s6)}
     .sizer__tip{display:grid;grid-template-columns:16px 1fr;gap:var(--s3);font-family:var(--font-m);font-size:.75rem;color:var(--text-mid);line-height:1.6;letter-spacing:.03em}
     .sizer__tip::before{content:"—";color:var(--text-dim)}
@@ -188,7 +186,7 @@
       <div class="section-eyebrow"><span>Sizing Tool</span></div>
       <h2 class="section-title">Find<br><span class="acid" style="display:inline-block;background:#000;color:#B8FF00;padding:.05em .15em;line-height:1.05">Your Ring Size</span></h2>
     </div>
-    <p class="t-body fade-up" style="max-width:640px;margin-bottom:var(--s7)">Everything is calculated right in your browser, on your screen. No camera or app needed, and nothing is ever sent anywhere — unless you choose to click "Send" at the end.</p>
+    <p class="t-body fade-up" style="max-width:640px;margin-bottom:var(--s7)">Everything is calculated right in your browser, on your screen — works on a phone, tablet, laptop or desktop. No camera or app needed, and nothing is ever sent anywhere — unless you choose to click "Send" at the end.</p>
 
     <div class="sizer fade-up" id="sizer">
 
@@ -210,7 +208,8 @@
 
       <!-- STEP: calibrate screen -->
       <div class="sizer__step" data-step="calibrate" hidden>
-        <p class="sizer__instr">Place a regular bank card (not a SIM card) on your screen over the rectangle below. Move the slider until the rectangle exactly matches the card's width and height — a card is always 85.6 × 54 mm, an international standard shared by every bank.</p>
+        <p class="sizer__instr">Take a regular bank card (not a SIM card) and compare it to the rectangle below — on a phone or tablet, lay it flat and rest the card on top; on a laptop or desktop monitor, just hold the card flat against the screen instead. Move the slider until the rectangle exactly matches the card's width and height — a card is always 85.6 × 54 mm, an international standard shared by every bank.</p>
+        <p class="sizer__note">Calibration is saved for this device and browser — you'll only need to do it once per screen.</p>
         <div class="calib-stage"><div class="calib-card" id="calibCard"></div></div>
         <div class="sizer__slider-row">
           <button type="button" class="nudge-btn" id="calibMinus" aria-label="Decrease">−</button>
@@ -242,6 +241,7 @@
 
       <!-- STEP: measure finger with paper strip -->
       <div class="sizer__step" data-step="measure-finger" hidden>
+        <div class="sizer__tip" style="margin-bottom:var(--s5)">Measure in the evening if you can — fingers are slightly larger by evening than in the morning, so an evening measurement fits more reliably.</div>
         <ol class="size-method__steps" style="margin-bottom:var(--s6)">
           <li data-n="1">Cut a strip of paper about 10cm long and 1cm wide.</li>
           <li data-n="2">Wrap it around the base of the finger you'll wear the ring on.</li>
@@ -265,12 +265,11 @@
         <div class="sizer__result-grid">
           <div class="sizer__result-stat"><span class="sizer__result-stat-label">RU size</span><span class="sizer__result-stat-value" id="resultRu">17.5</span></div>
           <div class="sizer__result-stat"><span class="sizer__result-stat-label">EU / ISO</span><span class="sizer__result-stat-value" id="resultEu">54</span></div>
+          <div class="sizer__result-stat"><span class="sizer__result-stat-label">US ≈</span><span class="sizer__result-stat-value" id="resultUs">7</span></div>
         </div>
-        <button type="button" class="sizer__other-toggle" id="otherSystemsToggle">Other systems ≈</button>
-        <div class="sizer__other-systems" id="otherSystemsBox" hidden>US ≈ <strong id="resultUs">7</strong> — approximate: the US system has no single international standard, so an exact conversion isn't possible.</div>
+        <p class="sizer__note" style="text-align:center">US is approximate — the US system has no single international standard, so an exact conversion isn't possible.</p>
 
         <div class="sizer__tips">
-          <div class="sizer__tip">Measure in the evening — fingers are slightly larger by evening than in the morning.</div>
           <div class="sizer__tip">If your result falls between two sizes, round up.</div>
           <div class="sizer__tip">For wide-band models (from ~6 mm), add a quarter to half a size: a wide band sits objectively tighter than a narrow one at the same inner diameter.</div>
         </div>

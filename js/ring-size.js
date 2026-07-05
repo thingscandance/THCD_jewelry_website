@@ -140,14 +140,8 @@ function showResult() {
   document.getElementById('resultRu').textContent = diameterToRu(d);
   document.getElementById('resultEu').textContent = diameterToEu(d);
   document.getElementById('resultUs').textContent = interpolateUs(d);
-  document.getElementById('otherSystemsBox').hidden = true;
   goToStep('result');
 }
-
-document.getElementById('otherSystemsToggle').addEventListener('click', () => {
-  const box = document.getElementById('otherSystemsBox');
-  box.hidden = !box.hidden;
-});
 
 document.getElementById('sendResultBtn').addEventListener('click', () => {
   const d = state.diameterMm;
