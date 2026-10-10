@@ -843,8 +843,8 @@ size(); layout(); target=progress(); kick();
 (function(){
   const st=document.getElementById('studio'), box=document.getElementById('drift');
   // [file, x%, y%, width (fraction of min(vw, 1500)), rotation]
-  const L=[[1,.03,.20,.20,-5],[2,.25,.03,.13,-7],[3,.80,.14,.17,6],[4,.86,.60,.12,-3],[5,.60,.70,.15,3],[6,.20,.66,.16,4],[7,-.01,.70,.10,8]];
-  const M=[[1,-.05,.10,.34,-5],[3,.66,.08,.32,6],[5,.32,.15,.22,3],[6,-.04,.86,.30,4],[4,.70,.88,.26,-3]];
+  const L=[[1,.03,.20,.20,-5],[2,.25,.03,.13,-7],[4,.82,.28,.14,-3],[5,.60,.70,.15,3],[6,.20,.66,.16,4],[7,-.01,.70,.10,8]];
+  const M=[[1,-.05,.10,.34,-5],[7,.66,.08,.30,6],[5,.32,.15,.22,3],[6,-.04,.86,.30,4],[4,.70,.88,.26,-3]];
   const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
   let items=[], raf=0, mx=-1e4, my=-1e4, last=0;
   function build(){
