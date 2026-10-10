@@ -223,7 +223,7 @@ body.cart-open .cpanel{transform:none}
   box-shadow:0 22px 54px rgba(0,0,0,.45);transform-origin:50% 50%;will-change:transform;transition:box-shadow .4s,border-color .4s}
 #studio .ph img{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
 #studio .ph.on{border-color:rgba(230,30,156,.7);box-shadow:0 40px 90px rgba(0,0,0,.6)}
-#studio .stext{position:relative;z-index:1;margin:auto;max-width:540px;background:rgba(9,10,11,.88);border:1px solid var(--edge);border-radius:3px;
+#studio .stext{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);width:min(540px,calc(100vw - 32px));z-index:1;margin:0;max-width:540px;background:rgba(9,10,11,.88);border:1px solid var(--edge);border-radius:3px;
   padding:clamp(22px,3.4vw,40px);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 30px 80px rgba(0,0,0,.45)}
 #studio .stext{cursor:zoom-in;transition:scale .6s cubic-bezier(.2,.8,.2,1),box-shadow .5s,border-color .4s;animation:sfloat 14s ease-in-out infinite alternate}
 #studio .stext.zoomed{scale:1.14;z-index:4;cursor:zoom-out;border-color:rgba(230,30,156,.6);box-shadow:0 50px 120px rgba(0,0,0,.6)}
@@ -239,7 +239,7 @@ body.cart-open .cpanel{transform:none}
 @media (max-width:760px){
   #studio{overflow:auto}
   #studio .stext.zoomed{scale:1.06}
-  #studio .stext{margin:auto 0 12vh;padding:20px}
+  #studio .stext{position:relative;left:auto;top:auto;transform:none;width:auto;margin:auto 0 12vh;padding:20px}
   #studio .stext p{font-size:14px;line-height:1.5}
 }
 
@@ -843,7 +843,7 @@ size(); layout(); target=progress(); kick();
 (function(){
   const st=document.getElementById('studio'), box=document.getElementById('drift');
   // [file, x%, y%, width (fraction of min(vw, 1500)), rotation]
-  const L=[[1,.03,.20,.20,-5],[2,.25,.03,.13,-7],[4,.82,.28,.14,-3],[5,.60,.70,.15,3],[6,.20,.66,.16,4],[7,-.01,.70,.10,8]];
+  const L=[[1,.04,.17,.16,-5],[6,.17,.60,.15,4],[7,.02,.66,.11,7],[2,.70,.12,.13,6],[4,.84,.32,.13,-3],[5,.70,.64,.14,3]];
   const M=[[1,-.05,.10,.34,-5],[7,.66,.08,.30,6],[5,.32,.15,.22,3],[6,-.04,.86,.30,4],[4,.70,.88,.26,-3]];
   const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
   let items=[], raf=0, mx=-1e4, my=-1e4, last=0;
