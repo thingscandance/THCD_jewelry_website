@@ -211,6 +211,39 @@ body.cart-open .cpanel{transform:none}
 .phead h2{margin:8px 0 0;font-weight:300;font-size:clamp(34px,5vw,72px);line-height:.95;letter-spacing:-.01em;text-transform:uppercase}
 .phead p{margin:0;max-width:46ch;color:#c9cecc;font-size:14px}
 
+
+/* studio */
+#studio{background:#070809;overflow:hidden;display:flex;flex-direction:column}
+#studio[hidden]{display:none}
+#studio .crumbs{color:var(--ash);position:relative;z-index:2}
+#studio .drift{position:absolute;inset:110px 0 0;z-index:0;pointer-events:none}
+#studio .drift img{position:absolute;width:clamp(150px,17vw,280px);aspect-ratio:3/4;object-fit:cover;border:1px solid var(--edge);border-radius:2px;
+  box-shadow:0 24px 60px rgba(0,0,0,.6);opacity:.82;animation:fl 26s ease-in-out infinite alternate;will-change:transform}
+#studio .f1{left:4%;top:16%;--r:-5deg;animation-duration:28s}
+#studio .f2{left:22%;top:58%;--r:4deg;animation-duration:33s;animation-delay:-6s}
+#studio .f3{left:72%;top:12%;--r:6deg;animation-duration:30s;animation-delay:-12s}
+#studio .f4{left:82%;top:52%;--r:-3deg;animation-duration:36s;animation-delay:-3s}
+#studio .f5{left:27%;top:0;--r:-7deg;animation-duration:31s;animation-delay:-18s;width:clamp(120px,13vw,210px)}
+#studio .f6{left:56%;top:66%;--r:3deg;animation-duration:34s;animation-delay:-9s;width:clamp(130px,14vw,230px)}
+#studio .f7{left:-3%;top:68%;--r:8deg;animation-duration:29s;animation-delay:-15s;width:clamp(120px,12vw,200px)}
+@keyframes fl{0%{transform:translate(0,0) rotate(var(--r))}50%{transform:translate(28px,-34px) rotate(calc(var(--r)*-.4))}100%{transform:translate(-22px,26px) rotate(var(--r))}}
+#studio .stext{position:relative;z-index:1;margin:auto;max-width:560px;background:rgba(9,10,11,.86);border:1px solid var(--edge);border-radius:3px;
+  padding:clamp(22px,3.4vw,40px);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 30px 80px rgba(0,0,0,.55)}
+#studio .stext .code{font:11px var(--f-mono);letter-spacing:.14em;color:var(--pink);text-transform:uppercase}
+#studio .stext h2{margin:8px 0 18px;font-weight:300;font-size:clamp(40px,6vw,80px);line-height:.95;text-transform:uppercase}
+#studio .stext p{margin:0 0 14px;color:#c9cecc;font-size:15px;line-height:1.6}
+#studio .slinks{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+#studio .slinks a{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--bone);text-decoration:none;border:1px solid var(--edge);border-radius:2px;padding:11px 14px;transition:color .2s,border-color .2s}
+#studio .slinks a:hover{color:var(--pink);border-color:var(--pink)}
+@media (max-width:760px){
+  #studio{overflow:auto}
+  #studio .drift img{width:34vw;opacity:.55}
+  #studio .drift{top:90px}#studio .f1{left:-6%;top:0}#studio .f3{left:70%;top:-2%}#studio .f2{left:-4%;top:70%}#studio .f4{left:66%;top:74%}
+  #studio .f5,#studio .f6,#studio .f7{display:none}
+  #studio .stext{margin:18vh auto auto}
+}
+@media (prefers-reduced-motion:reduce){#studio .drift img{animation:none;transform:rotate(var(--r))}}
+
 /* sold out archive */
 .sgrid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:clamp(12px,1.6vw,20px)}
 .scard{position:relative;display:block;width:100%;padding:0;text-align:left;cursor:pointer;background:var(--glass);border:1px solid var(--edge);border-radius:3px;
@@ -330,7 +363,7 @@ textarea.field{font:14px var(--f-body);resize:vertical}
       <li><a href="#sold-out" data-open="soldout">Sold out</a></li>
       <li><a href="#ring-size" data-open="sizer">Ring size</a></li>
       <li><a href="#top" data-go="top">World</a></li>
-      <li><a href="#pieces" data-go="end">Studio</a></li>
+      <li><a href="#studio" data-open="studio">Studio</a></li>
     </ul>
     <button class="cartbtn" id="cartBtn" type="button" aria-controls="cart">Cart<b id="cartCount">0</b></button>
   </nav>
@@ -354,6 +387,25 @@ textarea.field{font:14px var(--f-body);resize:vertical}
 
 <section id="product" hidden aria-label="Product"></section>
 
+<section id="studio" class="page" hidden aria-label="Studio">
+  <div class="drift" aria-hidden="true">
+    <img src="img/studio/s1.webp" alt="" class="f1" loading="lazy"><img src="img/studio/s2.webp" alt="" class="f2" loading="lazy">
+    <img src="img/studio/s3.webp" alt="" class="f3" loading="lazy"><img src="img/studio/s4.webp" alt="" class="f4" loading="lazy">
+    <img src="img/studio/s5.webp" alt="" class="f5" loading="lazy"><img src="img/studio/s6.webp" alt="" class="f6" loading="lazy">
+    <img src="img/studio/s7.webp" alt="" class="f7" loading="lazy">
+  </div>
+  <div class="crumbs"><button type="button" data-close>&larr; Board</button><span>Studio</span></div>
+  <div class="stext">
+    <div class="code">Tbilisi &middot; Georgia</div>
+    <h2>Studio</h2>
+    <p>Things Can Dance is a small Tbilisi-based jewelry studio. Most pieces are made by hand, one at a time: carved, cast and finished in sterling silver, so no two come out quite the same.</p>
+    <p>Saw something in the archive that already found its hands? I can make a relative of it, or something new for you. Write to me and we&rsquo;ll talk it through.</p>
+    <div class="slinks">
+      <a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a>
+      <a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener">Instagram @th_c_d</a>
+    </div>
+  </div>
+</section>
 <section id="soldout" class="page" hidden aria-label="Sold out">
   <div class="crumbs"><button type="button" data-close>&larr; Board</button><span>Archive</span></div>
   <div class="phead">
@@ -616,7 +668,7 @@ const cartCount=document.getElementById('cartCount'), lines=document.getElementB
 function renderCart(){
   cartCount.textContent=cart.reduce((s,l)=>s+l.q,0);
   if(!cart.length){lines.innerHTML='<div class="cempty">Your cart is empty.<br>Pick a piece on the board.</div>'}
-  else lines.innerHTML=cart.map((l,i)=>{const p=byId(l.id); return '<div class="line-item"><img src="img/'+p.id+'_photo.webp" alt="">'+
+  else lines.innerHTML=cart.map((l,i)=>{const p=byId(l.id); return '<div class="line-item"><img src="'+(p.gallery?'img/items/'+p.id+'/g1-t.webp':'img/'+p.id+'_photo.webp')+'" alt="">'+
     '<div><h4>'+p.name+'</h4><small>'+(l.size?'Size '+l.size:'Single')+'</small><div class="mini"><button type="button" data-i="'+i+'" data-d="-1" aria-label="One less">&minus;</button><span>'+l.q+'</span><button type="button" data-i="'+i+'" data-d="1" aria-label="One more">+</button></div>'+
     '<div><button class="rm" type="button" data-rm="'+i+'">Remove</button></div></div><div class="amt">'+money(p.price*l.q)+'</div></div>'}).join('');
   subtotal.textContent=money(cart.reduce((s,l)=>s+byId(l.id).price*l.q,0));
@@ -637,11 +689,14 @@ renderCart();
 const prod=document.getElementById('product');
 function openProduct(id){
   const p=byId(id), seq=(act.some(n=>n.id===id)?act:nodes).map(n=>n.id), i=seq.indexOf(id), prev=seq[(i+seq.length-1)%seq.length], next=seq[(i+1)%seq.length];
-  let size=null, q=1, view='photo';
-  const shots=[['photo','img/'+p.id+'_photo.webp','img/'+p.id+'_photo.webp',p.name+' in sterling silver'],['line','img/'+p.id+'_line.webp','img/'+p.id+'_line.webp','Line drawing of the '+p.name.toLowerCase()]];
+  let size=null, q=1;
+  const shots=[];
   for(let i=1;i<=(p.gallery||0);i++) shots.push(['g'+i,'img/items/'+p.id+'/g'+i+'.webp','img/items/'+p.id+'/g'+i+'-t.webp',p.name+', photo '+i]);
+  if(!shots.length) shots.push(['photo','img/'+p.id+'_photo.webp','img/'+p.id+'_photo.webp',p.name+' in sterling silver']);
+  shots.push(['line','img/'+p.id+'_line.webp','img/'+p.id+'_line.webp','Line drawing of the '+p.name.toLowerCase()]);
+  let view=shots[0][0];
   const gal=p.real?'<div class="thumbs">'+shots.map((x,i)=>'<button type="button" data-v="'+x[0]+'" aria-pressed="'+(i===0)+'"><img src="'+x[2]+'" alt="" loading="lazy"></button>').join('')+'</div>'+
-    '<div class="big"><img id="bigImg" src="img/'+p.id+'_photo.webp" alt="'+p.name+' in sterling silver"></div>'
+    '<div class="big"><img id="bigImg" src="'+shots[0][1]+'" alt="'+shots[0][3]+'"></div>'
     :'<div></div><div class="big"><div class="empty">In the<br>workshop</div></div>';
   prod.innerHTML='<div class="crumbs"><button type="button" id="pBack">&larr; Board</button><span class="nav"><button type="button" id="pPrev">Prev</button><button type="button" id="pNext">Next</button></span></div>'+
    '<div class="pgrid"><div class="gallery">'+gal+'</div><div class="info">'+
@@ -680,7 +735,7 @@ document.getElementById('toTop').addEventListener('click',e=>{e.preventDefault()
 document.getElementById('backTop').addEventListener('click',goTop);
 
 /* ---------- overlay pages: sold out + ring size ---------- */
-const pages={soldout:document.getElementById('soldout'),sizer:document.getElementById('sizerpage')};
+const pages={soldout:document.getElementById('soldout'),sizer:document.getElementById('sizerpage'),studio:document.getElementById('studio')};
 let pageFrom=null;
 function openPage(name){closeProduct(); if(name==='sizer'&&window.thcdSizerReset) window.thcdSizerReset(); for(const k in pages) pages[k].hidden=k!==name; const pg=pages[name]; pg.scrollTop=0; sc.style.overflow='hidden'; closeCart();}
 function closePages(){let was=false; for(const k in pages){if(!pages[k].hidden)was=true; pages[k].hidden=true} closeLb(); if(was&&prod.hidden) sc.style.overflow=''; return was}
