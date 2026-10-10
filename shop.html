@@ -103,9 +103,6 @@ body.arrived #board{pointer-events:auto}
 .tile.real .tb .dots i:first-child{background:var(--pink);border-color:var(--pink)}
 .view{position:relative;aspect-ratio:1/1;max-width:100%;overflow:hidden;background:#000}
 .view img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 46%;transition:opacity .7s ease;pointer-events:none;-webkit-user-drag:none}
-.view .photo{opacity:0}
-.tile:hover .photo{opacity:1}
-.tile:hover .line{opacity:0}
 .empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font:10px var(--f-mono);letter-spacing:.14em;color:var(--ash);text-transform:uppercase;
   background:repeating-linear-gradient(0deg,rgba(233,236,234,.035) 0 1px,transparent 1px 6px)}
 .empty::after{content:"";position:absolute;left:0;right:0;height:22%;top:-22%;background:linear-gradient(transparent,rgba(233,236,234,.07),transparent);animation:scan 3.2s linear infinite}
@@ -564,7 +561,7 @@ const nodes=[];
 ORDER.forEach((id,k)=>{const p=byId(id);
   const el=document.createElement('article'); el.className='tile real'; el.dataset.id=id;
   el.innerHTML='<div class="tb"><span>'+p.code+'.'+p.id+'</span><span class="dots"><i></i><i></i><i></i></span></div>'+
-    '<div class="view"><img class="line" src="img/'+p.id+'_line.webp" alt="Line drawing of the '+p.name.toLowerCase()+'"><img class="photo" src="img/'+p.id+'_photo.webp" alt="'+p.name+' in sterling silver"></div>'+
+    '<div class="view"><img class="photo" src="img/'+p.id+'_photo.webp" alt="'+p.name+' in sterling silver"></div>'+
     '<div class="meta"><h3>'+p.name+'</h3><span>'+money(p.price)+'</span></div>';
   el.style.zIndex=5; board.appendChild(el);
   let h=0; for(const c of id) h=(h*31+c.charCodeAt(0))>>>0;   // stable per-piece jitter
