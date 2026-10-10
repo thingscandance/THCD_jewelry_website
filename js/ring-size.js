@@ -1,3 +1,5 @@
+(() => {
+/* THCD ring sizer, ported from the previous site. */
 /* THCD Ring Sizer — screen-calibrated, fully client-side, no data leaves the browser
    unless the customer explicitly clicks "send". Sizes computed from measured mm,
    not looked up — RING_SIZE_TABLE below is only a reference/fallback for the
@@ -37,8 +39,11 @@ const CARD_W_MM = 85.60, CARD_H_MM = 53.98; // ISO/IEC 7810 ID-1
 const BASE_PX_PER_MM = 96 / 25.4;           // CSS reference pixel guess, corrected by calibration slider
 const STORAGE_KEY = 'thcd_px_per_mm';
 
-let pxPerMm = parseFloat(localStorage.getItem(STORAGE_KEY)) || BASE_PX_PER_MM;
-let calibrated = localStorage.getItem(STORAGE_KEY) !== null;
+function lsGet(k){ try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+let pxPerMm = parseFloat(lsGet(STORAGE_KEY)) || BASE_PX_PER_MM;
+let calibrated = lsGet(STORAGE_KEY) !== null;
+const showToast = window.showToast || (t => alert(t));
 const state = { method: null, diameterMm: null };
 
 function diameterToRu(d) { return Math.round(d * 2) / 2; }
@@ -58,6 +63,7 @@ function interpolateUs(d) {
 
 function goToStep(name) {
   document.querySelectorAll('.sizer__step').forEach(el => { el.hidden = el.dataset.step !== name; });
+  const pg = document.getElementById('sizerpage'); if (pg) pg.scrollTop = 0;
   if (name === 'calibrate') renderCalibCard();
   if (name === 'measure-ring') renderRingCircle();
 }
@@ -84,7 +90,7 @@ document.getElementById('calibPlus').addEventListener('click', () => { calibSlid
 document.getElementById('calibDoneBtn').addEventListener('click', () => {
   pxPerMm = parseFloat(calibCard.dataset.ppm);
   calibrated = true;
-  localStorage.setItem(STORAGE_KEY, pxPerMm);
+  lsSet(STORAGE_KEY, pxPerMm);
   goToStep('measure-ring');
 });
 document.getElementById('calibBackBtn').addEventListener('click', () => goToStep('method'));
@@ -176,3 +182,7 @@ document.getElementById('restartBtn').addEventListener('click', () => {
 document.getElementById('refChartBody').innerHTML = RING_SIZE_TABLE.map(r =>
   `<tr><td>${r.ru}</td><td>${r.eu}</td><td>${r.us}</td><td>${r.diameter.toFixed(1)}</td><td>${r.circumference.toFixed(1)}</td></tr>`
 ).join('');
+
+// lets the page start the sizer from the method choice every time it is opened
+window.thcdSizerReset = () => { state.method = null; state.diameterMm = null; goToStep('method'); };
+})();

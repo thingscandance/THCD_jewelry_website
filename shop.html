@@ -1,481 +1,763 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>THCD — Dark Jewelry. Edition 001.</title>
-  <meta name="description" content="THCD — Handcrafted sterling silver jewelry. Small-batch, numbered editions."/>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
-  <link rel="stylesheet" href="css/style.css"/>
-  <style>
-    /* ── RING SIZE SECTION ─────────────────────────────────── */
-    .size-guide{padding:var(--s9) 0;background:var(--concrete)}
-    .size-method__steps{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
-    .size-method__steps li{display:grid;grid-template-columns:20px 1fr;gap:var(--s3);font-family:var(--font-m);font-size:.78rem;color:var(--text-mid);line-height:1.6;letter-spacing:.03em}
-    .size-method__steps li::before{content:attr(data-n);font-family:var(--font-n);font-size:.75rem;color:var(--text-dim);line-height:1.6}
-    .size-chart-wrap{overflow-x:auto;border:1px solid var(--border-dark)}
-    .size-chart{width:100%;border-collapse:collapse;font-family:var(--font-m);font-size:.78rem}
-    .size-chart th{background:var(--black);color:var(--acid);padding:10px var(--s5);text-align:left;letter-spacing:.14em;text-transform:uppercase;font-size:.625rem;white-space:nowrap}
-    .size-chart td{padding:9px var(--s5);border-bottom:1px solid var(--border-dark);color:var(--text-mid);letter-spacing:.06em}
-    .size-chart tr:nth-child(even) td{background:var(--dust)}
-    .size-chart tr:nth-child(odd) td{background:var(--white)}
-    .size-chart tr:hover td{background:var(--concrete);color:var(--text-black)}
-    .size-chart td:first-child{color:var(--text-black);font-weight:700;font-size:.85rem}
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body class="preloading">
+<meta charset="utf-8">
+<title>Things Can Dance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky full-bleed canvas scrubbed by eased scroll; fixed menu + slogan; at the last frame twelve windows drop into a 4-wide spring mesh that reacts to the cursor; a tile opens a product page with add to cart. Single dark world on purpose. */
+:root{
+  --void:#070809;
+  --bone:#e9ecea;
+  --ash:#8d9493;
+  --glass:rgba(12,14,15,.8);
+  --edge:rgba(233,236,234,.2);
+  --pink:#e61e9c;
+  --f-body:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Geist Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--void)}
+body{background:var(--void);color:var(--bone);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+a:focus-visible,button:focus-visible{outline:1px solid var(--pink);outline-offset:4px}
 
-    /* ── RING SIZER TOOL ───────────────────────────────────── */
-    .sizer{background:var(--white);border:1px solid var(--border-dark);padding:var(--s7) var(--s6);margin-bottom:var(--s7)}
-    @media(max-width:700px){.sizer{padding:var(--s6) var(--s4)}}
-    .sizer__step[hidden]{display:none}
-    .sizer__methods{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5)}
-    @media(max-width:700px){.sizer__methods{grid-template-columns:1fr}}
-    .sizer__method-card{background:var(--concrete);border:1px solid var(--border-dark);padding:var(--s6);text-align:left;cursor:pointer;font-family:inherit;position:relative;overflow:hidden;transition:border-color var(--dur-m) var(--ease-sharp)}
-    .sizer__method-card:hover{border-color:var(--black)}
-    .sizer__method-num{display:block;font-family:var(--font-d);font-style:italic;font-size:2.75rem;color:var(--dust);line-height:1;margin-bottom:var(--s4)}
-    .sizer__method-card h3{font-family:var(--font-n);font-weight:700;text-transform:uppercase;font-size:.95rem;letter-spacing:.1em;color:var(--text-black);margin-bottom:var(--s3)}
-    .sizer__method-card p{font-family:var(--font-m);font-size:.78rem;color:var(--text-mid);line-height:1.6;letter-spacing:.03em}
-    .sizer__instr{font-family:var(--font-m);font-size:.82rem;color:var(--text-mid);line-height:1.7;letter-spacing:.03em;margin-bottom:var(--s5)}
-    .sizer__note{font-family:var(--font-m);font-size:.7rem;color:var(--text-dim);letter-spacing:.04em;margin:var(--s3) 0 var(--s5)}
-    .calib-stage{background:var(--concrete);border:1px dashed var(--border-mid);display:flex;align-items:center;justify-content:center;padding:var(--s7) var(--s5);min-height:220px;max-height:70vh;overflow:auto}
-    .calib-card{background:var(--dust);border:2px solid var(--text-black);border-radius:6%/10%;flex-shrink:0}
-    .ring-circle{border:3px solid var(--black);outline:3px solid var(--acid);outline-offset:-6px;border-radius:50%;background:transparent;flex-shrink:0}
-    .sizer__slider-row{display:flex;align-items:center;gap:var(--s4);margin:var(--s5) 0}
-    .sizer__slider-row input[type=range]{flex:1;accent-color:var(--black)}
-    .nudge-btn{width:36px;height:36px;flex-shrink:0;border:1px solid var(--border-mid);background:var(--white);color:var(--text-black);font-family:var(--font-m);font-size:1rem;cursor:pointer;transition:border-color var(--dur-m)}
-    .nudge-btn:hover{border-color:var(--black)}
-    .sizer__readout{text-align:center;font-family:var(--font-d);font-style:italic;font-weight:800;font-size:1.6rem;color:var(--text-black);margin-bottom:var(--s2)}
-    .sizer__actions{display:flex;justify-content:space-between;align-items:center;gap:var(--s4);margin-top:var(--s6);flex-wrap:wrap}
-    .sizer__link{font-family:var(--font-m);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);cursor:pointer;background:none;border:none;padding:0;text-decoration:underline;text-underline-offset:3px}
-    .sizer__link:hover{color:var(--text-black)}
-    .sizer__result-main{text-align:center;padding:var(--s6) 0;border-bottom:1px solid var(--border-dark);margin-bottom:var(--s6)}
-    .sizer__result-mm{display:block;font-family:var(--font-d);font-style:italic;font-weight:800;font-size:clamp(3rem,8vw,4.5rem);color:var(--text-black);line-height:1}
-    .sizer__result-label{font-family:var(--font-m);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
-    .sizer__result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s4);margin-bottom:var(--s4)}
-    .sizer__result-stat{background:var(--black);padding:var(--s5) var(--s3);text-align:center}
-    .sizer__result-stat-label{display:block;font-family:var(--font-m);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--acid);margin-bottom:var(--s2)}
-    .sizer__result-stat-value{font-family:var(--font-d);font-style:italic;font-weight:800;font-size:2rem;color:var(--white)}
-    @media(max-width:480px){.sizer__result-stat{padding:var(--s4) var(--s2)}.sizer__result-stat-value{font-size:1.5rem}}
-    .sizer__tips{display:flex;flex-direction:column;gap:var(--s3);margin-bottom:var(--s6)}
-    .sizer__tip{display:grid;grid-template-columns:16px 1fr;gap:var(--s3);font-family:var(--font-m);font-size:.75rem;color:var(--text-mid);line-height:1.6;letter-spacing:.03em}
-    .sizer__tip::before{content:"—";color:var(--text-dim)}
-    .sizer__send{border-top:1px solid var(--border-dark);padding-top:var(--s6)}
-    .sizer__send textarea{width:100%;resize:vertical;margin:var(--s3) 0 var(--s5)}
-    .size-chart-details summary{cursor:pointer;font-family:var(--font-n);font-weight:700;text-transform:uppercase;font-size:.8rem;letter-spacing:.12em;color:var(--text-black);padding:var(--s4) 0;list-style:none}
-    .size-chart-details summary::-webkit-details-marker{display:none}
-    .size-chart-details summary::before{content:"+ ";color:var(--text-dim)}
-    .size-chart-details[open] summary::before{content:"– "}
-    .size-chart-details{margin-top:var(--s6)}
-  </style>
-</head>
-<body>
+/* ---------- film ---------- */
+#track{position:relative;height:560vh}
+#stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+#film{position:absolute;inset:0;width:100%;height:100%;display:block;background:var(--void)}
+#stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(7,8,9,.55),rgba(7,8,9,0) 22%,rgba(7,8,9,0) 62%,rgba(7,8,9,.7))}
+#stage .dim{position:absolute;inset:0;background:var(--void);opacity:0;transition:opacity .9s ease;pointer-events:none;z-index:1}
+body.arrived #stage .dim{opacity:0}
+.loading{display:none}
+/* own scroll container: works the same inside an embedded preview and on the real site */
+html,body{height:100%;overflow:hidden}
+#scroller{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+body.preloading #scroller{overflow:hidden}
+/* preloader: the film shows only after every frame is in memory */
+#preload{position:fixed;inset:0;z-index:90;background:var(--void);display:grid;place-items:center;transition:opacity .9s ease,visibility .9s}
+#preload.done{opacity:0;visibility:hidden;pointer-events:none}
+.pl{width:min(420px,calc(100vw - 48px));display:grid;gap:18px;justify-items:center}
+.pl img{width:clamp(120px,22vw,190px);height:auto;opacity:.92}
+.pl .bar{width:100%;height:2px;background:var(--edge);position:relative;overflow:hidden}
+.pl .bar i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--pink);transition:width .25s ease}
+.pl .row{width:100%;display:flex;justify-content:space-between;font:11px var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ash);font-variant-numeric:tabular-nums}
+.pl .row b{color:var(--bone);font-weight:400}
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav__inner">
-    <a href="shop.html" class="nav__logo" aria-label="THCD Home">
-      <svg viewBox="0 0 1999.98 1216.2" aria-hidden="true">
-        <path d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/>
-        <path d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/>
-        <path d="M1969.89,1068.07c-53.28-50.91-118.58-129.74-140.79-199.21-11.25-35.21-6.92-46.08-1.51-79.29,1.78-10.91-2.23-23.12,2.47-33.53,4.72-10.44,36.95-29.82,37.9-34.15,2.23-10.2-17.88-12.19-23.64-16.25-45.74-32.26-23.61-75.32-24.02-119.73-.5-53.93-5.87-106.83-4.66-159.95.68-29.68,1.56-135.22,9.41-154.92,4.98-12.51,15.43-12.94,15.32-33.09-.07-12.68-6.74-18.52-8.15-28.18-7.1-48.55,32.27-127.45,62.1-165.46,12.44-15.85,30.23-27.53,41.66-44.29-26.27,3.57-74.63,33.72-93.98,51.98-30.99,29.24-53.01,82.46-80.02,115.9-10.96-9.18-10.7-22.72-10.02-35.9-3.99-4.77-19.01,12.3-20.96,17-7.09,17.01-25.01,100.98-26.98,121.02-4.49,45.58,12.68,90.98,7.65,135.64-2.05,18.15-14.46,32.45-3.72,54.32-58-41.12-93.05-113.46-162.12-136.18-41.16,7.16,10.62,13.65.3,52.29-7.56,28.3-43.17,69.19-50.08,101.93-6.73,9.15-10.83,10.27-21.67,6.74l-4.41,3.06c-10.94,21.36-6.04,58.21-14.96,77.19-6.93,14.74-25.65,18.87-30.74,49.26-4.67,27.85,6.1,17.93,15.25,32.19,17.52,27.3,26.96,136.28,14.47,165.53-6.04,14.14-25.24,23.29-24.99,37.44.34,19.38,51.76,18.71,63.2,33.42,13.78,17.72,11.52,62.8,19.84,85.13,5.71-.6,6.89-17.67,7.48-22.46,1.95-15.98-3.82-33.56,10.48-45.44,12.8-.15,30.63,53.59,36.01,59.91,3.98,4.68,17.49,5.08,25.85,10.15,27.19,16.48,36.1,39.55,46.07,65.93,4.45,11.77,10.2,18.87,15.89,3.88,3.84-10.12,4.33-21.99,8.27-31.87,13.97-35.03,38.54-59.37,65.87-84.08,4.28,40.42,26.37,29.74,50.88,43.16,31.18,17.08,44.27,64.18,51.86,69.1,15.52,10.06,25.06-3.87,33.59-2.42,10.15,1.72,64.4,41.55,82.21,49.66,7.27,3.31,50.55,19.2,53.49,16.47-1.74-15.47-20.09-22.32-30.09-31.87ZM1699.84,738.15c1.58,19.19,12.46,37.13,12.28,55.65-.05,5.47-4.65,38.65-6.18,42.11-3.96,8.97-37.43,32.6-47.59,32.12-28.12-1.31-50.87-55.88-54.41-80.06-15.46-4.05-1.9,15.02-11.89,15.96-8.94-19-20-40.27-20.36-61.99-.28-16.62,9.53-26.67,8.28-39.57-1.32-13.68-14.89-23.76-18.18-34.22-13.56-43.1,9.43-63.36,12-104.4l38.12-78c6.1-3.64,22.34,15.06,29.24,19.04,8.1,4.68,25.81,8.3,29.87,12.15,4.26,4.05,39.47,80.95,40.73,89.25,7.17,47.42-15.53,87.97-11.91,131.94Z"/>
-      </svg>
-    </a>
-    <ul class="nav__links">
-      <li><a href="#shop" class="nav__link active">Shop</a></li>
-      <li><a href="#craft" class="nav__link">Craft</a></li>
-      <li><a href="#ring-size" class="nav__link">Ring Size</a></li>
+/* ---------- fixed chrome ---------- */
+.bar{position:fixed;z-index:60;left:0;right:0;top:0;
+  padding:calc(env(safe-area-inset-top,0px) + 18px) clamp(16px,3vw,40px) 0;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;pointer-events:none}
+.bar>*{pointer-events:auto;position:relative}
+.bar::before{content:"";position:absolute;left:0;right:0;top:0;height:150px;background:linear-gradient(rgba(7,8,9,.72),rgba(7,8,9,0));pointer-events:none}
+.logo{display:block;width:clamp(96px,11vw,150px)}
+.logo img{display:block;width:100%;height:auto}
+nav{display:flex;align-items:center;gap:clamp(14px,2.2vw,34px)}
+.menu{display:flex;gap:clamp(14px,2.2vw,34px);list-style:none;margin:0;padding:0}
+.menu a,.cartbtn{color:var(--bone);text-decoration:none;font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.86;background:none;border:0;padding:0;cursor:pointer}
+.menu a:hover,.cartbtn:hover{opacity:1;color:var(--pink)}
+.cartbtn b{font:500 12px var(--f-mono);color:var(--pink);margin-left:4px}
+.menu-btn{position:relative;z-index:41;display:none;background:none;border:1px solid var(--edge);font:500 12px var(--f-mono);
+  letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;border-radius:2px;cursor:pointer}
+
+.slogan{position:fixed;z-index:20;left:clamp(16px,3vw,40px);bottom:calc(env(safe-area-inset-bottom,0px) + clamp(22px,4vh,44px));
+  max-width:min(620px,calc(100vw - 32px));pointer-events:none;transition:opacity .5s ease}
+.slogan h1{margin:0;font-weight:300;font-size:clamp(34px,6.2vw,92px);line-height:.92;letter-spacing:-.02em;text-transform:uppercase;text-wrap:balance}
+.slogan p{margin:14px 0 0;max-width:44ch;color:var(--ash);font-size:14px}
+body.arrived .slogan{opacity:0}
+
+.clock{position:fixed;z-index:20;right:clamp(16px,3vw,40px);bottom:calc(env(safe-area-inset-bottom,0px) + clamp(22px,4vh,44px));
+  font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-align:right;font-variant-numeric:tabular-nums;width:180px;transition:opacity .5s;pointer-events:none}
+.clock .ch{color:var(--ash);text-transform:uppercase}
+.clock .ch b{color:var(--pink);font-weight:500}
+.clock .rail{margin-top:8px;height:1px;background:var(--edge);position:relative}
+.clock .rail i{position:absolute;left:0;top:-1px;height:3px;background:var(--bone);width:0}
+.clock .ticks span{position:absolute;top:-3px;width:1px;height:7px;background:var(--ash)}
+body.arrived .clock{opacity:0}
+
+.hint{position:fixed;z-index:20;left:50%;top:58%;transform:translate(-50%,-50%);font:12px var(--f-mono);letter-spacing:.3em;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:10px;transition:opacity .4s;pointer-events:none}
+.hint::after{content:"";width:1px;height:44px;background:linear-gradient(var(--bone),transparent);animation:drip 1.8s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ---------- spring mesh of pieces ---------- */
+#board{position:fixed;inset:0;z-index:25;pointer-events:none;overflow:hidden;touch-action:none;
+  -webkit-user-select:none;user-select:none}
+body.arrived #board{pointer-events:auto}
+#board.grabbing{cursor:grabbing}
+#web{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.tile{position:absolute;left:0;top:0;width:var(--tw);background:var(--glass);border:1px solid var(--edge);border-radius:3px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 24px 60px rgba(0,0,0,.35);will-change:transform,opacity;opacity:0;transform-origin:0 0;
+  transition:border-color .25s}
+.tile{cursor:pointer}.tile:hover{border-color:rgba(230,30,156,.65)}
+.tb{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;border-bottom:1px solid var(--edge);
+  font:11px var(--f-mono);letter-spacing:.05em;color:var(--ash);white-space:nowrap;overflow:hidden}
+.tb .dots{display:flex;gap:4px;flex:none}
+.tb .dots i{width:6px;height:6px;border-radius:50%;border:1px solid var(--ash)}
+.tile.real .tb .dots i:first-child{background:var(--pink);border-color:var(--pink)}
+.view{position:relative;aspect-ratio:1/1;max-width:100%;overflow:hidden;background:#000}
+.view img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 46%;transition:opacity .7s ease;pointer-events:none;-webkit-user-drag:none}
+.view .photo{opacity:0}
+.tile:hover .photo{opacity:1}
+.tile:hover .line{opacity:0}
+.empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font:10px var(--f-mono);letter-spacing:.14em;color:var(--ash);text-transform:uppercase;
+  background:repeating-linear-gradient(0deg,rgba(233,236,234,.035) 0 1px,transparent 1px 6px)}
+.empty::after{content:"";position:absolute;left:0;right:0;height:22%;top:-22%;background:linear-gradient(transparent,rgba(233,236,234,.07),transparent);animation:scan 3.2s linear infinite}
+@keyframes scan{to{top:100%}}
+.meta{display:flex;flex-direction:column;gap:2px;padding:9px 11px 10px}
+.meta h3{margin:0;font-weight:400;font-size:14px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta span{font:12px var(--f-mono);color:var(--ash);letter-spacing:.05em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.boardnote{position:fixed;z-index:26;color:#1c1e20!important;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);
+  font:11px var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ash);display:flex;gap:18px;align-items:center;
+  opacity:0;transition:opacity .6s 1.2s;pointer-events:none;white-space:nowrap}
+body.arrived .boardnote{opacity:1;pointer-events:auto}
+
+.cats{display:flex;gap:4px}
+.cats button[aria-pressed="true"]{background:var(--bone);color:var(--void);border-color:var(--bone)}
+@media (max-width:760px){.cats .c-all{display:none}.boardnote{gap:8px}.boardnote button{padding:6px 8px}}
+.boardnote button{background:rgba(9,10,11,.85);border:1px solid var(--edge);padding:6px 10px;border-radius:2px;cursor:pointer;font:inherit;letter-spacing:inherit;color:var(--bone)}
+
+/* ---------- product page ---------- */
+#product{position:fixed;inset:0;z-index:55;background:#c9cccb url(img/cart_bg.webp) center/cover no-repeat;overflow:auto;
+  padding:calc(env(safe-area-inset-top,0px) + 132px) clamp(16px,4vw,64px) calc(env(safe-area-inset-bottom,0px) + 40px)}
+.crumbs{max-width:1280px;margin-inline:auto;display:flex;justify-content:space-between;align-items:center;gap:12px;font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ash);margin-bottom:22px}
+.crumbs button{background:rgba(9,10,11,.88);border:1px solid var(--edge);border-radius:2px;padding:8px 12px!important;cursor:pointer;color:var(--bone);font:inherit;letter-spacing:inherit;padding:0}
+.crumbs button:hover{color:var(--pink)}
+.crumbs .nav{display:flex;gap:18px}
+.pgrid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:start;max-width:1280px;margin:0 auto}
+.gallery{display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px}
+.thumbs{display:flex;flex-direction:column;gap:10px;max-height:min(78vh,760px);overflow-y:auto;scrollbar-width:thin}
+.thumbs button{padding:0;border:1px solid var(--edge);background:#000;cursor:pointer;aspect-ratio:3/4;overflow:hidden;border-radius:2px}
+.thumbs button[aria-pressed="true"]{border-color:var(--pink)}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.big{position:relative;aspect-ratio:3/4;max-width:100%;background:#000;border:1px solid var(--edge);overflow:hidden}
+.big img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 46%}
+.big .empty{font-size:12px}
+.info{min-width:0;position:sticky;top:20px;background:rgba(9,10,11,.9);border:1px solid var(--edge);border-radius:3px;padding:clamp(20px,3vw,36px);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.info .code{font:11px var(--f-mono);letter-spacing:.14em;color:var(--pink);text-transform:uppercase}
+.info h2{margin:8px 0 6px;font-weight:300;font-size:clamp(32px,4.4vw,62px);line-height:1;letter-spacing:-.01em;text-transform:uppercase;text-wrap:balance}
+.price{font:400 20px var(--f-mono);font-variant-numeric:tabular-nums;margin:0 0 22px}
+.info p{margin:0 0 24px;color:#c9cecc;max-width:52ch}
+.opt{margin:0 0 18px}
+.opt .lab{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ash);margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{min-width:46px;padding:9px 10px;border:1px solid var(--edge);background:none;border-radius:2px;cursor:pointer;font:12px var(--f-mono);font-variant-numeric:tabular-nums}
+.chips button[aria-pressed="true"]{border-color:var(--bone);background:var(--bone);color:var(--void)}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--edge);border-radius:2px}
+.qty button{width:38px;height:38px;background:none;border:0;cursor:pointer;font:16px var(--f-mono)}
+.qty output{min-width:28px;text-align:center;font:13px var(--f-mono);font-variant-numeric:tabular-nums}
+.buy{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:24px 0 28px}
+.add{background:var(--bone);color:var(--void);border:0;padding:14px 22px;border-radius:2px;cursor:pointer;font:500 12px var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
+.add:hover{background:var(--pink);color:#fff}
+.add:disabled{background:none;color:var(--ash);border:1px solid var(--edge);cursor:not-allowed}
+.specs{display:grid;grid-template-columns:auto 1fr;gap:8px 22px;margin:0;font-size:13px;border-top:1px solid var(--edge);padding-top:18px}
+.specs dt{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ash);padding-top:2px}
+.specs dd{margin:0}
+.warn{font:11px var(--f-mono);color:var(--pink);min-height:16px}
+
+/* ---------- cart ---------- */
+#cart{position:fixed;inset:0;z-index:70;background:#c9cccb url(img/cart_bg.webp) center/cover no-repeat;opacity:0;pointer-events:none;transition:opacity .45s ease;
+  display:flex;justify-content:flex-end;align-items:stretch;padding:calc(env(safe-area-inset-top,0px) + 24px) clamp(16px,3vw,40px) calc(env(safe-area-inset-bottom,0px) + 24px)}
+body.cart-open #cart{opacity:1;pointer-events:auto}
+.cpanel{width:min(460px,100%);background:rgba(9,10,11,.9);border:1px solid var(--edge);border-radius:3px;display:flex;flex-direction:column;padding:22px;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transform:translateY(24px);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+body.cart-open .cpanel{transform:none}
+.chead{display:flex;justify-content:space-between;align-items:center;font:12px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;padding-bottom:16px;border-bottom:1px solid var(--edge)}
+.chead button{background:none;border:0;cursor:pointer;font:inherit;letter-spacing:inherit}
+.lines{flex:1;overflow:auto;padding:8px 0}
+.line-item{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;padding:14px 0;border-bottom:1px solid var(--edge);align-items:center}
+.line-item img{width:64px;aspect-ratio:3/4;object-fit:cover;background:#000;display:block}
+.line-item h4{margin:0;font-weight:400;font-size:14px}
+.line-item small{font:11px var(--f-mono);color:var(--ash)}
+.line-item .rm{background:none;border:0;color:var(--ash);cursor:pointer;font:11px var(--f-mono);text-decoration:underline;padding:0;margin-top:4px}
+.line-item .amt{font:13px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.mini{display:inline-flex;align-items:center;gap:8px;margin-top:6px;font:12px var(--f-mono)}
+.mini button{width:24px;height:24px;border:1px solid var(--edge);background:none;cursor:pointer;border-radius:2px}
+.cempty{color:var(--ash);padding:40px 0;text-align:center;font-size:14px}
+.cfoot{border-top:1px solid var(--edge);padding-top:16px;display:grid;gap:12px}
+.sum{display:flex;justify-content:space-between;font:14px var(--f-mono);font-variant-numeric:tabular-nums}
+.cfoot .add{width:100%}
+.cnote{font:11px var(--f-mono);color:var(--ash);min-height:15px}
+.toast{position:fixed;z-index:80;left:50%;top:calc(env(safe-area-inset-top,0px) + 80px);transform:translate(-50%,-20px);opacity:0;
+  background:var(--bone);color:var(--void);padding:10px 16px;border-radius:2px;font:12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;transition:all .35s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:760px){
+  .menu{display:none}
+  .menu-btn{display:block}
+  body.menu-open .menu{display:flex;position:fixed;inset:0;z-index:40;flex-direction:column;justify-content:center;align-items:center;gap:26px;background:rgba(7,8,9,.95)}
+  body.menu-open .menu a{font-size:20px}
+  .clock{width:120px}
+  .pgrid{grid-template-columns:1fr}
+  .gallery{grid-template-columns:1fr}
+  .thumbs{flex-direction:row;order:2;overflow-x:auto;max-height:none}
+  .thumbs button{flex:none}
+  .thumbs button{width:64px}
+  .info{position:static}
+}
+/* ---------- overlay pages: sold out + ring size ---------- */
+.page{position:fixed;inset:0;z-index:56;background:#c9cccb url(img/cart_bg.webp) center/cover no-repeat;overflow:auto;
+  padding:calc(env(safe-area-inset-top,0px) + 132px) clamp(16px,4vw,64px) calc(env(safe-area-inset-bottom,0px) + 48px)}
+.page .crumbs{color:#2b2f31}
+.phead{max-width:1280px;margin:0 auto 28px;display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;
+  background:rgba(9,10,11,.9);border:1px solid var(--edge);border-radius:3px;padding:clamp(20px,3vw,32px);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.phead .code{font:11px var(--f-mono);letter-spacing:.14em;color:var(--pink);text-transform:uppercase}
+.phead h2{margin:8px 0 0;font-weight:300;font-size:clamp(34px,5vw,72px);line-height:.95;letter-spacing:-.01em;text-transform:uppercase}
+.phead p{margin:0;max-width:46ch;color:#c9cecc;font-size:14px}
+
+/* sold out archive */
+.sgrid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:clamp(12px,1.6vw,20px)}
+.scard{position:relative;display:block;width:100%;padding:0;text-align:left;cursor:pointer;background:var(--glass);border:1px solid var(--edge);border-radius:3px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 18px 44px rgba(0,0,0,.28);transition:border-color .25s,transform .35s cubic-bezier(.2,.8,.2,1)}
+.scard:hover{border-color:rgba(230,30,156,.65);transform:translateY(-4px)}
+.scard .view{aspect-ratio:3/4}
+.scard .view img{object-position:50% 50%;filter:grayscale(.35) contrast(1.05);transition:filter .5s}
+.scard:hover .view img{filter:none}
+.stamp{position:absolute;right:10px;top:46px;z-index:2;font:500 10px var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:#fff;background:var(--pink);padding:5px 8px;border-radius:2px}
+.scard .meta span{color:var(--ash)}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:75;background:rgba(7,8,9,.92);display:grid;grid-template-rows:auto 1fr auto;padding:calc(env(safe-area-inset-top,0px) + 20px) clamp(12px,3vw,40px) calc(env(safe-area-inset-bottom,0px) + 20px);gap:14px}
+.lb .lbtop{display:flex;justify-content:space-between;align-items:center;gap:12px;font:11px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ash)}
+.lb .lbtop b{color:var(--bone);font-weight:400}
+.lb .lbtop button,.lb .arrow{background:rgba(9,10,11,.88);border:1px solid var(--edge);border-radius:2px;padding:8px 12px;cursor:pointer;color:var(--bone);font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
+.lb .lbtop button:hover,.lb .arrow:hover{color:var(--pink)}
+.lb .lbmain{position:relative;min-height:0;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px}
+.lb .lbmain img{max-width:100%;max-height:calc(100vh - 170px);max-height:calc(100svh - 170px);margin:auto;display:block;object-fit:contain;border:1px solid var(--edge);background:#000}
+.lb .lbmain .frame{min-height:0;height:100%;display:grid;place-items:center}
+.lb .lbthumbs{display:flex;gap:8px;justify-content:center;overflow-x:auto;padding-bottom:2px}
+.lb .lbthumbs button{flex:none;width:54px;aspect-ratio:3/4;padding:0;border:1px solid var(--edge);background:#000;cursor:pointer;border-radius:2px;overflow:hidden;opacity:.6}
+.lb .lbthumbs button[aria-pressed="true"]{opacity:1;border-color:var(--pink)}
+.lb .lbthumbs img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ring sizer */
+.sizer{max-width:960px;margin:0 auto;background:rgba(9,10,11,.9);border:1px solid var(--edge);border-radius:3px;padding:clamp(20px,3.4vw,40px);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.sizer .lab{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ash);margin-bottom:10px}
+.methods{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mcard{text-align:left;background:none;border:1px solid var(--edge);border-radius:3px;padding:clamp(18px,2.4vw,28px);cursor:pointer;transition:border-color .25s,background .25s}
+.mcard:hover{border-color:var(--pink);background:rgba(230,30,156,.06)}
+.mcard .n{display:block;font:11px var(--f-mono);letter-spacing:.14em;color:var(--pink);margin-bottom:22px}
+.mcard h3{margin:0 0 8px;font-weight:300;font-size:clamp(20px,2.2vw,28px);line-height:1.1;text-transform:uppercase}
+.mcard p{margin:0;color:var(--ash);font-size:13px}
+.instr{margin:0 0 14px;color:#c9cecc;max-width:70ch;font-size:14px}
+.snote{margin:0 0 18px;font:11px var(--f-mono);letter-spacing:.04em;color:var(--ash)}
+.stagebox{border:1px dashed var(--edge);border-radius:3px;display:flex;align-items:center;justify-content:center;padding:28px 16px;min-height:220px;max-height:70vh;overflow:auto;
+  background:repeating-linear-gradient(0deg,rgba(233,236,234,.03) 0 1px,transparent 1px 8px)}
+.calib-card{flex-shrink:0;border:1.5px solid var(--bone);border-radius:6%/4%;background:rgba(233,236,234,.06)}
+.ring-circle{flex-shrink:0;border-radius:50%;border:1.5px solid var(--pink);box-shadow:0 0 0 1px rgba(230,30,156,.25),inset 0 0 0 1px rgba(230,30,156,.25)}
+.slide{display:flex;align-items:center;gap:12px;margin:18px 0}
+.slide input[type=range]{flex:1;accent-color:var(--pink)}
+.nudge{width:38px;height:38px;border:1px solid var(--edge);background:none;border-radius:2px;cursor:pointer;font:16px var(--f-mono)}
+.readout{text-align:center;font:400 22px var(--f-mono);font-variant-numeric:tabular-nums}
+.acts{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:24px}
+.ghost{background:none;border:1px solid var(--edge);color:var(--bone);padding:13px 18px;border-radius:2px;cursor:pointer;font:500 12px var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
+.ghost:hover{border-color:var(--bone)}
+.tlink{background:none;border:0;padding:0;color:var(--ash);font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.tlink:hover{color:var(--pink)}
+.steps{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:10px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:8px;color:#c9cecc;font-size:14px;counter-increment:s}
+.steps li::before{content:counter(s,decimal-leading-zero);font:11px var(--f-mono);color:var(--pink);padding-top:3px}
+.field{width:100%;background:none;border:1px solid var(--edge);border-radius:2px;color:var(--bone);padding:13px 14px;font:15px var(--f-mono)}
+.field:focus{outline:none;border-color:var(--pink)}
+textarea.field{font:14px var(--f-body);resize:vertical}
+.rmain{text-align:center;padding:10px 0 24px;border-bottom:1px solid var(--edge);margin-bottom:22px}
+.rmain .mm{display:block;font:300 clamp(54px,9vw,96px)/1 var(--f-body);letter-spacing:-.02em}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+.rgrid div{border:1px solid var(--edge);border-radius:2px;padding:16px 8px;text-align:center}
+.rgrid span{display:block;font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--pink);margin-bottom:6px}
+.rgrid b{font:400 28px var(--f-mono);font-variant-numeric:tabular-nums}
+.tips{margin:20px 0;padding:0;list-style:none;display:grid;gap:8px;color:#c9cecc;font-size:13px}
+.tips li::before{content:"— ";color:var(--ash)}
+.chart{max-width:960px;margin:16px auto 0;background:rgba(9,10,11,.9);border:1px solid var(--edge);border-radius:3px;padding:16px clamp(16px,3vw,32px)}
+.chart summary{cursor:pointer;font:11px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ash)}
+.chart summary:hover{color:var(--pink)}
+.chart table{width:100%;border-collapse:collapse;margin-top:14px;font:13px var(--f-mono);font-variant-numeric:tabular-nums}
+.chart th{font-weight:400;color:var(--ash);font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:left;padding:8px 6px;border-bottom:1px solid var(--edge)}
+.chart td{padding:7px 6px;border-bottom:1px solid rgba(233,236,234,.07)}
+.chart .wrap{overflow-x:auto}
+.opt .lab{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.opt .lab .tlink{font-size:10px}
+
+/* checkout */
+.pay{display:grid;gap:10px}
+.pay[hidden]{display:none!important}
+#ppButtons{background:var(--bone);border-radius:2px;padding:12px 12px 2px;min-height:60px}
+.paid{padding:30px 0;text-align:center}
+.paid .code{font:11px var(--f-mono);letter-spacing:.14em;color:var(--pink);text-transform:uppercase}
+.paid h3{margin:10px 0;font-weight:300;font-size:30px;text-transform:uppercase;line-height:1}
+.paid p{color:var(--ash);font-size:13px;margin:0}
+.shipnote{font:11px var(--f-mono);color:var(--ash);letter-spacing:.03em}
+
+@media (max-width:760px){
+  .methods{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .stamp{top:40px;right:6px;font-size:9px}
+  .lb .lbmain{grid-template-columns:minmax(0,1fr)}
+  .lb .arrow{display:none}
+  .page{padding-top:calc(env(safe-area-inset-top,0px) + 96px)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .hint::after,.empty::after{animation:none}
+}
+</style>
+
+<div id="scroller"><div id="track">
+  <div id="stage"><canvas id="film" aria-label="THCD film: a chrome pollinator flies from the monitor island past the silver head to the double ring"></canvas><div class="dim"></div></div>
+</div>
+</div>
+<div class="loading" id="loading"></div>
+<div id="preload" role="status" aria-live="polite"><div class="pl">
+  <img src="img/logo_white.png" alt="THCD">
+  <div class="bar"><i id="plBar"></i></div>
+  <div class="row"><span>Loading film</span><b id="plPct">0%</b></div>
+</div></div>
+
+<header class="bar">
+  <a class="logo" href="#top" id="toTop" aria-label="THCD, Things Can Dance"><img src="img/logo_white.png" alt="THCD"></a>
+  <nav>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menu">Menu</button>
+    <ul class="menu" id="menu">
+      <li><a href="#rings" data-go="end" data-cat="Ring">Rings</a></li>
+      <li><a href="#earrings" data-go="end" data-cat="Earring">Earrings</a></li>
+      <li><a href="#pendants" data-go="end" data-cat="Pendant">Pendants</a></li>
+      <li><a href="#sold-out" data-open="soldout">Sold out</a></li>
+      <li><a href="#ring-size" data-open="sizer">Ring size</a></li>
+      <li><a href="#top" data-go="top">World</a></li>
+      <li><a href="#pieces" data-go="end">Studio</a></li>
     </ul>
-    <div class="nav__right">
-      <a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener" class="nav__link" aria-label="Instagram" style="display:flex;align-items:center">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-      </a>
-      <a href="cart.html" class="nav__cart">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-        Cart
-        <span class="cart-count" style="display:none">0</span>
-      </a>
-      <button class="nav__hamburger" id="hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </div>
-</nav>
+    <button class="cartbtn" id="cartBtn" type="button" aria-controls="cart">Cart<b id="cartCount">0</b></button>
+  </nav>
+</header>
 
-<!-- MOBILE NAV -->
-<div class="mobile-nav" id="mobileNav">
-  <button class="mobile-nav__close" id="mobileClose">✕</button>
-  <a href="#shop" class="mobile-nav__link" onclick="document.getElementById('mobileNav').classList.remove('open')">Shop</a>
-  <a href="#craft" class="mobile-nav__link" onclick="document.getElementById('mobileNav').classList.remove('open')">Craft</a>
-  <a href="#ring-size" class="mobile-nav__link" onclick="document.getElementById('mobileNav').classList.remove('open')">Ring Size</a>
-  <a href="cart.html" class="mobile-nav__link">Cart</a>
+<div class="slogan">
+  <h1>Things<br>can dance</h1>
+  <p>Sterling silver grown in a posthuman garden. Cast by hand in Tbilisi.</p>
+</div>
+<div class="hint" id="hint">Scroll</div>
+<div class="clock" aria-hidden="true">
+  <div><span id="tc">00:00</span> / 00:14</div>
+  <div class="ch" id="ch"><b>&#9679;</b> signal</div>
+  <div class="rail"><div class="ticks"></div><i id="bar"></i></div>
 </div>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero__bg">
-    <video class="hero__video" autoplay muted loop playsinline poster="brand_assets/Backgrounds/Generated Image 2.png">
-      <source src="brand_assets/Backgrounds/kling_20260524_%E4%BD%9C%E5%93%81__813_0_1_rhea1.mp4" type="video/mp4"/>
-    </video>
-    <img src="brand_assets/Backgrounds/Generated Image 2.png" alt="" aria-hidden="true"/>
-  </div>
-
-  <div class="container" style="position:relative;z-index:2">
-    <div class="hero__content">
-      <div class="hero__logo-wrap">
-        <svg viewBox="0 0 1999.98 1216.2" aria-label="THCD">
-          <path d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/>
-          <path d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/>
-          <path d="M1969.89,1068.07c-53.28-50.91-118.58-129.74-140.79-199.21-11.25-35.21-6.92-46.08-1.51-79.29,1.78-10.91-2.23-23.12,2.47-33.53,4.72-10.44,36.95-29.82,37.9-34.15,2.23-10.2-17.88-12.19-23.64-16.25-45.74-32.26-23.61-75.32-24.02-119.73-.5-53.93-5.87-106.83-4.66-159.95.68-29.68,1.56-135.22,9.41-154.92,4.98-12.51,15.43-12.94,15.32-33.09-.07-12.68-6.74-18.52-8.15-28.18-7.1-48.55,32.27-127.45,62.1-165.46,12.44-15.85,30.23-27.53,41.66-44.29-26.27,3.57-74.63,33.72-93.98,51.98-30.99,29.24-53.01,82.46-80.02,115.9-10.96-9.18-10.7-22.72-10.02-35.9-3.99-4.77-19.01,12.3-20.96,17-7.09,17.01-25.01,100.98-26.98,121.02-4.49,45.58,12.68,90.98,7.65,135.64-2.05,18.15-14.46,32.45-3.72,54.32-58-41.12-93.05-113.46-162.12-136.18-41.16,7.16,10.62,13.65.3,52.29-7.56,28.3-43.17,69.19-50.08,101.93-6.73,9.15-10.83,10.27-21.67,6.74l-4.41,3.06c-10.94,21.36-6.04,58.21-14.96,77.19-6.93,14.74-25.65,18.87-30.74,49.26-4.67,27.85,6.1,17.93,15.25,32.19,17.52,27.3,26.96,136.28,14.47,165.53-6.04,14.14-25.24,23.29-24.99,37.44.34,19.38,51.76,18.71,63.2,33.42,13.78,17.72,11.52,62.8,19.84,85.13,5.71-.6,6.89-17.67,7.48-22.46,1.95-15.98-3.82-33.56,10.48-45.44,12.8-.15,30.63,53.59,36.01,59.91,3.98,4.68,17.49,5.08,25.85,10.15,27.19,16.48,36.1,39.55,46.07,65.93,4.45,11.77,10.2,18.87,15.89,3.88,3.84-10.12,4.33-21.99,8.27-31.87,13.97-35.03,38.54-59.37,65.87-84.08,4.28,40.42,26.37,29.74,50.88,43.16,31.18,17.08,44.27,64.18,51.86,69.1,15.52,10.06,25.06-3.87,33.59-2.42,10.15,1.72,64.4,41.55,82.21,49.66,7.27,3.31,50.55,19.2,53.49,16.47-1.74-15.47-20.09-22.32-30.09-31.87ZM1699.84,738.15c1.58,19.19,12.46,37.13,12.28,55.65-.05,5.47-4.65,38.65-6.18,42.11-3.96,8.97-37.43,32.6-47.59,32.12-28.12-1.31-50.87-55.88-54.41-80.06-15.46-4.05-1.9,15.02-11.89,15.96-8.94-19-20-40.27-20.36-61.99-.28-16.62,9.53-26.67,8.28-39.57-1.32-13.68-14.89-23.76-18.18-34.22-13.56-43.1,9.43-63.36,12-104.4l38.12-78c6.1-3.64,22.34,15.06,29.24,19.04,8.1,4.68,25.81,8.3,29.87,12.15,4.26,4.05,39.47,80.95,40.73,89.25,7.17,47.42-15.53,87.97-11.91,131.94Z"/>
-        </svg>
-      </div>
-      <p class="hero__tagline">Thingscandance<br>From inner symbol to form</p>
-      <div class="hero__ctas">
-        <a href="#shop" class="btn btn-primary btn-lg">Shop Edition 001 ↗</a>
-        <a href="#ring-size" class="btn btn-outline btn-lg">Ring Size</a>
-      </div>
-    </div>
-  </div>
-  <div class="hero__scroll" aria-hidden="true">
-    <div class="hero__scroll-line"></div>
-    <span class="hero__scroll-label">Scroll</span>
-  </div>
+<section id="board" aria-label="Pieces">
+  <canvas id="web"></canvas>
 </section>
+<div class="boardnote"><div class="cats" role="group" aria-label="Category"><button type="button" data-cat="all" class="c-all">All</button><button type="button" data-cat="Ring">Rings</button><button type="button" data-cat="Earring">Earrings</button><button type="button" data-cat="Pendant">Pendants</button></div><button type="button" id="backTop">Back to film</button></div>
 
-<!-- SHOP HEADER -->
-<div class="shop-header" id="shop">
-  <div class="container">
-    <h1 class="section-title" style="margin-bottom:var(--s5)">Edition <span class="acid">001</span></h1>
-    <p class="t-meta">23 pieces — Small batch, numbered</p>
-    <div class="filter-bar" id="filterBar">
-      <button class="filter-btn active" data-cat="all">All (23)</button>
-      <button class="filter-btn" data-cat="rings">Rings</button>
-      <button class="filter-btn" data-cat="pendants">Pendants</button>
-    </div>
-    <p class="shop-meta" id="shopMeta"></p>
+<section id="product" hidden aria-label="Product"></section>
+
+<section id="soldout" class="page" hidden aria-label="Sold out">
+  <div class="crumbs"><button type="button" data-close>&larr; Board</button><span>Archive</span></div>
+  <div class="phead">
+    <div><div class="code" id="soldCount">Archive</div><h2>Sold out</h2></div>
+    <p>One-of-a-kind rings that already found their hands. Each was cast once. Write to us if one of them calls to you and we can grow a relative.</p>
   </div>
+  <div class="sgrid" id="sgrid"></div>
+</section>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photos">
+  <div class="lbtop"><span><b id="lbName"></b> &middot; <span id="lbIdx"></span></span><button type="button" id="lbClose">Close &times;</button></div>
+  <div class="lbmain"><button class="arrow" type="button" id="lbPrev" aria-label="Previous photo">&larr;</button><div class="frame"><img id="lbImg" alt=""></div><button class="arrow" type="button" id="lbNext" aria-label="Next photo">&rarr;</button></div>
+  <div class="lbthumbs" id="lbThumbs"></div>
 </div>
 
-<!-- PRODUCTS GRID -->
-<div style="padding:var(--s7) 0 var(--s9)">
-  <div class="container">
-    <div class="products-grid" id="shopGrid"></div>
+<section id="sizerpage" class="page" hidden aria-label="Ring size">
+  <div class="crumbs"><button type="button" data-close>&larr; Back</button><span>Sizing tool</span></div>
+  <div class="phead">
+    <div><div class="code">Tool &middot; on your screen</div><h2>Find your<br>ring size</h2></div>
+    <p>Everything is measured right here in your browser, on a phone or a laptop. No camera, no app, and nothing is sent anywhere unless you choose to email the result.</p>
   </div>
-</div>
-
-<!-- CRAFT SECTION -->
-<section class="section" id="craft">
-  <div class="container">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s9);align-items:center" class="craft-layout">
-      <div>
-        <div class="section-eyebrow fade-up"><span>The Craft</span></div>
-        <p class="t-body fade-up" style="margin-bottom:var(--s6)">THCD works in sterling silver. Every piece in Edition 001 begins as a wax model—hand-shaped, never 3D printed. The irregularities are the design.</p>
-        <p class="t-body fade-up" style="margin-bottom:var(--s6)">Small batches. Numbered editions. No restocks. When Edition 001 is gone, it's gone.</p>
-        <p class="t-body fade-up" style="margin-bottom:var(--s5)">Need a specific size or have a question? Reach out — every order can be made to your size.</p>
-        <div class="fade-up" style="margin-bottom:var(--s5);font-family:var(--font-m);font-size:.78rem;letter-spacing:.06em;color:rgba(244,244,238,.5);line-height:1.8">
-          <div>Shipping worldwide — €10</div>
-          <div>Sakartvelo — free shipping</div>
-        </div>
-        <div class="fade-up" style="margin-bottom:var(--s7);display:flex;flex-direction:column;gap:var(--s3)">
-          <a href="mailto:marina.marbl@gmail.com" class="footer__link" style="font-family:var(--font-m);font-size:.8rem;letter-spacing:.06em;color:var(--acid)">marina.marbl@gmail.com</a>
-          <a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener" class="footer__link" style="font-family:var(--font-m);font-size:.8rem;letter-spacing:.06em;color:var(--acid)">@th_c_d on Instagram ↗</a>
-        </div>
-        <a href="#shop" class="btn btn-primary btn-lg fade-up">Shop Edition 001 ↗</a>
-      </div>
-      <div class="craft-img-frame fade-up">
-        <img src="brand_assets/Backgrounds/Generated Image 1.png" alt="THCD Craft" style="width:100%;aspect-ratio:4/5;object-fit:cover;opacity:.9"/>
+  <div class="sizer" id="sizer">
+    <div class="sizer__step" data-step="method">
+      <div class="methods">
+        <button type="button" class="mcard sizer__method-card" data-method="ring"><span class="n">01</span><h3>I have a ring that fits</h3><p>The most accurate way. First match your screen to a bank card, then lay the ring on the screen.</p></button>
+        <button type="button" class="mcard sizer__method-card" data-method="finger"><span class="n">02</span><h3>No ring, measure my finger</h3><p>Wrap a paper strip around the base of the finger and enter its length in millimetres.</p></button>
       </div>
     </div>
+    <div class="sizer__step" data-step="calibrate" hidden>
+      <p class="instr">Hold a regular bank card upright against the screen next to the rectangle (on a laptop, lay it flat on the screen). Move the slider until the rectangle matches the card exactly. Every bank card is 85.6 &times; 54 mm.</p>
+      <p class="snote">Saved for this device, so you only do it once per screen.</p>
+      <div class="stagebox"><div class="calib-card" id="calibCard"></div></div>
+      <div class="slide"><button type="button" class="nudge" id="calibMinus" aria-label="Smaller">&minus;</button><input type="range" id="calibSlider" min="40" max="220" value="100" step="0.2" aria-label="Calibration size"><button type="button" class="nudge" id="calibPlus" aria-label="Bigger">+</button></div>
+      <div class="acts"><button type="button" class="ghost" id="calibBackBtn">&larr; Back</button><button type="button" class="add" id="calibDoneBtn">It matches</button></div>
+    </div>
+    <div class="sizer__step" data-step="measure-ring" hidden>
+      <p class="instr">Put the ring on the screen and move the slider until the pink circle matches the ring's <b>inner</b> edge, not the outer one.</p>
+      <div class="stagebox"><div class="ring-circle" id="ringCircle"></div></div>
+      <div class="readout" id="ringReadout" style="margin-top:16px">17.0 mm</div>
+      <div class="slide"><button type="button" class="nudge" id="ringMinus" aria-label="Smaller">&minus;</button><input type="range" id="ringSlider" min="80" max="260" value="170" step="1" aria-label="Ring diameter"><button type="button" class="nudge" id="ringPlus" aria-label="Bigger">+</button></div>
+      <div style="text-align:center"><button type="button" class="tlink" id="recalibrateBtn">Recalibrate screen</button></div>
+      <div class="acts"><button type="button" class="ghost" id="ringBackBtn">&larr; Back</button><button type="button" class="add" id="ringDoneBtn">Done &rarr;</button></div>
+    </div>
+    <div class="sizer__step" data-step="measure-finger" hidden>
+      <p class="snote">Measure in the evening if you can: fingers are a little larger by then, so the size fits more reliably.</p>
+      <ol class="steps">
+        <li>Cut a paper strip about 10 cm long and 1 cm wide.</li>
+        <li>Wrap it around the base of the finger you will wear the ring on.</li>
+        <li>Mark where it overlaps: snug against the skin, not tight.</li>
+        <li>Lay it flat and measure to the mark in millimetres. That is the circumference.</li>
+      </ol>
+      <div class="lab"><label for="circInput">Finger circumference, mm</label></div>
+      <input type="number" id="circInput" class="field" placeholder="e.g. 54" min="30" max="90" step="0.1" inputmode="decimal">
+      <div class="acts"><button type="button" class="ghost" id="fingerBackBtn">&larr; Back</button><button type="button" class="add" id="fingerDoneBtn">Done &rarr;</button></div>
+    </div>
+    <div class="sizer__step" data-step="result" hidden>
+      <div class="rmain"><span class="mm" id="resultMm">17.3 mm</span><div class="lab" style="margin:10px 0 0">Inner diameter</div></div>
+      <div class="rgrid">
+        <div><span>RU</span><b id="resultRu">17.5</b></div>
+        <div><span>EU / ISO</span><b id="resultEu">54</b></div>
+        <div><span>US &asymp;</span><b id="resultUs">7</b></div>
+      </div>
+      <p class="snote" style="text-align:center">The sizes on our product pages are RU sizes. US is approximate.</p>
+      <ul class="tips">
+        <li>If you fall between two sizes, take the larger one.</li>
+        <li>For wide bands (from about 6 mm) add a quarter to half a size: a wide band sits tighter.</li>
+      </ul>
+      <div class="lab"><label for="sendComment">Comment (optional): your name, the piece, wishes</label></div>
+      <textarea id="sendComment" class="field" rows="3" placeholder="e.g. Maria, Drip ring"></textarea>
+      <div class="acts"><button type="button" class="tlink" id="restartBtn">Measure again</button><button type="button" class="add" id="sendResultBtn">Email me the result &nearr;</button></div>
+    </div>
   </div>
+  <details class="chart">
+    <summary>Size chart, for reference</summary>
+    <div class="wrap"><table><thead><tr><th>RU</th><th>EU / ISO</th><th>US</th><th>Diameter, mm</th><th>Circumference, mm</th></tr></thead><tbody id="refChartBody"></tbody></table></div>
+  </details>
 </section>
 
-<!-- RING SIZE GUIDE -->
-<section class="size-guide" id="ring-size">
-  <div class="container">
-    <div class="section-header fade-up" style="margin-bottom:var(--s6)">
-      <div class="section-eyebrow"><span>Sizing Tool</span></div>
-      <h2 class="section-title">Find<br><span class="acid" style="display:inline-block;background:#000;color:#B8FF00;padding:.05em .15em;line-height:1.05">Your Ring Size</span></h2>
-    </div>
-    <p class="t-body fade-up" style="max-width:640px;margin-bottom:var(--s7)">Everything is calculated right in your browser, on your screen — works on a phone, tablet, laptop or desktop. No camera or app needed, and nothing is ever sent anywhere — unless you choose to click "Send" at the end.</p>
-
-    <div class="sizer fade-up" id="sizer">
-
-      <!-- STEP: choose method -->
-      <div class="sizer__step" data-step="method">
-        <div class="sizer__methods">
-          <button type="button" class="sizer__method-card" data-method="ring">
-            <span class="sizer__method-num">01</span>
-            <h3>I have a ring that fits well</h3>
-            <p>The most accurate method. We'll first calibrate your screen against a bank card, then measure the ring right on it.</p>
-          </button>
-          <button type="button" class="sizer__method-card" data-method="finger">
-            <span class="sizer__method-num">02</span>
-            <h3>No ring — measure my finger</h3>
-            <p>Wrap a paper strip around the base of your finger and enter the length in millimeters.</p>
-          </button>
-        </div>
-      </div>
-
-      <!-- STEP: calibrate screen -->
-      <div class="sizer__step" data-step="calibrate" hidden>
-        <p class="sizer__instr">Take a regular bank card (not a SIM card) and hold it upright against the screen, long edge vertical, next to the tall rectangle below — no need to rotate your phone, the rectangle is drawn to fit any screen this way. On a laptop or desktop monitor, just hold the card flat against the screen instead. Move the slider until the rectangle exactly matches the card's width and height — a card is always 85.6 × 54 mm, an international standard shared by every bank.</p>
-        <p class="sizer__note">Calibration is saved for this device and browser — you'll only need to do it once per screen.</p>
-        <div class="calib-stage"><div class="calib-card" id="calibCard"></div></div>
-        <div class="sizer__slider-row">
-          <button type="button" class="nudge-btn" id="calibMinus" aria-label="Decrease">−</button>
-          <input type="range" id="calibSlider" min="40" max="220" value="100" step="0.2" aria-label="Calibration size">
-          <button type="button" class="nudge-btn" id="calibPlus" aria-label="Increase">+</button>
-        </div>
-        <div class="sizer__actions">
-          <button type="button" class="btn btn-outline" id="calibBackBtn">← Back</button>
-          <button type="button" class="btn btn-primary" id="calibDoneBtn">Done, it matches</button>
-        </div>
-      </div>
-
-      <!-- STEP: measure ring on screen -->
-      <div class="sizer__step" data-step="measure-ring" hidden>
-        <p class="sizer__instr">Place the ring on the screen, the side that goes on your finger facing down. Move the slider until the circle exactly matches the ring's INNER edge — not the outer one.</p>
-        <div class="calib-stage"><div class="ring-circle" id="ringCircle"></div></div>
-        <div class="sizer__readout" id="ringReadout">17.0 mm</div>
-        <div class="sizer__slider-row">
-          <button type="button" class="nudge-btn" id="ringMinus" aria-label="Decrease">−</button>
-          <input type="range" id="ringSlider" min="80" max="260" value="170" step="1" aria-label="Ring diameter">
-          <button type="button" class="nudge-btn" id="ringPlus" aria-label="Increase">+</button>
-        </div>
-        <button type="button" class="sizer__link" id="recalibrateBtn" style="display:block;margin:0 auto var(--s3)">Recalibrate screen</button>
-        <div class="sizer__actions">
-          <button type="button" class="btn btn-outline" id="ringBackBtn">← Back</button>
-          <button type="button" class="btn btn-primary" id="ringDoneBtn">Done →</button>
-        </div>
-      </div>
-
-      <!-- STEP: measure finger with paper strip -->
-      <div class="sizer__step" data-step="measure-finger" hidden>
-        <div class="sizer__tip" style="margin-bottom:var(--s5)">Measure in the evening if you can — fingers are slightly larger by evening than in the morning, so an evening measurement fits more reliably.</div>
-        <ol class="size-method__steps" style="margin-bottom:var(--s6)">
-          <li data-n="1">Cut a strip of paper about 10cm long and 1cm wide.</li>
-          <li data-n="2">Wrap it around the base of the finger you'll wear the ring on.</li>
-          <li data-n="3">Mark where it overlaps — snug against the skin, but not tight.</li>
-          <li data-n="4">Lay it flat and measure the distance to the mark in mm — that's your finger's circumference.</li>
-        </ol>
-        <label class="form-label" for="circInput">Finger circumference, mm</label>
-        <input type="number" id="circInput" class="form-input" placeholder="e.g. 54" min="30" max="90" step="0.1" style="width:100%;margin-top:var(--s3)">
-        <div class="sizer__actions">
-          <button type="button" class="btn btn-outline" id="fingerBackBtn">← Back</button>
-          <button type="button" class="btn btn-primary" id="fingerDoneBtn">Done →</button>
-        </div>
-      </div>
-
-      <!-- STEP: result -->
-      <div class="sizer__step" data-step="result" hidden>
-        <div class="sizer__result-main">
-          <span class="sizer__result-mm" id="resultMm">17.3 mm</span>
-          <span class="sizer__result-label">Inner diameter</span>
-        </div>
-        <div class="sizer__result-grid">
-          <div class="sizer__result-stat"><span class="sizer__result-stat-label">RU size</span><span class="sizer__result-stat-value" id="resultRu">17.5</span></div>
-          <div class="sizer__result-stat"><span class="sizer__result-stat-label">EU / ISO</span><span class="sizer__result-stat-value" id="resultEu">54</span></div>
-          <div class="sizer__result-stat"><span class="sizer__result-stat-label">US ≈</span><span class="sizer__result-stat-value" id="resultUs">7</span></div>
-        </div>
-        <p class="sizer__note" style="text-align:center">US is approximate — the US system has no single international standard, so an exact conversion isn't possible.</p>
-
-        <div class="sizer__tips">
-          <div class="sizer__tip">If your result falls between two sizes, round up.</div>
-          <div class="sizer__tip">For wide-band models (from ~6 mm), add a quarter to half a size: a wide band sits objectively tighter than a narrow one at the same inner diameter.</div>
-        </div>
-
-        <div class="sizer__send">
-          <label class="form-label" for="sendComment">Comment (optional) — your name, the ring model, any preferences</label>
-          <textarea id="sendComment" class="form-input" rows="3" placeholder="e.g. Maria, Vein model, narrow band"></textarea>
-          <button type="button" class="btn btn-primary btn-full" id="sendResultBtn">Email me the result ↗</button>
-        </div>
-
-        <div class="sizer__actions" style="justify-content:center;margin-top:var(--s6)">
-          <button type="button" class="sizer__link" id="restartBtn">Measure again</button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Reference chart -->
-    <details class="size-chart-details fade-up">
-      <summary>Size chart — for reference</summary>
-      <div class="size-chart-wrap" style="margin-top:var(--s4)">
-        <table class="size-chart">
-          <thead>
-            <tr>
-              <th>RU</th>
-              <th>EU / ISO</th>
-              <th>US</th>
-              <th>Diameter (mm)</th>
-              <th>Circumference (mm)</th>
-            </tr>
-          </thead>
-          <tbody id="refChartBody"></tbody>
-        </table>
-      </div>
-    </details>
+<aside id="cart" aria-label="Cart"><div class="cpanel">
+  <div class="chead"><span>Cart</span><button type="button" id="cartClose">Close &times;</button></div>
+  <div class="lines" id="lines"></div>
+  <div class="cfoot">
+    <div class="sum"><span>Subtotal</span><span id="subtotal">€0</span></div>
+    <div class="shipnote" id="shipnote"></div>
+    <button class="add" type="button" id="checkout">Checkout</button>
+    <div class="pay" id="pay" hidden><div id="ppButtons"></div></div>
+    <div class="cnote" id="cnote"></div>
   </div>
-</section>
+</div></aside>
+<div class="toast" id="toast" role="status"></div>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer__grid">
-      <div>
-        <div class="footer__brand-logo">
-          <svg viewBox="0 0 1999.98 1216.2" aria-label="THCD">
-            <path d="M988.04,678c1.38-26.68,17.38-83.17,14.86-103.61-.83-6.69-8.83-13.03-11.07-20.27-8.41-27.21-11.87-56.25-27.39-80.88-.82-10.32,15.58-4.77,10.97-18.55-4.6-13.74-66.17-44.85-79.4-64.71-11.82-17.75-4.34-23.9-.02-42-29.82-4.14-46.33,13.95-61.8,36.16l-86.19,75.81v-98c0-13.8,20.63-36.11,15.77-67.78-14.32-93.48,4.43-171.24,58.34-250.1,3.69-5.4,7.86-7.73,5.87-16.09-8.69-1.08-15.6,3.36-22.77,7.19-51.44,27.52-77.73,86.12-124.15,120.92-19.12,14.34-50.77,20.87-74.1,14.9-11.63-2.98-34.49-23.08-48.89-23.35-12.42-.23-51.42,20.58-73.2,23.16-16.95,2.01-30.09-2.48-42.37-1.58-30.46,2.23-49.39,16.52-86.76,8.99-13.16-2.65-43.81-20.83-50.36-21.49-8.11-.82-14.55,9.34-23.57,11.07-66.51,12.7-180.1-30.87-235.92-67.72-16.48-10.88-26.34-29.98-45.9-28.06,17.18,44.01,41.74,78.21,80.36,105.6,8.22,5.83,44.33,23.93,45.7,26.3,3.88,6.71.09,16.31,5.69,26.31,12.89,23.01,63.06,55.89,79.77,88.23,10.77,20.85.03,65.38,32.46,65.51,2.33-26.02-9.42-49.45-1.32-75.33,8.41-26.88,63.69-36.27,88.77-32.1l18.57,83.36c8.53.24,2.91-37.83,17.96-39.92-7.63,65.4,11.92,130.8.02,196.02-18.07,4.15-10.8-10.81-19.94-16-4.21,22.7,3.19,47.46-.3,69.72-2.26,14.4-14.4,22.19-16.06,36.18.8,8.6,12.11,10.54,17.26,19.14,20.79,34.73,21.75,173.32,7.22,209.09-16.3,40.15-32.55,26.81-6.23,77.92,54.66,106.13,44.91,115.07,57.95,230.05,1.9,16.73,13.73,33.5,8.16,53.86,7.76-4.06,10.69-26.12,11.46-34.47,4.8-51.63,4.69-64.52,21.35-114.65,8.52-25.63,7.12-26.56,11.65-52.35,8.8-50.2,20.96-108.37,67.51-136.61,1.28-5.19-13.03-16-16.83-23.07-39.83-74.16-28.51-161.13-27.36-240.66.32-22.34-1.24-46.17.22-68.12,1.6-23.97,13.02-59.36,12.32-80.07-.57-16.69-10.06-23.27-12.12-36.21-3.03-19.06-2.19-93.95,6.06-109.45,2.36-4.43,24.4-26.32,28.57-27.57,12.26-3.67,21.05,3.49,31.13,3.27,17.7-.39,27.05-8.72,48.3-.3,10.7,4.24,37.61,31.95,41.4,42.57,13.54,37.98-15.44,45.27-15.44,63.71,0,7.87,12.36,25.06,14.81,36.95,8.09,39.24,7.37,125.21,4.89,167.03-1.4,23.56-12.99,60.62-12.32,80.09.54,15.78,9.98,25.78,12.01,40.3,6.23,44.47-9.12,126.11-28.06,167.24-8.16,17.72-25.68,31.3-27.59,54.37,28.71-10.31,59.76.13,67.07,30.97,1.79,7.54-.68,16.42.89,22.2.88,3.23,9.15,5.48,13.01,11.81,16.96,27.84,15.48,93.37,23.06,127.06,34.12-32.95,6.47-73.14,24.85-113.11,6.49-14.1,22.97-25.5,25.42-34.72,2.34-8.81-4.61-20.66-.41-36.3,5.68-21.16,25.95-30.75,42.08-42.11-14.34-21.77-35.56-66.3-36.21-91.93-.34-13.52,8.3-20.72,8.43-31.74.15-13.03-10.79-30.84-12.36-47.92-3.23-35.04,9.24-58.11,10.65-88.84,1.06-23.08-5.38-53.54-4.92-77.41,28.58-40.79,54.75-81.89,102.58-34.06,32.35,32.35,10.02,57.67,16.8,91.41,2.63,13.09,13.99,11.82,17.35,22.42,11.17,35.17-2.72,60.14-2.62,90.32.05,12.94,4.94,24.25,4.3,39.88-.82,19.82-12,46.24-12.17,64.39-.14,15.25,13.9,27.98,14.69,48.36,1.47,37.52-13.7,140.1-24.69,177.16-11.34,38.25-49.19,98.81-79.91,124.09-13.9,11.44-39.4,16.3-37.88,36.08,2.16,2.23,41.94-10.67,48.23-13.73,86.27-41.95,96.74-83.6,148.34-155.66,6.92-9.67,15.66-9.57,22.96-25.04,17.38-36.83,15.93-94.72,25.36-134.64,3.5-14.82,18.67-24.86,19.36-40.96.52-12.09-6.06-21.13-7.96-32.25-7.78-45.58-18.75-87.87-16.27-135.65Z"/>
-            <path d="M1296.02,643.94c8.18,1.07,13.34-6.71,17.72-12.24,19.33-24.44,34.91-57.38,52.54-83.46,11.38-16.85,44.93-44.82,41.84-66.06-.94-6.46-29.61-35.97-36.26-40.08-14.86-9.18-25.65-7.27-41.96-22.04-11.22-10.16-86.54-115.57-101.88-100.08-.58,12.19,5.8,18.75,1,30.73-28.01,69.96-138.22,123.63-209.03,137.29,1.29,23.37,31.96,31.99,38.12,55.85,3.58,13.87,8.62,60.94,10.03,77.97,3.72,44.96-7.96,128.84-18.85,173.43-4.39,17.98-21.34,47.31-16.74,62.09,3.79,12.18,25.76-2.66,41.14,2.6,22.77,7.8,23.76,22.88,36.11,36.21,10.43,11.26,29.64,16.1,37.67,30.33,7.14,12.65,11.01,57.65,18.59,61.43,7.39,3.68,7.72-15.69,18.91-21.02,23.99-11.41,38.54,29.94,44.92,49.17,6.34,19.11,3.76,40.52,16.17,55.87,11.85,2.89,19.3-50.6,23.06-60.86,2.98-8.11,57.53-91.4,62.66-96.29,4.35-4.14,11.18-3.5,14.25-6.64,44.69-45.73,73.28-124.9,56.86-189.09-3.07-12.02-6.48-30.34-22.87-27.09-1.47,16.94,2.46,36.6-.93,53.07-2.97,14.41-58.71,86.42-71.44,96.56-45.7,36.4-46.2,12.82-75.5-15.8-6.62-6.46-16.2-7.94-21.96-14.04-43.56-46.13-50.7-164.5-46.14-225.76,1.58-21.19,4.82-58.41,23.91-70.05l1.95,24.09,14.07,3.89c2.99-15.83-1.95-80.25,20.18-74.46,24.1,6.32,20.87,41.77,24.32,45.98,5.25,6.41,38.8,2.15,53.45,40.56,15.79,41.4-7.73,49.57-5.91,87.91Z"/>
-            <path d="M1969.89,1068.07c-53.28-50.91-118.58-129.74-140.79-199.21-11.25-35.21-6.92-46.08-1.51-79.29,1.78-10.91-2.23-23.12,2.47-33.53,4.72-10.44,36.95-29.82,37.9-34.15,2.23-10.2-17.88-12.19-23.64-16.25-45.74-32.26-23.61-75.32-24.02-119.73-.5-53.93-5.87-106.83-4.66-159.95.68-29.68,1.56-135.22,9.41-154.92,4.98-12.51,15.43-12.94,15.32-33.09-.07-12.68-6.74-18.52-8.15-28.18-7.1-48.55,32.27-127.45,62.1-165.46,12.44-15.85,30.23-27.53,41.66-44.29-26.27,3.57-74.63,33.72-93.98,51.98-30.99,29.24-53.01,82.46-80.02,115.9-10.96-9.18-10.7-22.72-10.02-35.9-3.99-4.77-19.01,12.3-20.96,17-7.09,17.01-25.01,100.98-26.98,121.02-4.49,45.58,12.68,90.98,7.65,135.64-2.05,18.15-14.46,32.45-3.72,54.32-58-41.12-93.05-113.46-162.12-136.18-41.16,7.16,10.62,13.65.3,52.29-7.56,28.3-43.17,69.19-50.08,101.93-6.73,9.15-10.83,10.27-21.67,6.74l-4.41,3.06c-10.94,21.36-6.04,58.21-14.96,77.19-6.93,14.74-25.65,18.87-30.74,49.26-4.67,27.85,6.1,17.93,15.25,32.19,17.52,27.3,26.96,136.28,14.47,165.53-6.04,14.14-25.24,23.29-24.99,37.44.34,19.38,51.76,18.71,63.2,33.42,13.78,17.72,11.52,62.8,19.84,85.13,5.71-.6,6.89-17.67,7.48-22.46,1.95-15.98-3.82-33.56,10.48-45.44,12.8-.15,30.63,53.59,36.01,59.91,3.98,4.68,17.49,5.08,25.85,10.15,27.19,16.48,36.1,39.55,46.07,65.93,4.45,11.77,10.2,18.87,15.89,3.88,3.84-10.12,4.33-21.99,8.27-31.87,13.97-35.03,38.54-59.37,65.87-84.08,4.28,40.42,26.37,29.74,50.88,43.16,31.18,17.08,44.27,64.18,51.86,69.1,15.52,10.06,25.06-3.87,33.59-2.42,10.15,1.72,64.4,41.55,82.21,49.66,7.27,3.31,50.55,19.2,53.49,16.47-1.74-15.47-20.09-22.32-30.09-31.87ZM1699.84,738.15c1.58,19.19,12.46,37.13,12.28,55.65-.05,5.47-4.65,38.65-6.18,42.11-3.96,8.97-37.43,32.6-47.59,32.12-28.12-1.31-50.87-55.88-54.41-80.06-15.46-4.05-1.9,15.02-11.89,15.96-8.94-19-20-40.27-20.36-61.99-.28-16.62,9.53-26.67,8.28-39.57-1.32-13.68-14.89-23.76-18.18-34.22-13.56-43.1,9.43-63.36,12-104.4l38.12-78c6.1-3.64,22.34,15.06,29.24,19.04,8.1,4.68,25.81,8.3,29.87,12.15,4.26,4.05,39.47,80.95,40.73,89.25,7.17,47.42-15.53,87.97-11.91,131.94Z"/>
-          </svg>
-        </div>
-        <p class="footer__desc">Dark jewelry. Sterling silver. Small-batch numbered editions. From inner symbol to form.</p>
-      </div>
-      <div>
-        <p class="footer__col-title">Shop</p>
-        <ul class="footer__links">
-          <li><a href="#shop" class="footer__link">All Pieces</a></li>
-          <li><a href="shop.html?cat=rings#shop" class="footer__link">Rings</a></li>
-          <li><a href="shop.html?cat=pendants#shop" class="footer__link">Pendants</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer__col-title">Info</p>
-        <ul class="footer__links">
-          <li><a href="#craft" class="footer__link">The Craft</a></li>
-          <li><a href="#ring-size" class="footer__link">Ring Size Guide</a></li>
-          <li><a href="cart.html" class="footer__link">Cart</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer__col-title">Shipping</p>
-        <ul class="footer__links">
-          <li class="footer__link" style="cursor:default">Worldwide — €10</li>
-          <li class="footer__link" style="cursor:default">Sakartvelo — free</li>
-          <li class="footer__link" style="cursor:default;margin-top:var(--s3);color:var(--text-dim)">Write me directly to order</li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer__col-title">Contact</p>
-        <ul class="footer__links">
-          <li><a href="mailto:marina.marbl@gmail.com" class="footer__link">marina.marbl@gmail.com</a></li>
-          <li><a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener" class="footer__link">Instagram ↗</a></li>
-        </ul>
-        <div style="margin-top:var(--s6)">
-          <span class="tag tag-silver">925 Sterling</span>
-        </div>
-      </div>
-    </div>
-    <div class="footer__bottom">
-      <p class="footer__copy">© 2026 THCD — All rights reserved</p>
-      <p class="footer__hallmark">Edition 001 — Handcrafted</p>
-    </div>
-  </div>
-</footer>
-
-<div class="toast-container" id="toastContainer"></div>
-
-<script src="js/products.js"></script>
-<script src="js/cart.js"></script>
-<script src="js/ring-size.js"></script>
+<script src="data/catalog.js"></script>
 <script>
-let currentCat = 'all';
-const urlCat = new URLSearchParams(location.search).get('cat');
-if (urlCat) currentCat = urlCat;
+(()=>{
+/* ---------- catalogue (prices are placeholders) ---------- */
+const CAT=window.THCD_CATALOG;
+const P=CAT.products.slice();
+// 4 x 3 board: real pieces sit in the middle row
+// board order: categories interleaved so the full board reads as one mixed cloud
+const ORDER=['quartz','glitter','drip','branch','xeno','double','figure','innerhome','smoky','drop','stump','rain','slay2','innerhome2','slay1'].filter(id=>P.some(p=>p.id===id));
+P.forEach(p=>{if(!ORDER.includes(p.id))ORDER.push(p.id)});
+const COLS=4, ROWS=3;
+const byId=id=>P.find(p=>p.id===id);
+const money=v=>'€'+v.toLocaleString('en-US');
 
-function renderCard(product) {
-  const img = getImagePath(product.id, product.images[0]);
-  const matTag = product.materialTag === 'gold'
-    ? `<span class="tag tag-gold">Gold Vermeil</span>`
-    : `<span class="tag tag-silver">Sterling Silver</span>`;
-  const stockTag = product.inStock
-    ? `<span class="tag tag-acid">In Stock</span>`
-    : `<span class="tag tag-dim">Sold Out</span>`;
-  return `
-    <article class="product-card fade-up" onclick="location.href='product.html?id=${product.id}'">
-      <div class="product-card__image">
-        <img src="${img}" alt="${product.name}" loading="lazy"/>
-        <div class="product-card__status">${stockTag}</div>
-      </div>
-      <div class="product-card__body">
-        ${matTag}
-        <h3 class="t-card">${product.name}</h3>
-        <p class="product-card__edition">${product.edition}</p>
-      </div>
-      <div class="product-card__footer">
-        <span class="t-price">€${product.price}</span>
-        <button class="btn btn-dark btn-sm" onclick="event.stopPropagation();handleAddToCart(${product.id},null,this)" ${!product.inStock ? 'disabled' : ''}>
-          ${product.inStock ? 'Add ↗' : 'Sold Out'}
-        </button>
-      </div>
-    </article>`;
+/* ---------- film ---------- */
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+document.body.classList.add('preloading');
+const sc=document.getElementById('scroller'); sc.scrollTop=0;
+const plBar=document.getElementById('plBar'), plPct=document.getElementById('plPct'), preload=document.getElementById('preload');
+const N=169, DUR=14.04, FILM=0.95;
+const cv=document.getElementById('film'), cx=cv.getContext('2d');
+const track=document.getElementById('track'), loadingEl=document.getElementById('loading');
+const tc=document.getElementById('tc'), ch=document.getElementById('ch'), bar=document.getElementById('bar'), hint=document.getElementById('hint');
+const chapters=[[0,'signal'],[5,'face'],[8,'lichen'],[11,'pollination']];
+const ticks=document.querySelector('.ticks');
+chapters.slice(1).forEach(([t])=>{const s=document.createElement('span');s.style.left=(t/DUR*100)+'%';ticks.appendChild(s)});
+const bmp=new Array(N); let ready=0;
+const src=i=>'frames/f'+String(i+1).padStart(3,'0')+'.webp';
+async function loadFrame(i){
+  try{const r=await fetch(src(i)); bmp[i]=await createImageBitmap(await r.blob());}
+  catch(e){await new Promise(res=>{const im=new Image();im.onload=()=>{bmp[i]=im;res()};im.onerror=res;im.src=src(i)})}
+  ready++; const pc=Math.round(ready/N*100); plBar.style.width=pc+'%'; plPct.textContent=pc+'%';
+  if(ready>=N) filmReady();
+  kick();
 }
-
-// Scroll reveal
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 60); observer.unobserve(e.target); }
-  });
-}, { threshold: 0.08 });
-
-function renderGrid() {
-  const filtered = currentCat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category === currentCat);
-  const grid = document.getElementById('shopGrid');
-  grid.innerHTML = filtered.map(renderCard).join('');
-  document.getElementById('shopMeta').textContent = `Showing ${filtered.length} piece${filtered.length !== 1 ? 's' : ''}`;
-  document.querySelectorAll('#shopGrid .fade-up').forEach(el => observer.observe(el));
+(async()=>{await loadFrame(0); const order=[]; for(const s of [32,16,8,4,2,1]) for(let i=0;i<N;i+=s) if(i&&!order.includes(i)) order.push(i);
+  let k=0; await Promise.all(Array.from({length:6},async()=>{while(k<order.length) await loadFrame(order[k++])}))})();
+let W=0,H=0;
+function size(){const d=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=Math.round(W*d);cv.height=Math.round(H*d);cx.setTransform(d,0,0,d,0,0);kick()}
+function near(i){for(let k=0;k<N;k++){if(bmp[i-k])return bmp[i-k]; if(bmp[i+k])return bmp[i+k]}return null}
+function blit(f,a){const s=Math.max(W/f.width,H/f.height),w=f.width*s,h=f.height*s;cx.globalAlpha=a;cx.drawImage(f,(W-w)/2,(H-h)/2,w,h)}
+function drawAt(pos){const i=Math.floor(pos),t=pos-i,a=near(i); if(!a)return; blit(a,1); const b=bmp[Math.min(N-1,i+1)]; if(b&&t>0.02) blit(b,t); cx.globalAlpha=1}
+let target=0,shown=0,raf=0;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function progress(){const total=track.offsetHeight-sc.clientHeight;return Math.min(1,Math.max(0,sc.scrollTop/total))}
+function filmReady(){if(!document.body.classList.contains('preloading'))return; sc.scrollTop=0; target=0;
+  document.body.classList.remove('preloading'); preload.classList.add('done'); kick()}
+function kick(){if(!raf)raf=requestAnimationFrame(loop)}
+function loop(){raf=0;
+  const now=performance.now(), dt=Math.min(64,now-(loop.t||now)); loop.t=now;
+  const d=target-shown; shown+=reduce?d:d*(1-Math.exp(-dt/220)); if(Math.abs(d)<0.0002) shown=target;
+  const pf=Math.min(1,shown/FILM); drawAt(pf*(N-1));
+  const t=pf*DUR; tc.textContent='00:'+String(Math.floor(t)).padStart(2,'0');
+  let name=chapters[0][1]; for(const [s,n] of chapters) if(t>=s) name=n;
+  ch.innerHTML='<b>●</b> '+name; bar.style.width=(pf*100)+'%';
+  hint.style.opacity=target<0.01?1:0;
+  setArrived(target>=FILM*0.93);
+  if(shown!==target) kick();
 }
+sc.addEventListener('scroll',()=>{target=progress();kick()},{passive:true});
 
-function handleAddToCart(id, size, btn) {
-  const product = getProductById(id);
-  if (!product) return;
-  if (product.sizes && product.sizes.length > 0 && !size) {
-    location.href = `product.html?id=${id}`;
-    return;
-  }
-  if (addToCart(id, size)) {
-    showToast(`${product.name} — Added to cart`);
-    btn && btn.classList.add('add-success');
-    setTimeout(() => btn && btn.classList.remove('add-success'), 400);
-  }
-}
-
-function showToast(msg) {
-  const c = document.getElementById('toastContainer');
-  const t = document.createElement('div');
-  t.className = 'toast'; t.textContent = msg;
-  c.appendChild(t);
-  requestAnimationFrame(() => t.classList.add('show'));
-  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
-}
-
-// Filter buttons
-document.getElementById('filterBar').addEventListener('click', e => {
-  const btn = e.target.closest('.filter-btn');
-  if (!btn) return;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentCat = btn.dataset.cat;
-  renderGrid();
+/* ---------- cloud of pieces ---------- */
+const board=document.getElementById('board'), web=document.getElementById('web'), wx=web.getContext('2d');
+// hand-placed cloud: centre (x,y as share of the free area) and size; the real pieces are larger and sit in the middle
+const nodes=[];
+ORDER.forEach((id,k)=>{const p=byId(id);
+  const el=document.createElement('article'); el.className='tile real'; el.dataset.id=id;
+  el.innerHTML='<div class="tb"><span>'+p.code+'.'+p.id+'</span><span class="dots"><i></i><i></i><i></i></span></div>'+
+    '<div class="view"><img class="line" src="img/'+p.id+'_line.webp" alt="Line drawing of the '+p.name.toLowerCase()+'"><img class="photo" src="img/'+p.id+'_photo.webp" alt="'+p.name+' in sterling silver"></div>'+
+    '<div class="meta"><h3>'+p.name+'</h3><span>'+money(p.price)+'</span></div>';
+  el.style.zIndex=5; board.appendChild(el);
+  let h=0; for(const c of id) h=(h*31+c.charCodeAt(0))>>>0;   // stable per-piece jitter
+  nodes.push({el,id,k,type:p.type,s:1,jx:((h%1000)/1000-.5),jy:(((h>>10)%1000)/1000-.5),bx:0,by:0,dx:0,dy:0,rise:1,o:0,hv:0,ph:Math.random()*6.28,ph2:Math.random()*6.28,sp:.6+Math.random()*.5,nb:[]});
 });
-if (urlCat) {
-  const btn = document.querySelector(`[data-cat="${urlCat}"]`);
-  if (btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
+let act=nodes.slice();   // pieces shown on the board for the chosen category
+let cat='all';
+let tw=180,th=280,arrived=false,armT=0;
+const mouse={x:-1e4,y:-1e4,in:false};
+function layout(){const vw=innerWidth,vh=innerHeight,narrow=vw<760;
+  const top=narrow?96:118, bottom=narrow?92:96, left=narrow?10:Math.max(24,vw*.03);
+  const aw=vw-2*left, ah=vh-top-bottom, n=act.length;
+  let cols=narrow?(n<=4?2:3):Math.max(2,Math.min(6,Math.ceil(Math.sqrt(n*aw/ah*.62))));
+  cols=Math.min(cols,n); const rows=Math.ceil(n/cols);
+  const cw=aw/cols, ch=ah/rows;
+  tw=Math.max(80,Math.min(narrow?cw*1.02:cw*1.12, ch*1.32-78, ah-90, narrow?170:250));
+  document.documentElement.style.setProperty('--tw',tw+'px');
+  th=Math.max(act[0]?act[0].el.offsetHeight:0,tw+78);
+  act.forEach((nd,i)=>{const r=Math.floor(i/cols), c=i%cols, inRow=Math.min(cols,n-r*cols);
+    const off=(cols-inRow)*cw/2;                       // centre a short last row
+    const w=tw,h=th;
+    let x=left+off+c*cw+cw/2-w/2+nd.jx*cw*.34, y=top+r*ch+ch/2-h/2+nd.jy*ch*.26+(c%2?ch*.08:-ch*.06);
+    nd.bx=Math.min(Math.max(left,x),vw-left-w); nd.by=Math.min(Math.max(top,y),vh-bottom-h); nd.w=w; nd.h=h;
+    nd.el.style.setProperty('--s',1);});
+  act.forEach(n=>{n.nb=act.filter(m=>m!==n).map(m=>[m,Math.hypot(m.bx+m.w/2-n.bx-n.w/2,m.by+m.h/2-n.by-n.h/2)]).sort((a,b)=>a[1]-b[1]).slice(0,3).map(a=>a[0])});
+  const d=Math.min(devicePixelRatio||1,2); web.width=vw*d; web.height=vh*d; wx.setTransform(d,0,0,d,0,0);
 }
-renderGrid();
+const links=()=>{const L=[],seen=new Set();for(const n of act)for(const m of n.nb){const key=Math.min(n.k,m.k)+'-'+Math.max(n.k,m.k);if(!seen.has(key)){seen.add(key);L.push([n,m])}}return L};
+let LINKS=[];
+function setArrived(v){if(v===arrived)return; arrived=v; document.body.classList.toggle('arrived',v);
+  if(v){layout(); LINKS=links(); armT=performance.now(); act.forEach(n=>{n.rise=1;n.o=0;n.dx=n.dy=0})}
+  cloudKick();
+}
+const narrowNow=()=>innerWidth<760;
+function setCat(c){
+  if(c==='all'&&narrowNow()) c='Ring';
+  cat=c; act=nodes.filter(n=>c==='all'||n.type===c);
+  nodes.forEach(n=>{const on=act.includes(n); n.el.hidden=!on; if(!on){n.o=0}});
+  document.querySelectorAll('.cats button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.cat===cat));
+  act.forEach((n,i)=>{n.k=i});
+  if(arrived){layout(); LINKS=links(); armT=performance.now(); act.forEach(n=>{n.rise=1;n.o=0;n.dx=n.dy=0}); cloudKick()}
+}
+let craf=0; function cloudKick(){if(!craf)craf=requestAnimationFrame(step)}
+const ease=t=>1-Math.pow(1-t,3);
+let held=null;
+function step(){craf=0; const now=performance.now(), T=now/1000;
+  // 1) own pull: cursor nearby, or the held piece following the hand
+  for(const n of act){let tx=0,ty=0; const cx=n.bx+n.w/2, cy=n.by+n.h/2;
+    if(held&&held.n===n){tx=mouse.x-held.ox-n.bx; ty=mouse.y-held.oy-n.by}
+    else if(mouse.in&&arrived&&!held&&hover!==n){const ddx=mouse.x-cx, ddy=mouse.y-cy, R=tw*1.7, f=Math.exp(-(ddx*ddx+ddy*ddy)/(2*R*R))*.2; tx=ddx*f; ty=ddy*f;
+      const m=Math.hypot(tx,ty); if(m>48){tx*=48/m;ty*=48/m}}
+    n.ptx=tx; n.pty=ty}
+  // 2) neighbours are dragged along a little, so the cloud stretches like a net
+  for(const n of act){let ax=0,ay=0; for(const m of n.nb){ax+=m.ptx;ay+=m.pty} const k=held&&held.n!==n?.3:.22, nl=Math.max(1,n.nb.length);
+    n.tx=n.ptx+k*ax/nl; n.ty=n.pty+k*ay/nl}
+  for(const n of act){
+    const delay=n.k*35, t=(now-armT-delay)/850;
+    if(arrived){const e=t<0?0:t>1?1:ease(t); n.rise=1-e; n.o=e}
+    else{n.rise+=(1-n.rise)*.15; n.o+=(0-n.o)*.2}
+    const L=held&&held.n===n?.25:.05;              // slow, heavy follow: no jitter
+    n.dx+=(n.tx-n.dx)*L; n.dy+=(n.ty-n.dy)*L;
+    const fx=Math.sin(T*.5*n.sp+n.ph)*4, fy=Math.cos(T*.4*n.sp+n.ph2)*5;   // slow breathing drift
+    n.x=n.bx+n.dx+fx; n.y=n.by+n.dy+fy+n.rise*innerHeight*.75;
+    // hover: the piece floats forward and grows from its centre
+    const hvT=(hover===n||(held&&held.n===n))?1:0; n.hv+=(hvT-n.hv)*.12;
+    const sc=n.s*(1+.18*n.hv), gx=-n.w*.09*n.hv, gy=-n.h*.09*n.hv-10*n.hv;
+    n.el.style.transform='translate3d('+(n.x+gx).toFixed(1)+'px,'+(n.y+gy).toFixed(1)+'px,0) scale('+sc.toFixed(4)+')';
+    n.el.style.boxShadow='0 '+(24+40*n.hv).toFixed(0)+'px '+(60+60*n.hv).toFixed(0)+'px rgba(0,0,0,'+(.35+.3*n.hv).toFixed(2)+')';
+    n.el.style.opacity=n.o.toFixed(3);
+  }
+  drawWeb();
+  if(arrived||act.some(n=>n.o>.01)) cloudKick();
+}
+function drawWeb(){wx.clearRect(0,0,innerWidth,innerHeight); if(!arrived)return;
+  wx.lineWidth=1;
+  for(const [n,m] of LINKS){const a=Math.min(n.o,m.o); if(a<.02)continue;
+    wx.strokeStyle='rgba(20,22,24,'+(.45*a).toFixed(3)+')';
+    const ax=n.x+n.w/2, ay=n.y+n.h/2, bx=m.x+m.w/2, by=m.y+m.h/2, sag=Math.min(22,Math.hypot(bx-ax,by-ay)*.05);
+    wx.beginPath(); wx.moveTo(ax,ay); wx.quadraticCurveTo((ax+bx)/2,(ay+by)/2+sag,bx,by); wx.stroke()}
+  for(const n of act){if(n.o<.02)continue; wx.fillStyle='rgba(230,30,156,'+(.95*n.o).toFixed(3)+')'; wx.beginPath(); wx.arc(n.x+n.w/2,n.y-7,2.4,0,Math.PI*2); wx.fill()}
+}
+board.addEventListener('pointermove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;mouse.in=true; if(held) held.moved=Math.max(held.moved,Math.hypot(e.clientX-held.sx,e.clientY-held.sy))});
+board.addEventListener('pointerleave',()=>{mouse.in=false; setHover(null)});
+let hover=null;
+function setHover(n){if(hover===n)return; if(hover&&!(held&&held.n===hover)) hover.el.style.zIndex=5; hover=n; if(n) n.el.style.zIndex=10}
+board.addEventListener('pointerover',e=>{const t=e.target.closest('.tile'); setHover(t?nodes.find(q=>q.el===t):null)});
+board.addEventListener('pointerdown',e=>{if(!arrived)return; const t=e.target.closest('.tile'); if(!t)return;
+  try{board.setPointerCapture(e.pointerId)}catch(_){}
+  const n=nodes.find(q=>q.el===t); mouse.x=e.clientX; mouse.y=e.clientY; mouse.in=true;
+  held={n,ox:e.clientX-n.bx-n.dx,oy:e.clientY-n.by-n.dy,sx:e.clientX,sy:e.clientY,moved:0}; board.classList.add('grabbing'); t.style.zIndex=9});
+function release(){board.classList.remove('grabbing'); const h=held; held=null; if(!h)return;
+  h.n.el.style.zIndex=5; if(h.moved<6) openProduct(h.n.id)}
+board.addEventListener('pointerup',release); board.addEventListener('pointercancel',release);
+addEventListener('resize',()=>{size(); if(cat==='all'&&narrowNow()) setCat('Ring'); else if(arrived){layout(); LINKS=links()}});
 
-document.getElementById('hamburger')?.addEventListener('click', () => document.getElementById('mobileNav').classList.add('open'));
-document.getElementById('mobileClose')?.addEventListener('click', () => document.getElementById('mobileNav').classList.remove('open'));
+/* ---------- cart ---------- */
+const KEY='thcd-cart';
+let cart=[]; try{cart=JSON.parse(localStorage.getItem(KEY)||'[]')||[]}catch(e){cart=[]}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(cart))}catch(e){}};
+const cartCount=document.getElementById('cartCount'), lines=document.getElementById('lines'), subtotal=document.getElementById('subtotal'), cnote=document.getElementById('cnote');
+function renderCart(){
+  cartCount.textContent=cart.reduce((s,l)=>s+l.q,0);
+  if(!cart.length){lines.innerHTML='<div class="cempty">Your cart is empty.<br>Pick a piece on the board.</div>'}
+  else lines.innerHTML=cart.map((l,i)=>{const p=byId(l.id); return '<div class="line-item"><img src="img/'+p.id+'_photo.webp" alt="">'+
+    '<div><h4>'+p.name+'</h4><small>'+(l.size?'Size '+l.size:'Single')+'</small><div class="mini"><button type="button" data-i="'+i+'" data-d="-1" aria-label="One less">&minus;</button><span>'+l.q+'</span><button type="button" data-i="'+i+'" data-d="1" aria-label="One more">+</button></div>'+
+    '<div><button class="rm" type="button" data-rm="'+i+'">Remove</button></div></div><div class="amt">'+money(p.price*l.q)+'</div></div>'}).join('');
+  subtotal.textContent=money(cart.reduce((s,l)=>s+byId(l.id).price*l.q,0));
+  cnote.textContent='';
+  const pe=document.getElementById('pay'); if(pe&&!pe.hidden){pe.hidden=true; document.getElementById('checkout').hidden=false}
+}
+lines.addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return;
+  if(b.dataset.rm!==undefined){cart.splice(+b.dataset.rm,1)}
+  else{const l=cart[+b.dataset.i]; l.q=Math.max(1,l.q+(+b.dataset.d))}
+  save(); renderCart()});
+function addToCart(id,size,q){const l=cart.find(x=>x.id===id&&x.size===size); if(l) l.q+=q; else cart.push({id,size,q}); save(); renderCart(); toast('Added to cart')}
+const openCart=()=>{document.body.classList.add('cart-open')}, closeCart=()=>document.body.classList.remove('cart-open');
+document.getElementById('cartBtn').onclick=openCart; document.getElementById('cartClose').onclick=closeCart; document.getElementById('cart').addEventListener('click',e=>{if(e.target.id==='cart')closeCart()});
+let tt; window.showToast=t=>toast(t); function toast(t){const el=document.getElementById('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(tt); tt=setTimeout(()=>el.classList.remove('on'),1600)}
+renderCart();
 
-document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+/* ---------- product page ---------- */
+const prod=document.getElementById('product');
+function openProduct(id){
+  const p=byId(id), seq=(act.some(n=>n.id===id)?act:nodes).map(n=>n.id), i=seq.indexOf(id), prev=seq[(i+seq.length-1)%seq.length], next=seq[(i+1)%seq.length];
+  let size=null, q=1, view='photo';
+  const shots=[['photo','img/'+p.id+'_photo.webp','img/'+p.id+'_photo.webp',p.name+' in sterling silver'],['line','img/'+p.id+'_line.webp','img/'+p.id+'_line.webp','Line drawing of the '+p.name.toLowerCase()]];
+  for(let i=1;i<=(p.gallery||0);i++) shots.push(['g'+i,'img/items/'+p.id+'/g'+i+'.webp','img/items/'+p.id+'/g'+i+'-t.webp',p.name+', photo '+i]);
+  const gal=p.real?'<div class="thumbs">'+shots.map((x,i)=>'<button type="button" data-v="'+x[0]+'" aria-pressed="'+(i===0)+'"><img src="'+x[2]+'" alt="" loading="lazy"></button>').join('')+'</div>'+
+    '<div class="big"><img id="bigImg" src="img/'+p.id+'_photo.webp" alt="'+p.name+' in sterling silver"></div>'
+    :'<div></div><div class="big"><div class="empty">In the<br>workshop</div></div>';
+  prod.innerHTML='<div class="crumbs"><button type="button" id="pBack">&larr; Board</button><span class="nav"><button type="button" id="pPrev">Prev</button><button type="button" id="pNext">Next</button></span></div>'+
+   '<div class="pgrid"><div class="gallery">'+gal+'</div><div class="info">'+
+   '<div class="code">'+p.code+(p.type?' &middot; '+p.type:'')+'</div><h2>'+p.name+'</h2>'+
+   '<div class="price">'+(p.price?money(p.price):'&mdash;')+'</div><p>'+p.text+'</p>'+
+   (p.sizes?'<div class="opt"><div class="lab"><span>Size (RU)</span><button type="button" class="tlink" id="findSize">Find my size</button></div><div class="chips" id="sizes">'+p.sizes.map(s=>'<button type="button" aria-pressed="false" data-s="'+s+'">'+s+'</button>').join('')+'</div></div>':'')+
+   (p.real?'<div class="opt"><div class="lab">Quantity</div><div class="qty"><button type="button" id="qm" aria-label="One less">&minus;</button><output id="qv">1</output><button type="button" id="qp" aria-label="One more">+</button></div></div>':'')+
+   '<div class="buy"><button class="add" type="button" id="addBtn"'+(p.real?'':' disabled')+'>'+(p.real?'Add to cart &middot; '+money(p.price):'Not available yet')+'</button></div>'+
+   '<div class="warn" id="warn"></div>'+
+   (p.real?'<dl class="specs"><dt>Metal</dt><dd>Sterling silver 925</dd><dt>Made</dt><dd>Cast and finished by hand in Tbilisi</dd><dt>Ships</dt><dd>Made to order, 2&ndash;3 weeks</dd></dl>':'')+
+   '</div></div>';
+  prod.hidden=false; prod.scrollTop=0; sc.style.overflow='hidden';
+  prod.querySelectorAll('.thumbs button').forEach(b=>b.onclick=()=>{view=b.dataset.v; prod.querySelectorAll('.thumbs button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    const sh=shots.find(x=>x[0]===view); const img=document.getElementById('bigImg'); img.src=sh[1]; img.alt=sh[3]});
+  const sz=document.getElementById('sizes'); if(sz) sz.onclick=e=>{const b=e.target.closest('button'); if(!b)return; size=b.dataset.s;
+    sz.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b)); document.getElementById('warn').textContent=''};
+  const qv=document.getElementById('qv');
+  if(qv){document.getElementById('qm').onclick=()=>{q=Math.max(1,q-1);qv.textContent=q};document.getElementById('qp').onclick=()=>{q=Math.min(9,q+1);qv.textContent=q}}
+  document.getElementById('addBtn').onclick=()=>{if(!p.real)return; if(p.sizes&&!size){document.getElementById('warn').textContent='Choose a size first';return} addToCart(p.id,size,q)};
+  const fs=document.getElementById('findSize'); if(fs) fs.onclick=()=>{pageFrom=id; openPage('sizer')};
+  document.getElementById('pBack').onclick=closeProduct;
+  document.getElementById('pPrev').onclick=()=>openProduct(prev);
+  document.getElementById('pNext').onclick=()=>openProduct(next);
+}
+function closeProduct(){prod.hidden=true; sc.style.overflow=''}
+addEventListener('keydown',e=>{if(e.key!=='Escape')return; if(document.body.classList.contains('cart-open'))closeCart(); else if(!lb.hidden)closeLb(); else if(!prod.hidden)closeProduct(); else closePages()});
 
-// responsive craft layout
-if (window.innerWidth < 768) document.querySelector('.craft-layout') && (document.querySelector('.craft-layout').style.gridTemplateColumns = '1fr');
-window.addEventListener('resize', () => {
-  const cl = document.querySelector('.craft-layout');
-  if (cl) cl.style.gridTemplateColumns = window.innerWidth < 768 ? '1fr' : '1fr 1fr';
-});
+/* ---------- menu & nav ---------- */
+const mb=document.getElementById('menuBtn');
+mb.addEventListener('click',()=>{const o=document.body.classList.toggle('menu-open');mb.setAttribute('aria-expanded',o);mb.textContent=o?'Close':'Menu'});
+const goEnd=()=>{closeProduct();closePages();sc.scrollTo({top:track.offsetHeight,behavior:reduce?'auto':'smooth'})};
+const goTop=()=>{closeProduct();closePages();sc.scrollTo({top:0,behavior:reduce?'auto':'smooth'})};
+document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.body.classList.remove('menu-open');mb.textContent='Menu';if(a.dataset.cat)setCat(a.dataset.cat);(a.dataset.go==='top'?goTop:goEnd)()}));
+document.querySelectorAll('.cats button').forEach(b=>b.addEventListener('click',()=>setCat(b.dataset.cat)));
+document.getElementById('toTop').addEventListener('click',e=>{e.preventDefault();goTop()});
+document.getElementById('backTop').addEventListener('click',goTop);
+
+/* ---------- overlay pages: sold out + ring size ---------- */
+const pages={soldout:document.getElementById('soldout'),sizer:document.getElementById('sizerpage')};
+let pageFrom=null;
+function openPage(name){closeProduct(); if(name==='sizer'&&window.thcdSizerReset) window.thcdSizerReset(); for(const k in pages) pages[k].hidden=k!==name; const pg=pages[name]; pg.scrollTop=0; sc.style.overflow='hidden'; closeCart();}
+function closePages(){let was=false; for(const k in pages){if(!pages[k].hidden)was=true; pages[k].hidden=true} closeLb(); if(was&&prod.hidden) sc.style.overflow=''; return was}
+document.querySelectorAll('.page [data-close]').forEach(b=>b.onclick=()=>{const back=pageFrom; pageFrom=null; closePages(); if(back) openProduct(back)});
+
+// sold out archive
+const SOLD=CAT.soldOut||[];
+const simg=(s,i,thumb)=>'img/soldout/'+s.slug+'/'+s.slug+'-'+String(i).padStart(2,'0')+(thumb?'-thumb':'')+'.webp';
+document.getElementById('soldCount').innerHTML='Archive &middot; '+SOLD.length+' pieces';
+document.getElementById('sgrid').innerHTML=SOLD.map((s,k)=>'<button type="button" class="scard" data-k="'+k+'">'+
+  '<div class="tb"><span>ARC_'+String(k+1).padStart(2,'0')+'.'+s.slug.replace(/-ring$/,'')+'</span><span class="dots"><i></i><i></i><i></i></span></div>'+
+  '<span class="stamp">Sold out</span>'+
+  '<div class="view"><img loading="lazy" decoding="async" src="'+simg(s,1,true)+'" alt="'+s.name+' ring in sterling silver"></div>'+
+  '<div class="meta"><h3>'+s.name+' ring</h3><span>'+s.note+'</span></div></button>').join('');
+document.getElementById('sgrid').addEventListener('click',e=>{const b=e.target.closest('.scard'); if(b) openLb(+b.dataset.k)});
+
+// lightbox
+const lb=document.getElementById('lb'), lbImg=document.getElementById('lbImg'), lbThumbs=document.getElementById('lbThumbs');
+let lbK=0, lbI=1;
+function showLb(i){const s=SOLD[lbK]; lbI=(i-1+s.n)%s.n+1; lbImg.src=simg(s,lbI,false); lbImg.alt=s.name+' ring, photo '+lbI;
+  document.getElementById('lbIdx').textContent=lbI+' / '+s.n;
+  lbThumbs.querySelectorAll('button').forEach((b,j)=>b.setAttribute('aria-pressed',j+1===lbI))}
+function openLb(k){lbK=k; const s=SOLD[k]; document.getElementById('lbName').textContent=s.name+' ring · sold out';
+  lbThumbs.innerHTML=Array.from({length:s.n},(_,j)=>'<button type="button" data-i="'+(j+1)+'" aria-label="Photo '+(j+1)+'"><img src="'+simg(s,j+1,true)+'" alt=""></button>').join('');
+  lb.hidden=false; showLb(1); document.getElementById('lbClose').focus()}
+function closeLb(){if(!lb.hidden){lb.hidden=true; lbImg.removeAttribute('src')}}
+lbThumbs.addEventListener('click',e=>{const b=e.target.closest('button'); if(b) showLb(+b.dataset.i)});
+document.getElementById('lbPrev').onclick=()=>showLb(lbI-1);
+document.getElementById('lbNext').onclick=()=>showLb(lbI+1);
+document.getElementById('lbClose').onclick=closeLb;
+lb.addEventListener('click',e=>{if(e.target===lb||e.target.classList.contains('frame'))closeLb()});
+let lbX=null; lb.addEventListener('touchstart',e=>{lbX=e.touches[0].clientX},{passive:true});
+lb.addEventListener('touchend',e=>{if(lbX===null)return; const d=e.changedTouches[0].clientX-lbX; if(Math.abs(d)>40) showLb(lbI+(d<0?1:-1)); lbX=null});
+addEventListener('keydown',e=>{if(lb.hidden)return; if(e.key==='ArrowRight')showLb(lbI+1); if(e.key==='ArrowLeft')showLb(lbI-1)});
+
+document.querySelectorAll('[data-open]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.body.classList.remove('menu-open');mb.textContent='Menu';pageFrom=null;openPage(a.dataset.open)}));
+
+/* ---------- checkout: one PayPal payment for the whole cart (PayPal account or card) ---------- */
+const pay=document.getElementById('pay'), ppBox=document.getElementById('ppButtons'), checkoutBtn=document.getElementById('checkout');
+const ship=Number(CAT.shipping)||0;
+document.getElementById('shipnote').textContent=ship?'Shipping '+money(ship)+' is added at payment.':'Shipping is included. You enter the delivery address in PayPal.';
+let sdk=null;
+function loadSdk(){if(sdk)return sdk;
+  sdk=fetch('/api/config').then(r=>r.ok?r.json():Promise.reject(new Error('config'))).then(c=>new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://www.paypal.com/sdk/js?client-id='+encodeURIComponent(c.clientId)+'&currency='+encodeURIComponent(c.currency)+'&intent=capture&components=buttons';
+    s.onload=()=>res(window.paypal); s.onerror=()=>rej(new Error('sdk')); document.head.appendChild(s)}));
+  sdk.catch(()=>{sdk=null}); return sdk}
+let ppRendered=null;
+function cartSig(){return JSON.stringify(cart)}
+async function showPay(){
+  if(!cart.length){cnote.textContent='Add a piece first.';return}
+  cnote.textContent='Loading payment…';
+  let paypal; try{paypal=await loadSdk()}catch(e){cnote.textContent=location.protocol==='file:'?'Payment works on the published site, not from a local file.':'Payment is not available right now. Write to marina.marbl@gmail.com';return}
+  cnote.textContent=''; checkoutBtn.hidden=true; pay.hidden=false;
+  if(ppRendered===cartSig())return;
+  ppBox.innerHTML=''; ppRendered=cartSig();
+  paypal.Buttons({
+    style:{layout:'vertical',color:'black',shape:'rect',label:'pay',height:44},
+    createOrder:async()=>{cnote.textContent='';
+      const r=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cart:cart.map(l=>({id:l.id,size:l.size,q:l.q}))})});
+      const d=await r.json(); if(!r.ok||!d.id) throw new Error(d.error||'Could not start the payment'); return d.id},
+    onApprove:async(data,actions)=>{
+      const r=await fetch('/api/capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderID:data.orderID})});
+      const d=await r.json().catch(()=>({}));
+      const issue=d&&d.details&&d.details[0]&&d.details[0].issue;
+      if(issue==='INSTRUMENT_DECLINED') return actions.restart();
+      if(!r.ok||d.status!=='COMPLETED'){cnote.textContent='The payment did not go through. Nothing was charged. Please try again.';return}
+      cart=[]; save(); renderCart(); pay.hidden=true; checkoutBtn.hidden=false; ppRendered=null;
+      lines.innerHTML='<div class="paid"><div class="code">Order '+d.id+'</div><h3>Thank you</h3><p>The payment is complete. A receipt is on its way from PayPal,<br>and we will write to you about delivery.</p></div>'},
+    onCancel:()=>{cnote.textContent='Payment cancelled. Your cart is still here.'},
+    onError:err=>{cnote.textContent=(err&&err.message&&!/^[A-Z_]+$/.test(err.message)&&err.message.length<120)?err.message:'Something went wrong with the payment. Please try again.'}
+  }).render('#ppButtons').catch(()=>{cnote.textContent='Payment could not load. Please refresh the page.'});
+}
+checkoutBtn.onclick=showPay;
+
+setCat('all');
+size(); layout(); target=progress(); kick();
+})();
 </script>
-</body>
-</html>
+<script src="js/ring-size.js"></script>
+
+</body></html>
