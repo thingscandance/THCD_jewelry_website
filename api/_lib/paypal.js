@@ -12,11 +12,11 @@ function catalog() {
   return _catalog;
 }
 
-const LIVE = process.env.PAYPAL_ENV === 'live';
+const LIVE = String(process.env.PAYPAL_ENV || '').trim().toLowerCase() === 'live';
 const API = LIVE ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
 
 async function accessToken() {
-  const id = process.env.PAYPAL_CLIENT_ID, secret = process.env.PAYPAL_CLIENT_SECRET;
+  const id = (process.env.PAYPAL_CLIENT_ID || '').trim(), secret = (process.env.PAYPAL_CLIENT_SECRET || '').trim();
   if (!id || !secret) throw new Error('PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET are not set');
   const r = await fetch(API + '/v1/oauth2/token', {
     method: 'POST',

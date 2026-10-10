@@ -2,7 +2,7 @@
 const { catalog, send } = require('./_lib/paypal');
 
 module.exports = (req, res) => {
-  const id = process.env.PAYPAL_CLIENT_ID;
+  const id = (process.env.PAYPAL_CLIENT_ID || '').trim();
   if (!id) return send(res, 503, { error: 'Payment is not configured yet' });
-  send(res, 200, { clientId: id, currency: catalog().currency, live: process.env.PAYPAL_ENV === 'live' });
+  send(res, 200, { clientId: id, currency: catalog().currency, live: String(process.env.PAYPAL_ENV || '').trim().toLowerCase() === 'live' });
 };
