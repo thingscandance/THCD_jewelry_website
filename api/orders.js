@@ -12,6 +12,7 @@ module.exports = async (req, res) => {
   }
   try {
     const r = await paypal('POST', '/v2/checkout/orders', order);
+    if (!r.ok) console.error('create failed', r.status, JSON.stringify(r.data).slice(0, 1500));
     if (!r.ok) return send(res, 502, { error: 'PayPal could not create the order', details: r.data });
     send(res, 200, { id: r.data.id });
   } catch (e) {

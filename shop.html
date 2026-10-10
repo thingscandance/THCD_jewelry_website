@@ -803,11 +803,11 @@ async function showPay(){
       const d=await r.json().catch(()=>({}));
       const issue=d&&d.details&&d.details[0]&&d.details[0].issue;
       if(issue==='INSTRUMENT_DECLINED') return actions.restart();
-      if(!r.ok||d.status!=='COMPLETED'){cnote.textContent='The payment did not go through. Nothing was charged. Please try again.';return}
+      if(!r.ok||d.status!=='COMPLETED'){const code=issue||d.name||d.error||(d.status?'status '+d.status:'HTTP '+r.status); cnote.textContent='The payment did not go through. Nothing was charged. Please try again. ('+String(code).slice(0,80)+')';console.warn('capture',r.status,d);return}
       cart=[]; save(); renderCart(); pay.hidden=true; checkoutBtn.hidden=false; ppRendered=null;
       lines.innerHTML='<div class="paid"><div class="code">Order '+d.id+'</div><h3>Thank you</h3><p>The payment is complete. A receipt is on its way from PayPal,<br>and we will write to you about delivery.</p></div>'},
     onCancel:()=>{cnote.textContent='Payment cancelled. Your cart is still here.'},
-    onError:err=>{cnote.textContent=(err&&err.message&&!/^[A-Z_]+$/.test(err.message)&&err.message.length<120)?err.message:'Something went wrong with the payment. Please try again.'}
+    onError:err=>{console.warn('paypal error',err); cnote.textContent=(err&&err.message&&!/^[A-Z_]+$/.test(err.message)&&err.message.length<120)?err.message:'Something went wrong with the payment. Please try again.'}
   }).render('#ppButtons').catch(()=>{cnote.textContent='Payment could not load. Please refresh the page.'});
 }
 checkoutBtn.onclick=showPay;

@@ -46,6 +46,7 @@ module.exports = async (req, res) => {
       try { const full = await paypal('GET', '/v2/checkout/orders/' + id); await notify(full.ok ? full.data : r.data); }
       catch (e) { console.error('order e-mail failed', e.message); }
     }
+    if (!r.ok || (r.data && r.data.status !== 'COMPLETED')) console.error('capture failed', r.status, JSON.stringify(r.data).slice(0, 1500));
     // Pass PayPal's answer through: the browser needs `details` to handle a declined card (INSTRUMENT_DECLINED).
     send(res, r.ok ? 200 : r.status, r.data);
   } catch (e) {
