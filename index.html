@@ -1,20 +1,143 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>THCD — Dark Jewelry. Edition 001.</title>
-  <meta name="description" content="THCD — Handcrafted sterling silver jewelry. Small-batch, numbered editions."/>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
-  <link rel="canonical" href="shop.html"/>
-  <meta http-equiv="refresh" content="0; url=shop.html"/>
-  <script>location.replace('shop.html' + location.search + location.hash);</script>
-  <style>
-    body{background:#000;color:#F4F4EE;font-family:monospace;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
-    a{color:#B8FF00}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Things Can Dance</title>
+<meta name="description" content="THCD, Tbilisi: silver shop, movie studio, art practice.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="img/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+:root{--void:#070809;--bone:#e9ecea;--ash:#8d9493;--glass:rgba(12,14,15,.82);--edge:rgba(233,236,234,.2);--pink:#e61e9c;
+  --f-body:"Geist",ui-sans-serif,system-ui,sans-serif;--f-mono:"Geist Mono",ui-monospace,monospace}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--void);color:var(--bone);font-family:var(--f-body)}
+.bg{position:fixed;inset:0;background:#000 url(img/home_bg.webp) center/cover no-repeat;transform:scale(1.04);transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.bg::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 35%,rgba(0,0,0,.55) 100%)}
+header{position:fixed;left:0;right:0;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;
+  padding:calc(env(safe-area-inset-top,0px) + 22px) clamp(16px,3vw,44px) 0;pointer-events:none}
+header img{width:clamp(110px,10vw,150px);height:auto;display:block}
+header .loc{font:11px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ash)}
+header .loc b{color:var(--pink);font-weight:400}
+svg.links{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+svg.links line{stroke:rgba(233,236,234,.75);stroke-width:1.2;stroke-dasharray:3 5;animation:flow 1.6s linear infinite}
+svg.links line.hot{stroke:var(--pink);stroke-width:1.4}
+svg.links circle{fill:var(--pink)}
+@keyframes flow{to{stroke-dashoffset:-16}}
+.node{position:fixed;left:0;top:0;z-index:2;width:var(--w);display:block;color:inherit;text-decoration:none;background:var(--glass);
+  border:1px solid var(--edge);border-radius:3px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  box-shadow:0 24px 60px rgba(0,0,0,.45);will-change:transform;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;
+  transition:border-color .25s,box-shadow .4s}
+.node:hover,.node.on{border-color:rgba(230,30,156,.7);box-shadow:0 40px 90px rgba(0,0,0,.6)}
+.node:focus-visible{outline:2px solid var(--pink);outline-offset:3px}
+.tb{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;border-bottom:1px solid var(--edge);
+  font:11px var(--f-mono);letter-spacing:.05em;color:var(--ash);white-space:nowrap}
+.tb .dots{display:flex;gap:4px}
+.tb .dots i{width:6px;height:6px;border-radius:50%;border:1px solid var(--ash)}
+.node.live .tb .dots i:first-child{background:var(--pink);border-color:var(--pink)}
+.view{aspect-ratio:16/10;overflow:hidden;background:#000}
+.view img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(.3) contrast(1.05);transition:filter .5s,transform .8s cubic-bezier(.2,.8,.2,1);pointer-events:none;-webkit-user-drag:none}
+.node:hover .view img,.node.on .view img{filter:none;transform:scale(1.06)}
+.meta{display:flex;justify-content:space-between;align-items:end;gap:10px;padding:11px 12px 12px}
+.meta h2{margin:0;font-weight:300;font-size:clamp(20px,2.2vw,30px);letter-spacing:-.01em;text-transform:lowercase;line-height:1}
+.meta span{font:10px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ash);white-space:nowrap}
+.node.live .meta span{color:var(--pink)}
+.foot{position:fixed;left:0;right:0;bottom:0;z-index:3;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:0 clamp(16px,3vw,44px) calc(env(safe-area-inset-bottom,0px) + 18px);font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ash)}
+.foot a{color:var(--bone);text-decoration:none}.foot a:hover{color:var(--pink)}
+.hint{opacity:.8}
+@media (max-width:760px){.meta h2{font-size:21px}.hint{display:none}}
+</style>
 </head>
 <body>
-  <p>Redirecting to <a href="shop.html">THCD Shop</a>…</p>
+<div class="bg" id="bg" aria-hidden="true"></div>
+<header><img src="img/logo_white.png" alt="Things Can Dance"><div class="loc">Tbilisi <b>&#9679;</b> Georgia</div></header>
+<svg class="links" id="links" aria-hidden="true"></svg>
+<nav aria-label="Things Can Dance">
+  <a class="node live" href="shop.html" data-k="0">
+    <div class="tb"><span>01.silvershop</span><span class="dots"><i></i><i></i><i></i></span></div>
+    <div class="view"><img src="img/drip_photo.webp" alt=""></div>
+    <div class="meta"><h2>silvershop</h2><span>Enter</span></div>
+  </a>
+  <a class="node" href="#" data-k="1" aria-disabled="true">
+    <div class="tb"><span>02.moviestudio</span><span class="dots"><i></i><i></i><i></i></span></div>
+    <div class="view"><img src="img/home_movie.webp" alt=""></div>
+    <div class="meta"><h2>moviestudio</h2><span>Soon</span></div>
+  </a>
+  <a class="node" href="#" data-k="2" aria-disabled="true">
+    <div class="tb"><span>03.artpractice</span><span class="dots"><i></i><i></i><i></i></span></div>
+    <div class="view"><img src="img/home_art.webp" alt=""></div>
+    <div class="meta"><h2>artpractice</h2><span>Soon</span></div>
+  </a>
+</nav>
+<div class="foot"><span class="hint">Drag the windows &middot; tap to enter</span><span><a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener">@th_c_d</a> &nbsp;&middot;&nbsp; <a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a></span></div>
+<script>
+(function(){
+  const els=[...document.querySelectorAll('.node')], svg=document.getElementById('links'), bg=document.getElementById('bg');
+  const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // home positions as fractions of the viewport (centre of each window)
+  const D=[[.22,.36],[.79,.32],[.62,.78]], M=[[.32,.24],[.68,.52],[.34,.80]];
+  const N=els.map((el,i)=>({el,i,x:0,y:0,vx:0,vy:0,s:1,hx:0,hy:0,ph:i*2.1,drag:null,moved:0,hover:false}));
+  let W=0,H=0,mob=false,mx=-1e4,my=-1e4,last=0;
+  // svg lines: every pair connected
+  const pairs=[[0,1],[1,2],[2,0]];
+  const lines=pairs.map(()=>{const l=document.createElementNS('http://www.w3.org/2000/svg','line');svg.appendChild(l);return l});
+  const dots=pairs.map(()=>{const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('r','2.2');svg.appendChild(c);return c});
+  function size(){
+    W=innerWidth;H=innerHeight;mob=W<=760;
+    const w=mob?Math.min(W*.56,230):Math.max(220,Math.min(W*.2,330));
+    document.documentElement.style.setProperty('--w',w+'px');
+    N.forEach((n,i)=>{const p=(mob?M:D)[i]; n.hx=p[0]*W; n.hy=p[1]*H; if(!last){n.x=n.hx;n.y=n.hy}});
+  }
+  addEventListener('resize',size); size();
+  addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY; if(!mob&&!red) bg.style.transform='scale(1.06) translate('+((mx/W-.5)*-14).toFixed(1)+'px,'+((my/H-.5)*-10).toFixed(1)+'px)'});
+  N.forEach(n=>{
+    const el=n.el;
+    el.addEventListener('pointerenter',()=>n.hover=true);
+    el.addEventListener('pointerleave',()=>n.hover=false);
+    el.addEventListener('pointerdown',e=>{n.drag={dx:e.clientX-n.x,dy:e.clientY-n.y};n.moved=0;el.setPointerCapture(e.pointerId)});
+    el.addEventListener('pointermove',e=>{if(!n.drag)return; const nx=e.clientX-n.drag.dx, ny=e.clientY-n.drag.dy; n.moved+=Math.abs(nx-n.x)+Math.abs(ny-n.y); n.vx=(nx-n.x); n.vy=(ny-n.y); n.x=nx; n.y=ny});
+    const up=()=>{if(!n.drag)return; n.drag=null};
+    el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up);
+    el.addEventListener('click',e=>{
+      if(n.moved>6){e.preventDefault();return}
+      if(el.getAttribute('aria-disabled')==='true'){e.preventDefault(); const s=el.querySelector('.meta span'); s.textContent='Coming soon'; setTimeout(()=>s.textContent='Soon',1600)}
+    });
+  });
+  function tick(t){
+    const dt=Math.min(40,t-(last||t)); last=t; const f=dt/16.7;
+    for(const n of N){
+      if(!n.drag){
+        const dx=red?0:Math.sin(t*.00035+n.ph)*(mob?8:18), dy=red?0:Math.cos(t*.00028+n.ph*1.3)*(mob?8:16);
+        let tx=n.hx+dx, ty=n.hy+dy;
+        // gentle pull toward the cursor when it is close
+        const cx=mx-n.x, cy=my-n.y, d=Math.hypot(cx,cy);
+        if(!mob&&d<320){tx+=cx*.12*(1-d/320); ty+=cy*.12*(1-d/320)}
+        n.vx+=(tx-n.x)*.012*f; n.vy+=(ty-n.y)*.012*f;
+        n.vx*=Math.pow(.86,f); n.vy*=Math.pow(.86,f);
+        n.x+=n.vx*f; n.y+=n.vy*f;
+      }
+      // windows push each other apart
+      for(const o of N){ if(o===n)continue; const ex=n.x-o.x, ey=n.y-o.y, dd=Math.hypot(ex,ey)||1, min=n.el.offsetWidth*.9;
+        if(dd<min&&!n.drag){n.vx+=ex/dd*(min-dd)*.01*f; n.vy+=ey/dd*(min-dd)*.01*f} }
+      const ts=(n.hover||n.drag)?1.08:1; n.s+=(ts-n.s)*.15*f;
+      n.el.classList.toggle('on',!!n.drag);
+      const w=n.el.offsetWidth,h=n.el.offsetHeight, rot=red?0:Math.sin(t*.0003+n.ph)*1.2;
+      n.el.style.transform='translate('+(n.x-w/2).toFixed(1)+'px,'+(n.y-h/2).toFixed(1)+'px) rotate('+rot.toFixed(2)+'deg) scale('+n.s.toFixed(3)+')';
+      n.el.style.zIndex=(n.hover||n.drag)?4:2;
+    }
+    pairs.forEach(([a,b],k)=>{const A=N[a],B=N[b],l=lines[k];
+      l.setAttribute('x1',A.x);l.setAttribute('y1',A.y);l.setAttribute('x2',B.x);l.setAttribute('y2',B.y);
+      l.classList.toggle('hot',A.hover||B.hover||!!A.drag||!!B.drag);
+      const p=red?.5:(t*.00012+k/3)%1; dots[k].setAttribute('cx',A.x+(B.x-A.x)*p); dots[k].setAttribute('cy',A.y+(B.y-A.y)*p)});
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
 </body>
 </html>
