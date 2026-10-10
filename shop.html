@@ -776,7 +776,7 @@ document.querySelectorAll('[data-open]').forEach(a=>a.addEventListener('click',e
 /* ---------- checkout: one PayPal payment for the whole cart (PayPal account or card) ---------- */
 const pay=document.getElementById('pay'), ppBox=document.getElementById('ppButtons'), checkoutBtn=document.getElementById('checkout');
 const ship=Number(CAT.shipping)||0;
-document.getElementById('shipnote').textContent=ship?'Shipping '+money(ship)+' is added at payment.':'Shipping is included. You enter the delivery address in PayPal.';
+document.getElementById('shipnote').textContent=ship?'Shipping '+money(ship)+' is added at payment.':'Worldwide delivery is included. You confirm your delivery address in the PayPal window before you pay.';
 let sdk=null;
 function loadSdk(){if(sdk)return sdk;
   sdk=fetch('/api/config').then(r=>r.ok?r.json():Promise.reject(new Error('config'))).then(c=>new Promise((res,rej)=>{
@@ -805,7 +805,9 @@ async function showPay(){
       if(issue==='INSTRUMENT_DECLINED') return actions.restart();
       if(!r.ok||d.status!=='COMPLETED'){const code=issue||d.name||d.error||(d.status?'status '+d.status:'HTTP '+r.status); cnote.textContent='The payment did not go through. Nothing was charged. Please try again. ('+String(code).slice(0,80)+')';console.warn('capture',r.status,d);return}
       cart=[]; save(); renderCart(); pay.hidden=true; checkoutBtn.hidden=false; ppRendered=null;
-      lines.innerHTML='<div class="paid"><div class="code">Order '+d.id+'</div><h3>Thank you</h3><p>The payment is complete. A receipt is on its way from PayPal,<br>and we will write to you about delivery.</p></div>'},
+      const sh=((d.purchase_units||[])[0]||{}).shipping||{}, ad=sh.address||{}, esc=x=>String(x||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+      const to=[(sh.name||{}).full_name,ad.address_line_1,ad.address_line_2,[ad.postal_code,ad.admin_area_2].filter(Boolean).join(' '),ad.admin_area_1,ad.country_code].filter(Boolean).map(esc).join('<br>');
+      lines.innerHTML='<div class="paid"><div class="code">Order '+esc(d.id)+'</div><h3>Thank you</h3><p>The payment is complete. A receipt is on its way from PayPal,<br>and we will write to you about delivery.</p>'+(to?'<p class="shipto"><b>We will ship to:</b><br>'+to+'</p><p class="small">Wrong address? Write to <a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a> right away.</p>':'')+'</div>'},
     onCancel:()=>{cnote.textContent='Payment cancelled. Your cart is still here.'},
     onError:err=>{console.warn('paypal error',err); cnote.textContent=(err&&err.message&&!/^[A-Z_]+$/.test(err.message)&&err.message.length<120)?err.message:'Something went wrong with the payment. Please try again.'}
   }).render('#ppButtons').catch(()=>{cnote.textContent='Payment could not load. Please refresh the page.'});

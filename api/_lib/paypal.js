@@ -71,6 +71,9 @@ function buildOrder(cart) {
   const shipping = Number(cat.shipping) || 0;
   return {
     intent: 'CAPTURE',
+    // Ask PayPal for the buyer's delivery address (shown to them before they confirm) and label the button "Pay now".
+    // application_context (not payment_source.paypal) so it also works for the card button.
+    application_context: { shipping_preference: 'GET_FROM_FILE', user_action: 'PAY_NOW', brand_name: 'THINGS CAN DANCE' },
     purchase_units: [{
       description: 'THCD order',
       amount: {
