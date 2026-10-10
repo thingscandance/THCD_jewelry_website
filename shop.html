@@ -1,5 +1,10 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body class="preloading">
+<!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="favicon.ico" sizes="any">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>Things Can Dance</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -329,6 +334,8 @@ textarea.field{font:14px var(--f-body);resize:vertical}
   .hint::after,.empty::after{animation:none}
 }
 </style>
+</head>
+<body class="preloading">
 
 <div id="scroller"><div id="track">
   <div id="stage"><canvas id="film" aria-label="THCD film"></canvas><div class="dim"></div></div>
@@ -679,7 +686,6 @@ function openProduct(id){
   const shots=[];
   for(let i=1;i<=(p.gallery||0);i++) shots.push(['g'+i,'img/items/'+p.id+'/g'+i+'.webp','img/items/'+p.id+'/g'+i+'-t.webp',p.name+', photo '+i]);
   if(!shots.length) shots.push(['photo','img/'+p.id+'_photo.webp','img/'+p.id+'_photo.webp',p.name+' in sterling silver']);
-  shots.push(['line','img/'+p.id+'_line.webp','img/'+p.id+'_line.webp','Line drawing of the '+p.name.toLowerCase()]);
   let view=shots[0][0];
   const gal=p.real?'<div class="thumbs">'+shots.map((x,i)=>'<button type="button" data-v="'+x[0]+'" aria-pressed="'+(i===0)+'"><img src="'+x[2]+'" alt="" loading="lazy"></button>').join('')+'</div>'+
     '<div class="big"><img id="bigImg" src="'+shots[0][1]+'" alt="'+shots[0][3]+'"></div>'

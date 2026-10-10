@@ -25,7 +25,6 @@ window.THCD_CATALOG = {
     {"slug": "dragon-ring-with-calcite", "name": "Dragon", "note": "With calcite", "n": 4},
     {"slug": "apok-ring", "name": "Apok", "note": "Sterling silver", "n": 4},
     {"slug": "dragon-eye-ring", "name": "Dragon Eye", "note": "Peach pink morganite", "n": 4},
-    {"slug": "nude-ring", "name": "Nude", "note": "Sterling silver", "n": 5},
     {"slug": "black-stars-ring", "name": "Black Stars", "note": "Black zirconia", "n": 5},
     {"slug": "moon-ring", "name": "Moon", "note": "With quartz", "n": 7},
     {"slug": "dragon-tear-ring", "name": "Dragon Tear", "note": "With quartz", "n": 6},
