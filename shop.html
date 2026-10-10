@@ -215,8 +215,7 @@ body.cart-open .cpanel{transform:none}
 
 
 /* studio */
-#studio{overflow:hidden;display:flex;flex-direction:column;background:#000}
-#studio .sbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+#studio{overflow:hidden;display:flex;flex-direction:column}
 #studio[hidden]{display:none}
 #studio .crumbs{position:relative;z-index:2}
 #studio .drift{position:absolute;inset:0}
@@ -390,7 +389,6 @@ textarea.field{font:14px var(--f-body);resize:vertical}
 <section id="product" hidden aria-label="Product"></section>
 
 <section id="studio" class="page" hidden aria-label="Studio">
-  <video class="sbg" id="sbg" muted loop playsinline preload="none" poster="media/studio-bg.webp" aria-hidden="true"><source src="media/studio-bg.mp4" type="video/mp4"></video>
   <div class="drift" id="drift" aria-hidden="true"></div>
   <div class="crumbs"><button type="button" data-close>&larr; Board</button><span>Studio</span></div>
   <div class="stext">
@@ -855,10 +853,10 @@ size(); layout(); target=progress(); kick();
     raf=requestAnimationFrame(tick);
   }
   const go=()=>{if(!raf&&!st.hidden){last=0;raf=requestAnimationFrame(tick)}};
-  const sbg=document.getElementById('sbg'), stx=st.querySelector('.stext');
+  const stx=st.querySelector('.stext');
   stx.addEventListener('click',e=>{if(e.target.closest('a'))return; stx.classList.toggle('zoomed')});
   st.addEventListener('click',e=>{if(!e.target.closest('.stext')) stx.classList.remove('zoomed')});
-  new MutationObserver(()=>{if(!st.hidden){if(!items.length)build(); go(); if(!red){const p=sbg.play(); if(p&&p.catch)p.catch(()=>{})}} else sbg.pause()}).observe(st,{attributes:true,attributeFilter:['hidden']});
+  new MutationObserver(()=>{if(!st.hidden){if(!items.length)build(); go()}}).observe(st,{attributes:true,attributeFilter:['hidden']});
   let rw=innerWidth; addEventListener('resize',()=>{if(Math.abs(innerWidth-rw)>40){rw=innerWidth; if(items.length) build()}});
 })();
 </script>
