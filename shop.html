@@ -520,16 +520,19 @@ const tc=document.getElementById('tc'), ch=document.getElementById('ch'), bar=do
 const chapters=[[0,'signal'],[5,'face'],[8,'lichen'],[11,'pollination']];
 const ticks=document.querySelector('.ticks');
 chapters.slice(1).forEach(([t])=>{const s=document.createElement('span');s.style.left=(t/DUR*100)+'%';ticks.appendChild(s)});
-const bmp=new Array(N); let ready=0, evenReady=0; const EVEN=Math.ceil(N/2);
-const src=i=>'frames/f'+String(i+1).padStart(3,'0')+'.webp';
+const bmp=new Array(N); let ready=0, evenReady=0; const EVEN=Math.ceil(N/4); let EXT='.webp';
+const src=i=>'frames/f'+String(i+1).padStart(3,'0')+EXT;
 async function loadFrame(i){
   try{const r=await fetch(src(i)); bmp[i]=await createImageBitmap(await r.blob());}
   catch(e){await new Promise(res=>{const im=new Image();im.onload=()=>{bmp[i]=im;res()};im.onerror=res;im.src=src(i)})}
-  ready++; if(i%2===0) evenReady++; const pc=Math.min(100,Math.round(evenReady/EVEN*100)); plBar.style.width=pc+'%'; plPct.textContent=pc+'%';
+  ready++; if(i%4===0) evenReady++; const pc=Math.min(100,Math.round(evenReady/EVEN*100)); plBar.style.width=pc+'%'; plPct.textContent=pc+'%';
   if(evenReady>=EVEN) filmReady();
   kick();
 }
-(async()=>{await loadFrame(0); const order=[]; for(const s of [32,16,8,4,2,1]) for(let i=0;i<N;i+=s) if(i&&!order.includes(i)) order.push(i);
+(async()=>{
+  // AVIF frames are ~40% lighter; fall back to WebP where AVIF is not supported
+  EXT=await new Promise(r=>{const im=new Image(); im.onload=()=>r(im.width>0?'.avif':'.webp'); im.onerror=()=>r('.webp'); im.src='data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAIQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAAgAAAAIAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAKW1kYXQSAAoIGAA2iAhoNCAyExlHh4Yhh5555oAAAJBAyRxhQr4='});
+  await loadFrame(0); const order=[]; for(const s of [32,16,8,4,2,1]) for(let i=0;i<N;i+=s) if(i&&!order.includes(i)) order.push(i);
   let k=0; await Promise.all(Array.from({length:6},async()=>{while(k<order.length) await loadFrame(order[k++])}))})();
 let W=0,H=0,lastF=null;
 function size(){const d=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=Math.round(W*d);cv.height=Math.round(H*d);cx.setTransform(d,0,0,d,0,0);lastF=null;kick()}
@@ -545,7 +548,7 @@ function filmReady(){if(!document.body.classList.contains('preloading'))return; 
 function kick(){if(!raf)raf=requestAnimationFrame(loop)}
 function loop(){raf=0;
   const now=performance.now(), dt=Math.min(64,now-(loop.t||now)); loop.t=now;
-  const d=target-shown; shown+=reduce?d:d*(1-Math.exp(-dt/140)); if(Math.abs(d)<0.0002) shown=target;
+  const d=target-shown; shown+=reduce?d:d*(1-Math.exp(-dt/90)); if(Math.abs(d)<0.0002) shown=target;
   const pf=Math.min(1,shown/FILM); drawAt(pf*(N-1));
   const t=pf*DUR; tc.textContent='00:'+String(Math.floor(t)).padStart(2,'0');
   let name=chapters[0][1]; for(const [s,n] of chapters) if(t>=s) name=n;
