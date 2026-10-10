@@ -1,6 +1,9 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body class="preloading">
 <meta charset="utf-8">
 <title>Things Can Dance</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap">
@@ -25,7 +28,7 @@ button{font:inherit;color:inherit}
 a:focus-visible,button:focus-visible{outline:1px solid var(--pink);outline-offset:4px}
 
 /* ---------- film ---------- */
-#track{position:relative;height:560vh}
+#track{position:relative;height:1100vh}
 #stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
 #film{position:absolute;inset:0;width:100%;height:100%;display:block;background:var(--void)}
 #stage::after{content:"";position:absolute;inset:0;pointer-events:none;
@@ -449,7 +452,7 @@ const CAT=window.THCD_CATALOG;
 const P=CAT.products.slice();
 // 4 x 3 board: real pieces sit in the middle row
 // board order: categories interleaved so the full board reads as one mixed cloud
-const ORDER=['quartz','glitter','drip','branch','xeno','double','figure','innerhome','smoky','drop','stump','rain','slay2','innerhome2','slay1'].filter(id=>P.some(p=>p.id===id));
+const ORDER=['quartz','glitter','drip','branch','xeno','double','figure','innerhome','thistle','drop','stump','rain','slay2','slay1'].filter(id=>P.some(p=>p.id===id));
 P.forEach(p=>{if(!ORDER.includes(p.id))ORDER.push(p.id)});
 const COLS=4, ROWS=3;
 const byId=id=>P.find(p=>p.id===id);
@@ -644,7 +647,7 @@ function openProduct(id){
    '<div class="pgrid"><div class="gallery">'+gal+'</div><div class="info">'+
    '<div class="code">'+p.code+(p.type?' &middot; '+p.type:'')+'</div><h2>'+p.name+'</h2>'+
    '<div class="price">'+(p.price?money(p.price):'&mdash;')+'</div><p>'+p.text+'</p>'+
-   (p.sizes?'<div class="opt"><div class="lab"><span>Size (RU)</span><button type="button" class="tlink" id="findSize">Find my size</button></div><div class="chips" id="sizes">'+p.sizes.map(s=>'<button type="button" aria-pressed="false" data-s="'+s+'">'+s+'</button>').join('')+'</div></div>':'')+
+   (p.sizes?'<div class="opt"><div class="lab"><span>Size'+(p.sizes.some(x=>/US/.test(x))?'':' (RU)')+'</span><button type="button" class="tlink" id="findSize">Find my size</button></div><div class="chips" id="sizes">'+p.sizes.map(s=>'<button type="button" aria-pressed="false" data-s="'+s+'">'+s+'</button>').join('')+'</div></div>':'')+
    (p.real?'<div class="opt"><div class="lab">Quantity</div><div class="qty"><button type="button" id="qm" aria-label="One less">&minus;</button><output id="qv">1</output><button type="button" id="qp" aria-label="One more">+</button></div></div>':'')+
    '<div class="buy"><button class="add" type="button" id="addBtn"'+(p.real?'':' disabled')+'>'+(p.real?'Add to cart &middot; '+money(p.price):'Not available yet')+'</button></div>'+
    '<div class="warn" id="warn"></div>'+
@@ -685,22 +688,23 @@ document.querySelectorAll('.page [data-close]').forEach(b=>b.onclick=()=>{const 
 
 // sold out archive
 const SOLD=CAT.soldOut||[];
+const sname=s=>s.label||s.name+' ring';
 const simg=(s,i,thumb)=>'img/soldout/'+s.slug+'/'+s.slug+'-'+String(i).padStart(2,'0')+(thumb?'-thumb':'')+'.webp';
 document.getElementById('soldCount').innerHTML='Archive &middot; '+SOLD.length+' pieces';
 document.getElementById('sgrid').innerHTML=SOLD.map((s,k)=>'<button type="button" class="scard" data-k="'+k+'">'+
-  '<div class="tb"><span>ARC_'+String(k+1).padStart(2,'0')+'.'+s.slug.replace(/-ring$/,'')+'</span><span class="dots"><i></i><i></i><i></i></span></div>'+
+  '<div class="tb"><span>ARC_'+String(k+1).padStart(2,'0')+'.'+s.slug.replace(/-(ring|pendant)$/,'')+'</span><span class="dots"><i></i><i></i><i></i></span></div>'+
   '<span class="stamp">Sold out</span>'+
-  '<div class="view"><img loading="lazy" decoding="async" src="'+simg(s,1,true)+'" alt="'+s.name+' ring in sterling silver"></div>'+
-  '<div class="meta"><h3>'+s.name+' ring</h3><span>'+s.note+'</span></div></button>').join('');
+  '<div class="view"><img loading="lazy" decoding="async" src="'+simg(s,1,true)+'" alt="'+sname(s)+' in sterling silver"></div>'+
+  '<div class="meta"><h3>'+sname(s)+'</h3><span>'+s.note+'</span></div></button>').join('');
 document.getElementById('sgrid').addEventListener('click',e=>{const b=e.target.closest('.scard'); if(b) openLb(+b.dataset.k)});
 
 // lightbox
 const lb=document.getElementById('lb'), lbImg=document.getElementById('lbImg'), lbThumbs=document.getElementById('lbThumbs');
 let lbK=0, lbI=1;
-function showLb(i){const s=SOLD[lbK]; lbI=(i-1+s.n)%s.n+1; lbImg.src=simg(s,lbI,false); lbImg.alt=s.name+' ring, photo '+lbI;
+function showLb(i){const s=SOLD[lbK]; lbI=(i-1+s.n)%s.n+1; lbImg.src=simg(s,lbI,false); lbImg.alt=sname(s)+', photo '+lbI;
   document.getElementById('lbIdx').textContent=lbI+' / '+s.n;
   lbThumbs.querySelectorAll('button').forEach((b,j)=>b.setAttribute('aria-pressed',j+1===lbI))}
-function openLb(k){lbK=k; const s=SOLD[k]; document.getElementById('lbName').textContent=s.name+' ring · sold out';
+function openLb(k){lbK=k; const s=SOLD[k]; document.getElementById('lbName').textContent=sname(s)+' · sold out';
   lbThumbs.innerHTML=Array.from({length:s.n},(_,j)=>'<button type="button" data-i="'+(j+1)+'" aria-label="Photo '+(j+1)+'"><img src="'+simg(s,j+1,true)+'" alt=""></button>').join('');
   lb.hidden=false; showLb(1); document.getElementById('lbClose').focus()}
 function closeLb(){if(!lb.hidden){lb.hidden=true; lbImg.removeAttribute('src')}}
