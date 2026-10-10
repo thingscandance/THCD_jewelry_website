@@ -588,7 +588,7 @@ function layout(){const vw=innerWidth,vh=innerHeight,narrow=vw<760;
   let cols=narrow?(n<=4?2:3):Math.max(2,Math.min(6,Math.ceil(Math.sqrt(n*aw/ah*.62))));
   cols=Math.min(cols,n); const rows=Math.ceil(n/cols);
   const cw=aw/cols, ch=ah/rows;
-  tw=Math.max(80,Math.min(narrow?cw*1.02:cw*1.12, ch*1.32-78, ah-90, narrow?170:250));
+  tw=Math.max(72,Math.min(narrow?cw*.86:cw*.8, ch*1.05-70, ah-90, narrow?150:200));
   document.documentElement.style.setProperty('--tw',tw+'px');
   th=Math.max(act[0]?act[0].el.offsetHeight:0,tw+78);
   act.forEach((nd,i)=>{const r=Math.floor(i/cols), c=i%cols, inRow=Math.min(cols,n-r*cols);
@@ -624,6 +624,10 @@ function step(){craf=0; const now=performance.now(), T=now/1000;
     if(held&&held.n===n){tx=mouse.x-held.ox-n.bx; ty=mouse.y-held.oy-n.by}
     else if(mouse.in&&arrived&&!held&&hover!==n){const ddx=mouse.x-cx, ddy=mouse.y-cy, R=tw*1.7, f=Math.exp(-(ddx*ddx+ddy*ddy)/(2*R*R))*.2; tx=ddx*f; ty=ddy*f;
       const m=Math.hypot(tx,ty); if(m>48){tx*=48/m;ty*=48/m}}
+    // make room: the grid around the enlarged piece is pushed outwards, strongest for the nearest tiles
+    const hn=(held&&held.n)||hover;
+    if(hn&&hn!==n&&hn.hv>.01){const hx=hn.bx+hn.w/2, hy=hn.by+hn.h/2, ex=cx-hx, ey=cy-hy, d=Math.hypot(ex,ey)||1, R=tw*1.5;
+      const push=tw*.42*hn.hv*Math.exp(-(d*d)/(2*R*R)); tx+=ex/d*push; ty+=ey/d*push}
     n.ptx=tx; n.pty=ty}
   // 2) neighbours are dragged along a little, so the cloud stretches like a net
   for(const n of act){let ax=0,ay=0; for(const m of n.nb){ax+=m.ptx;ay+=m.pty} const k=held&&held.n!==n?.3:.22, nl=Math.max(1,n.nb.length);
@@ -632,13 +636,15 @@ function step(){craf=0; const now=performance.now(), T=now/1000;
     const delay=n.k*35, t=(now-armT-delay)/850;
     if(arrived){const e=t<0?0:t>1?1:ease(t); n.rise=1-e; n.o=e}
     else{n.rise+=(1-n.rise)*.15; n.o+=(0-n.o)*.2}
-    const L=held&&held.n===n?.25:.05;              // slow, heavy follow: no jitter
+    const L=held&&held.n===n?.25:((hover||held)?.09:.05);              // slow, heavy follow: no jitter
     n.dx+=(n.tx-n.dx)*L; n.dy+=(n.ty-n.dy)*L;
     const fx=Math.sin(T*.5*n.sp+n.ph)*4, fy=Math.cos(T*.4*n.sp+n.ph2)*5;   // slow breathing drift
     n.x=n.bx+n.dx+fx; n.y=n.by+n.dy+fy+n.rise*innerHeight*.75;
     // hover: the piece floats forward and grows from its centre
     const hvT=(hover===n||(held&&held.n===n))?1:0; n.hv+=(hvT-n.hv)*.12;
-    const sc=n.s*(1+.18*n.hv), gx=-n.w*.09*n.hv, gy=-n.h*.09*n.hv-10*n.hv;
+    const sc=n.s*(1+.5*n.hv); let gx=-n.w*.25*n.hv, gy=-n.h*.25*n.hv-6*n.hv;
+    if(n.hv>.01){const W2=n.w*sc, H2=n.h*sc, vw=innerWidth, vh=innerHeight;   // keep the enlarged piece on screen
+      const L0=n.x+gx, T0=n.y+gy; gx+=Math.max(0,8-L0)-Math.max(0,L0+W2-(vw-8)); gy+=Math.max(0,90-T0)-Math.max(0,T0+H2-(vh-70))}
     n.el.style.transform='translate3d('+(n.x+gx).toFixed(1)+'px,'+(n.y+gy).toFixed(1)+'px,0) scale('+sc.toFixed(4)+')';
     n.el.style.boxShadow='0 '+(24+40*n.hv).toFixed(0)+'px '+(60+60*n.hv).toFixed(0)+'px rgba(0,0,0,'+(.35+.3*n.hv).toFixed(2)+')';
     n.el.style.opacity=n.o.toFixed(3);
