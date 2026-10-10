@@ -318,6 +318,12 @@ textarea.field{font:14px var(--f-body);resize:vertical}
 
 /* checkout */
 .pay{display:grid;gap:10px}
+.tel{display:grid;gap:6px;font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ash)}
+.tel input{font:15px var(--f-body);letter-spacing:0;color:var(--bone);background:rgba(9,10,11,.6);border:1px solid var(--edge);border-radius:2px;padding:11px 12px;outline:none}
+.tel input:focus{border-color:var(--pink)}
+.tel.bad input{border-color:#ff4d6d}
+.talk{font-size:13px;line-height:1.5;color:#c9cecc;border-left:2px solid var(--pink);padding:2px 0 2px 10px;margin:4px 0 12px}
+.talk a{color:var(--bone)}.talk a:hover{color:var(--pink)}
 .pay[hidden]{display:none!important}
 #ppButtons{background:var(--bone);border-radius:2px;padding:12px 12px 2px;min-height:60px}
 .paid{padding:30px 0;text-align:center}
@@ -486,8 +492,9 @@ textarea.field{font:14px var(--f-body);resize:vertical}
   <div class="cfoot">
     <div class="sum"><span>Subtotal</span><span id="subtotal">€0</span></div>
     <div class="shipnote" id="shipnote"></div>
+    <div class="talk">Best of all, write to me before you pay: we will agree on the size, the delivery and everything else. <a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a> &middot; <a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener">@th_c_d</a></div>
     <button class="add" type="button" id="checkout">Checkout</button>
-    <div class="pay" id="pay" hidden><div id="ppButtons"></div></div>
+    <div class="pay" id="pay" hidden><label class="tel" for="phone"><span>Phone for delivery</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+995 555 12 34 56" maxlength="24"></label><label class="tel" for="cemail"><span>Your email</span><input id="cemail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="80"></label><div id="ppButtons"></div></div>
     <div class="cnote" id="cnote"></div>
   </div>
 </div></aside>
@@ -786,6 +793,11 @@ function loadSdk(){if(sdk)return sdk;
   sdk.catch(()=>{sdk=null}); return sdk}
 let ppRendered=null;
 function cartSig(){return JSON.stringify(cart)}
+const phoneEl=document.getElementById('phone'), emailEl=document.getElementById('cemail');
+[[phoneEl,'thcd_phone'],[emailEl,'thcd_email']].forEach(([el,k])=>{try{el.value=localStorage.getItem(k)||''}catch(e){}
+  el.addEventListener('input',()=>{el.parentNode.classList.remove('bad'); try{localStorage.setItem(k,el.value)}catch(e){}})});
+function emailVal(){const v=emailEl.value.trim(); return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)?v:''}
+function phoneVal(){const v=phoneEl.value.trim(); return /^\+?[\d\s().-]{6,24}$/.test(v)&&v.replace(/\D/g,'').length>=7?v:''}
 async function showPay(){
   if(!cart.length){cnote.textContent='Add a piece first.';return}
   cnote.textContent='Loading payment…';
@@ -795,8 +807,12 @@ async function showPay(){
   ppBox.innerHTML=''; ppRendered=cartSig();
   paypal.Buttons({
     style:{layout:'vertical',color:'black',shape:'rect',label:'pay',height:44},
+    onClick:(data,actions)=>{
+      if(!phoneVal()){phoneEl.parentNode.classList.add('bad'); cnote.textContent='Please add a phone number for the delivery.'; phoneEl.focus(); return actions.reject()}
+      if(!emailVal()){emailEl.parentNode.classList.add('bad'); cnote.textContent='Please add your email so I can write to you about the order.'; emailEl.focus(); return actions.reject()}
+      cnote.textContent=''; return actions.resolve()},
     createOrder:async()=>{cnote.textContent='';
-      const r=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cart:cart.map(l=>({id:l.id,size:l.size,q:l.q}))})});
+      const r=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phoneVal(),email:emailVal(),cart:cart.map(l=>({id:l.id,size:l.size,q:l.q}))})});
       const d=await r.json(); if(!r.ok||!d.id) throw new Error(d.error||'Could not start the payment'); return d.id},
     onApprove:async(data,actions)=>{
       const r=await fetch('/api/capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderID:data.orderID})});

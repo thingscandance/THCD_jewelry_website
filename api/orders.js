@@ -7,6 +7,12 @@ module.exports = async (req, res) => {
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
     order = buildOrder(body.cart);
+    const phone = String(body.phone || '').trim();
+    if (!/^\+?[\d\s().-]{6,24}$/.test(phone) || phone.replace(/\D/g, '').length < 7) throw new Error('Please add a phone number for the delivery.');
+    // custom_id is shown in the PayPal transaction details and read back for the order e-mail.
+    const email = String(body.email || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 80) throw new Error('Please add your email so I can write to you about the order.');
+    order.purchase_units[0].custom_id = ('tel ' + phone + ' | ' + email).slice(0, 127);
   } catch (e) {
     return send(res, 400, { error: e.message });
   }

@@ -14,12 +14,14 @@ async function notify(order) {
   const ship = pu.shipping || {};
   const a = ship.address || {};
   const addr = [(ship.name || {}).full_name, a.address_line_1, a.address_line_2, [a.postal_code, a.admin_area_2].filter(Boolean).join(' '), a.admin_area_1, a.country_code].filter(Boolean);
+  const cm = String(pu.custom_id || '').match(/^tel (.*?)(?: \| (.*))?$/) || [];
+  const contact = { tel: cm[1] || '', email: cm[2] || '' };
   const items = (pu.items || []).map(i => '<tr><td>' + esc(i.name) + '</td><td>' + esc(i.description) + '</td><td>&times;' + esc(i.quantity) + '</td><td>' + esc(i.unit_amount && i.unit_amount.value) + ' ' + esc(i.unit_amount && i.unit_amount.currency_code) + '</td></tr>').join('');
   const total = (cap.amount || pu.amount || {});
   const html = '<h2>New THCD order</h2>' +
     '<p><b>Total:</b> ' + esc(total.value) + ' ' + esc(total.currency_code) + '<br><b>PayPal order:</b> ' + esc(order.id) + '</p>' +
     '<table cellpadding="6" border="1" style="border-collapse:collapse">' + items + '</table>' +
-    '<p><b>Buyer:</b> ' + esc(name) + ' &lt;' + esc(payer.email_address) + '&gt;</p>' +
+    '<p><b>Buyer:</b> ' + esc(name) + ' &lt;' + esc(payer.email_address) + '&gt;<br><b>Phone:</b> ' + esc(contact.tel) + '<br><b>Email given on the site:</b> ' + esc(contact.email) + '</p>' +
     '<p><b>Ship to:</b><br>' + addr.map(esc).join('<br>') + '</p>';
   await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -27,7 +29,7 @@ async function notify(order) {
     body: JSON.stringify({
       from: process.env.ORDER_EMAIL_FROM || 'THCD shop <onboarding@resend.dev>',
       to: [process.env.ORDER_EMAIL || 'marina.marbl@gmail.com'],
-      reply_to: payer.email_address || undefined,
+      reply_to: contact.email || payer.email_address || undefined,
       subject: 'New order ' + esc(total.value) + ' ' + esc(total.currency_code) + (name ? ' from ' + name : ''),
       html
     })
