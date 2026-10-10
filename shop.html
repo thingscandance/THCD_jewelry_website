@@ -226,6 +226,11 @@ body.cart-open .cpanel{transform:none}
 #studio .ph.on{border-color:rgba(230,30,156,.7);box-shadow:0 40px 90px rgba(0,0,0,.6)}
 #studio .stext{position:relative;z-index:1;margin:auto;max-width:540px;background:rgba(9,10,11,.88);border:1px solid var(--edge);border-radius:3px;
   padding:clamp(22px,3.4vw,40px);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+#studio .stext{cursor:zoom-in;transition:scale .6s cubic-bezier(.2,.8,.2,1),box-shadow .5s,border-color .4s;animation:sfloat 14s ease-in-out infinite alternate}
+#studio .stext.zoomed{scale:1.14;z-index:4;cursor:zoom-out;border-color:rgba(230,30,156,.6);box-shadow:0 50px 120px rgba(0,0,0,.6)}
+#studio .stext:not(.zoomed):hover{scale:1.03}
+@keyframes sfloat{0%{translate:0 0;rotate:-.6deg}35%{translate:18px -14px;rotate:.4deg}70%{translate:-14px 10px;rotate:-.2deg}100%{translate:8px 16px;rotate:.6deg}}
+@media (prefers-reduced-motion:reduce){#studio .stext{animation:none}}
 #studio .stext .code{font:11px var(--f-mono);letter-spacing:.14em;color:var(--pink);text-transform:uppercase}
 #studio .stext h2{margin:8px 0 18px;font-weight:300;font-size:clamp(40px,6vw,80px);line-height:.95;text-transform:uppercase}
 #studio .stext p{margin:0 0 14px;color:#c9cecc;font-size:15px;line-height:1.6}
@@ -234,6 +239,7 @@ body.cart-open .cpanel{transform:none}
 #studio .slinks a:hover{color:var(--pink);border-color:var(--pink)}
 @media (max-width:760px){
   #studio{overflow:auto}
+  #studio .stext.zoomed{scale:1.06}
   #studio .stext{margin:auto 0 12vh;padding:20px}
   #studio .stext p{font-size:14px;line-height:1.5}
 }
@@ -846,7 +852,9 @@ size(); layout(); target=progress(); kick();
     raf=requestAnimationFrame(tick);
   }
   const go=()=>{if(!raf&&!st.hidden){last=0;raf=requestAnimationFrame(tick)}};
-  const sbg=document.getElementById('sbg');
+  const sbg=document.getElementById('sbg'), stx=st.querySelector('.stext');
+  stx.addEventListener('click',e=>{if(e.target.closest('a'))return; stx.classList.toggle('zoomed')});
+  st.addEventListener('click',e=>{if(!e.target.closest('.stext')) stx.classList.remove('zoomed')});
   new MutationObserver(()=>{if(!st.hidden){if(!items.length)build(); go(); if(!red){const p=sbg.play(); if(p&&p.catch)p.catch(()=>{})}} else sbg.pause()}).observe(st,{attributes:true,attributeFilter:['hidden']});
   let rw=innerWidth; addEventListener('resize',()=>{if(Math.abs(innerWidth-rw)>40){rw=innerWidth; if(items.length) build()}});
 })();
