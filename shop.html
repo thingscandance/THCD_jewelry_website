@@ -508,7 +508,7 @@ const CAT=window.THCD_CATALOG;
 const P=CAT.products.slice();
 // 4 x 3 board: real pieces sit in the middle row
 // board order: categories interleaved so the full board reads as one mixed cloud
-const ORDER=['quartz','glitter','drip','branch','xeno','double','figure','innerhome','thistle','drop','stump','rain','slay2','slay1'].filter(id=>P.some(p=>p.id===id));
+const ORDER=['quartz','glitter','branch','xeno','figure','innerhome','double','drip','thistle','drop','stump','rain','slay2','slay1'].filter(id=>P.some(p=>p.id===id));
 P.forEach(p=>{if(!ORDER.includes(p.id))ORDER.push(p.id)});
 const COLS=4, ROWS=3;
 const byId=id=>P.find(p=>p.id===id);
