@@ -33,23 +33,23 @@ svg.links circle{fill:var(--pink)}
   transition:border-color .25s,box-shadow .4s}
 .node:hover,.node.on{border-color:rgba(230,30,156,.7);box-shadow:0 40px 90px rgba(0,0,0,.6)}
 .node:focus-visible{outline:2px solid var(--pink);outline-offset:3px}
-.tb{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;border-bottom:1px solid var(--edge);
-  font:11px var(--f-mono);letter-spacing:.05em;color:var(--ash);white-space:nowrap}
-.tb .dots{display:flex;gap:4px}
-.tb .dots i{width:6px;height:6px;border-radius:50%;border:1px solid var(--ash)}
+.tb{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 8px;border-bottom:1px solid var(--edge);
+  font:9px var(--f-mono);letter-spacing:.03em;color:var(--ash);white-space:nowrap;overflow:hidden}
+.tb .dots{display:flex;gap:3px;flex:none}
+.tb .dots i{width:5px;height:5px;border-radius:50%;border:1px solid var(--ash)}
 .node.live .tb .dots i:first-child{background:var(--pink);border-color:var(--pink)}
 .view{aspect-ratio:16/10;overflow:hidden;background:#000}
 .view img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(.3) contrast(1.05);transition:filter .5s,transform .8s cubic-bezier(.2,.8,.2,1);pointer-events:none;-webkit-user-drag:none}
 .node:hover .view img,.node.on .view img{filter:none;transform:scale(1.06)}
-.meta{display:flex;justify-content:space-between;align-items:end;gap:10px;padding:11px 12px 12px}
-.meta h2{margin:0;font-weight:300;font-size:clamp(15px,1.3vw,19px);letter-spacing:-.01em;text-transform:lowercase;line-height:1}
-.meta span{font:10px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ash);white-space:nowrap}
+.meta{display:flex;justify-content:space-between;align-items:end;gap:8px;padding:8px 9px 9px}
+.meta h2{margin:0;font-weight:300;font-size:clamp(13px,1vw,15px);letter-spacing:-.01em;text-transform:lowercase;line-height:1}
+.meta span{font:8px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ash);white-space:nowrap}
 .node.live .meta span{color:var(--pink)}
 .foot{position:fixed;left:0;right:0;bottom:0;z-index:3;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
   padding:0 clamp(16px,3vw,44px) calc(env(safe-area-inset-bottom,0px) + 18px);font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ash)}
 .foot a{color:var(--bone);text-decoration:none}.foot a:hover{color:var(--pink)}
 .hint{opacity:.8}
-@media (max-width:760px){.meta h2{font-size:15px}.hint{display:none}}
+@media (max-width:760px){.meta h2{font-size:12px}.hint{display:none}}
 </style>
 </head>
 <body>
@@ -88,7 +88,7 @@ svg.links circle{fill:var(--pink)}
   const dots=pairs.map(()=>{const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('r','2.2');svg.appendChild(c);return c});
   function size(){
     W=innerWidth;H=innerHeight;mob=W<=760;
-    const w=mob?Math.min(W*.36,150):Math.max(140,Math.min(W*.115,190));
+    const w=mob?Math.min(W*.3,120):Math.max(110,Math.min(W*.085,145));
     document.documentElement.style.setProperty('--w',w+'px');
     N.forEach((n,i)=>{const p=n.fx!=null?[n.fx,n.fy]:(mob?M:D)[i]; n.hx=p[0]*W; n.hy=p[1]*H; if(!last){n.x=n.hx;n.y=n.hy}});
   }

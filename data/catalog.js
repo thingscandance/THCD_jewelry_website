@@ -13,7 +13,7 @@ window.THCD_CATALOG = {
     {"id": "glitter", "code": "PEN_02", "name": "Im Your Glitter", "type": "Pendant", "price": 75, "real": true, "sizes": null, "gallery": 4, "text": "Silver pendant 3 × 3 cm on a silver chain 42 cm long."},
     {"id": "innerhome", "code": "PEN_03", "name": "Inner Home", "type": "Pendant", "price": 75, "real": true, "sizes": null, "gallery": 4, "text": "Silver pendant 2 × 5 cm on a silver chain 44 cm long."},
     {"id": "stump", "code": "PEN_05", "name": "Stump", "type": "Pendant", "price": 75, "real": true, "sizes": null, "gallery": 4, "text": "Silver pendant 1.5 × 4 cm on a silver chain 48 cm long."},
-    {"id": "slay1", "code": "PEN_06", "name": "Slay I", "type": "Pendant", "price": 65, "real": true, "sizes": null, "gallery": 2, "text": "Silver pendant on a silver chain 38 cm long."},
+    {"id": "slay1", "code": "PEN_06", "name": "Slay I", "type": "Pendant", "price": 75, "real": true, "sizes": null, "gallery": 2, "text": "Silver pendant on a silver chain 38 cm long."},
     {"id": "slay2", "code": "PEN_07", "name": "Slay II", "type": "Pendant", "price": 75, "real": true, "sizes": null, "gallery": 3, "text": "Silver pendant on a silver chain 48 cm long."},
     {"id": "thistle", "code": "RING_07", "name": "Thistle ring", "type": "Ring", "price": 85, "real": true, "sizes": ["US 6.5", "US 7"], "gallery": 3, "text": "A thistle head and its leaves wrapped around the finger in sterling silver. Available in US 6.5 and US 7."}
   ],
