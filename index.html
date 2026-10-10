@@ -43,22 +43,22 @@ svg.links circle{fill:var(--pink)}
 .view img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(.3) contrast(1.05);transition:filter .5s,transform .8s cubic-bezier(.2,.8,.2,1);pointer-events:none;-webkit-user-drag:none}
 .node:hover .view img,.node.on .view img{filter:none;transform:scale(1.06)}
 .meta{display:flex;justify-content:space-between;align-items:end;gap:10px;padding:11px 12px 12px}
-.meta h2{margin:0;font-weight:300;font-size:clamp(20px,2.2vw,30px);letter-spacing:-.01em;text-transform:lowercase;line-height:1}
+.meta h2{margin:0;font-weight:300;font-size:clamp(18px,1.7vw,24px);letter-spacing:-.01em;text-transform:lowercase;line-height:1}
 .meta span{font:10px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ash);white-space:nowrap}
 .node.live .meta span{color:var(--pink)}
 .foot{position:fixed;left:0;right:0;bottom:0;z-index:3;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
   padding:0 clamp(16px,3vw,44px) calc(env(safe-area-inset-bottom,0px) + 18px);font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ash)}
 .foot a{color:var(--bone);text-decoration:none}.foot a:hover{color:var(--pink)}
 .hint{opacity:.8}
-@media (max-width:760px){.meta h2{font-size:21px}.hint{display:none}}
+@media (max-width:760px){.meta h2{font-size:17px}.hint{display:none}}
 </style>
 </head>
 <body>
 <div class="bg" id="bg" aria-hidden="true"></div>
-<header><img src="img/logo_white.png" alt="Things Can Dance"><div class="loc">Tbilisi <b>&#9679;</b> Georgia</div></header>
+<header><img src="img/logo_white.png" alt="Things Can Dance"></header>
 <svg class="links" id="links" aria-hidden="true"></svg>
 <nav aria-label="Things Can Dance">
-  <a class="node live" href="shop.html" data-k="0">
+  <a draggable="false" class="node live" href="shop.html" data-k="0">
     <div class="tb"><span>01.silvershop</span><span class="dots"><i></i><i></i><i></i></span></div>
     <div class="view"><img src="img/drip_photo.webp" alt=""></div>
     <div class="meta"><h2>silvershop</h2><span>Enter</span></div>
@@ -74,7 +74,7 @@ svg.links circle{fill:var(--pink)}
     <div class="meta"><h2>artpractice</h2><span>Soon</span></div>
   </a>
 </nav>
-<div class="foot"><span class="hint">Drag the windows &middot; tap to enter</span><span><a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener">@th_c_d</a> &nbsp;&middot;&nbsp; <a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a></span></div>
+<div class="foot"><span></span><span><a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener">@th_c_d</a> &nbsp;&middot;&nbsp; <a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a></span></div>
 <script>
 (function(){
   const els=[...document.querySelectorAll('.node')], svg=document.getElementById('links'), bg=document.getElementById('bg');
@@ -89,19 +89,21 @@ svg.links circle{fill:var(--pink)}
   const dots=pairs.map(()=>{const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('r','2.2');svg.appendChild(c);return c});
   function size(){
     W=innerWidth;H=innerHeight;mob=W<=760;
-    const w=mob?Math.min(W*.56,230):Math.max(220,Math.min(W*.2,330));
+    const w=mob?Math.min(W*.44,180):Math.max(180,Math.min(W*.15,250));
     document.documentElement.style.setProperty('--w',w+'px');
-    N.forEach((n,i)=>{const p=(mob?M:D)[i]; n.hx=p[0]*W; n.hy=p[1]*H; if(!last){n.x=n.hx;n.y=n.hy}});
+    N.forEach((n,i)=>{const p=n.fx!=null?[n.fx,n.fy]:(mob?M:D)[i]; n.hx=p[0]*W; n.hy=p[1]*H; if(!last){n.x=n.hx;n.y=n.hy}});
   }
   addEventListener('resize',size); size();
   addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY; if(!mob&&!red) bg.style.transform='scale(1.06) translate('+((mx/W-.5)*-14).toFixed(1)+'px,'+((my/H-.5)*-10).toFixed(1)+'px)'});
   N.forEach(n=>{
     const el=n.el;
+    el.addEventListener('dragstart',e=>e.preventDefault());
     el.addEventListener('pointerenter',()=>n.hover=true);
     el.addEventListener('pointerleave',()=>n.hover=false);
     el.addEventListener('pointerdown',e=>{n.drag={dx:e.clientX-n.x,dy:e.clientY-n.y};n.moved=0;el.setPointerCapture(e.pointerId)});
     el.addEventListener('pointermove',e=>{if(!n.drag)return; const nx=e.clientX-n.drag.dx, ny=e.clientY-n.drag.dy; n.moved+=Math.abs(nx-n.x)+Math.abs(ny-n.y); n.vx=(nx-n.x); n.vy=(ny-n.y); n.x=nx; n.y=ny});
-    const up=()=>{if(!n.drag)return; n.drag=null};
+    const up=()=>{if(!n.drag)return; n.drag=null; if(n.moved>6){const w=el.offsetWidth/2,h=el.offsetHeight/2;
+      n.x=Math.max(w,Math.min(W-w,n.x)); n.y=Math.max(h+10,Math.min(H-h,n.y)); n.hx=n.x; n.hy=n.y; n.fx=n.x/W; n.fy=n.y/H; n.vx=n.vy=0}};
     el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up);
     el.addEventListener('click',e=>{
       if(n.moved>6){e.preventDefault();return}
@@ -122,7 +124,7 @@ svg.links circle{fill:var(--pink)}
         n.x+=n.vx*f; n.y+=n.vy*f;
       }
       // windows push each other apart
-      for(const o of N){ if(o===n)continue; const ex=n.x-o.x, ey=n.y-o.y, dd=Math.hypot(ex,ey)||1, min=n.el.offsetWidth*.9;
+      for(const o of N){ if(o===n)continue; const ex=n.x-o.x, ey=n.y-o.y, dd=Math.hypot(ex,ey)||1, min=n.el.offsetWidth*.75;
         if(dd<min&&!n.drag){n.vx+=ex/dd*(min-dd)*.01*f; n.vy+=ey/dd*(min-dd)*.01*f} }
       const ts=(n.hover||n.drag)?1.08:1; n.s+=(ts-n.s)*.15*f;
       n.el.classList.toggle('on',!!n.drag);
