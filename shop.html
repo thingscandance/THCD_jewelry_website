@@ -354,10 +354,11 @@ textarea.field{font:14px var(--f-body);resize:vertical}
 </div></div>
 
 <header class="bar">
-  <a class="logo" href="#top" id="toTop" aria-label="THCD, Things Can Dance"><img src="img/logo_white.png" alt="THCD"></a>
+  <a class="logo" href="/" id="toTop" aria-label="THCD main page"><img src="img/logo_white.png" alt="THCD"></a>
   <nav>
     <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menu">Menu</button>
     <ul class="menu" id="menu">
+      <li><a href="/">Main</a></li>
       <li><a href="#rings" data-go="end" data-cat="Ring">Rings</a></li>
       <li><a href="#earrings" data-go="end" data-cat="Earring">Earrings</a></li>
       <li><a href="#pendants" data-go="end" data-cat="Pendant">Pendants</a></li>
@@ -730,7 +731,6 @@ const goEnd=()=>{closeProduct();closePages();sc.scrollTo({top:track.offsetHeight
 const goTop=()=>{closeProduct();closePages();sc.scrollTo({top:0,behavior:reduce?'auto':'smooth'})};
 document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.body.classList.remove('menu-open');mb.textContent='Menu';if(a.dataset.cat)setCat(a.dataset.cat);(a.dataset.go==='top'?goTop:goEnd)()}));
 document.querySelectorAll('.cats button').forEach(b=>b.addEventListener('click',()=>setCat(b.dataset.cat)));
-document.getElementById('toTop').addEventListener('click',e=>{e.preventDefault();goTop()});
 document.getElementById('backTop').addEventListener('click',goTop);
 
 /* ---------- overlay pages: sold out + ring size ---------- */
