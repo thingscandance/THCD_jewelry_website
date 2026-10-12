@@ -580,19 +580,20 @@ let act=nodes.slice();   // pieces shown on the board for the chosen category
 let cat='all';
 let tw=180,th=280,arrived=false,armT=0;
 const mouse={x:-1e4,y:-1e4,in:false};
-function layout(){const vw=innerWidth,vh=innerHeight,narrow=vw<760;
+function layout(){const vw=innerWidth,vh=innerHeight,narrow=vw<760, coarse=matchMedia('(pointer:coarse)').matches, J=coarse?0:1;
   const top=narrow?96:118, bottom=narrow?92:96, left=narrow?10:Math.max(24,vw*.03);
   const aw=vw-2*left, ah=vh-top-bottom, n=act.length;
   let cols=narrow?(n<=4?2:3):Math.max(2,Math.min(6,Math.ceil(Math.sqrt(n*aw/ah*.62))));
+  if(coarse&&!narrow){let best=-1; for(let c=2;c<=8;c++){const r=Math.ceil(n/c), t=Math.min(aw/c*.84, ah/r-92, 200); if(t>best){best=t; cols=c}}}
   cols=Math.min(cols,n); const rows=Math.ceil(n/cols);
   const cw=aw/cols, ch=ah/rows;
-  tw=Math.max(72,Math.min(narrow?cw*.86:cw*.8, ch*1.05-70, ah-90, narrow?150:200));
+  tw=Math.max(72,Math.min(narrow?cw*.86:cw*.8, coarse?ch-96:ch*1.05-70, ah-90, narrow?150:200));
   document.documentElement.style.setProperty('--tw',tw+'px');
   th=Math.max(act[0]?act[0].el.offsetHeight:0,tw+78);
   act.forEach((nd,i)=>{const r=Math.floor(i/cols), c=i%cols, inRow=Math.min(cols,n-r*cols);
     const off=(cols-inRow)*cw/2;                       // centre a short last row
     const w=tw,h=th;
-    let x=left+off+c*cw+cw/2-w/2+nd.jx*cw*.34, y=top+r*ch+ch/2-h/2+nd.jy*ch*.26+(c%2?ch*.08:-ch*.06);
+    let x=left+off+c*cw+cw/2-w/2+J*nd.jx*cw*.34, y=top+r*ch+ch/2-h/2+J*(nd.jy*ch*.26+(c%2?ch*.08:-ch*.06));
     nd.bx=Math.min(Math.max(left,x),vw-left-w); nd.by=Math.min(Math.max(top,y),vh-bottom-h); nd.w=w; nd.h=h;
     nd.el.style.setProperty('--s',1);});
   act.forEach(n=>{n.nb=act.filter(m=>m!==n).map(m=>[m,Math.hypot(m.bx+m.w/2-n.bx-n.w/2,m.by+m.h/2-n.by-n.h/2)]).sort((a,b)=>a[1]-b[1]).slice(0,3).map(a=>a[0])});
@@ -658,11 +659,11 @@ function drawWeb(){wx.clearRect(0,0,innerWidth,innerHeight); if(!arrived)return;
     wx.beginPath(); wx.moveTo(ax,ay); wx.quadraticCurveTo((ax+bx)/2,(ay+by)/2+sag,bx,by); wx.stroke()}
   for(const n of act){if(n.o<.02)continue; wx.fillStyle='rgba(230,30,156,'+(.95*n.o).toFixed(3)+')'; wx.beginPath(); wx.arc(n.x+n.w/2,n.y-7,2.4,0,Math.PI*2); wx.fill()}
 }
-board.addEventListener('pointermove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;mouse.in=true; if(held) held.moved=Math.max(held.moved,Math.hypot(e.clientX-held.sx,e.clientY-held.sy))});
-board.addEventListener('pointerleave',()=>{mouse.in=false; setHover(null)});
+board.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return; mouse.x=e.clientX;mouse.y=e.clientY;mouse.in=true; if(held) held.moved=Math.max(held.moved,Math.hypot(e.clientX-held.sx,e.clientY-held.sy))});
+board.addEventListener('pointerleave',e=>{if(e.pointerType==='touch')return; mouse.in=false; setHover(null)});
 let hover=null;
 function setHover(n){if(hover===n)return; if(hover&&!(held&&held.n===hover)) hover.el.style.zIndex=5; hover=n; if(n) n.el.style.zIndex=10}
-board.addEventListener('pointerover',e=>{const t=e.target.closest('.tile'); setHover(t?nodes.find(q=>q.el===t):null)});
+board.addEventListener('pointerover',e=>{if(e.pointerType==='touch')return; const t=e.target.closest('.tile'); setHover(t?nodes.find(q=>q.el===t):null)});
 // the board and menu are fixed layers, so scrolling over them is passed on to the page by hand
 let tscr=null, tvel=0, tlast=0;
 function wheelPass(e){if(e.ctrlKey)return; const k=e.deltaMode===1?32:e.deltaMode===2?innerHeight:1; sc.scrollTop+=e.deltaY*k; e.preventDefault()}
@@ -674,7 +675,7 @@ board.addEventListener('pointerdown',e=>{if(!arrived||e.pointerType!=='touch')re
 board.addEventListener('pointermove',e=>{if(!tscr||e.pointerType!=='touch')return; const now=performance.now();
   tscr.moved=Math.max(tscr.moved,Math.hypot(e.clientX-tscr.x,e.clientY-tscr.y)); sc.scrollTop=tscr.st-(e.clientY-tscr.y);
   tvel=(e.clientY-tscr.ly)/Math.max(8,now-tlast); tscr.ly=e.clientY; tlast=now});
-function tend(e){if(!tscr)return; const h=tscr; tscr=null; if(h.moved<8){tvel=0; if(h.n&&e.type==='pointerup') openProduct(h.n.id)} else if(performance.now()-tlast<80) coast()}
+function tend(e){if(!tscr)return; const h=tscr; tscr=null; if(h.moved<8){tvel=0; if(e.type==='pointerup'){ if(h.n&&hover===h.n) openProduct(h.n.id); else setHover(h.n); cloudKick() }} else if(performance.now()-tlast<80) coast()}
 board.addEventListener('pointerup',tend); board.addEventListener('pointercancel',tend);
 board.addEventListener('pointerdown',e=>{if(!arrived||e.pointerType==='touch')return; const t=e.target.closest('.tile'); if(!t)return;
   try{board.setPointerCapture(e.pointerId)}catch(_){}
