@@ -243,7 +243,9 @@ body.cart-open .cpanel{transform:none}
 header.bar{z-index:80;transition:background .35s ease,padding .35s ease}
 body.onwhite header.bar{background:rgba(8,9,10,.92);padding-bottom:14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .sizerblock .phead{max-width:960px}
-@media (max-width:760px){.vpin img{height:auto;width:118vw}.about{margin-left:16px;margin-right:16px}.sizerblock{margin-top:45vh}}
+.nexthint{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 62px);transform:translateX(-50%);z-index:26;font:11px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:#fff;background:rgba(8,9,10,.7);padding:6px 10px;border-radius:2px;opacity:0;transition:opacity .5s;pointer-events:none;white-space:nowrap}
+.nexthint.on{opacity:1;animation:nh 1.6s ease-in-out infinite}@keyframes nh{50%{transform:translate(-50%,4px)}}
+@media (max-width:760px){#track{height:1300vh}.vpin img{height:auto;width:118vw}.about{margin-left:16px;margin-right:16px}.sizerblock{margin-top:45vh}}
 
 /* sold out archive */
 .sgrid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:clamp(12px,1.6vw,20px)}
@@ -465,6 +467,7 @@ textarea.field{font:14px var(--f-body);resize:vertical}
 <section id="board" aria-label="Pieces">
   <canvas id="web"></canvas>
 </section>
+<div class="nexthint" id="nextHint" aria-hidden="true"></div>
 <div class="boardnote"><div class="cats" role="group" aria-label="Category"><button type="button" data-cat="all" class="c-all">All</button><button type="button" data-cat="Ring">Rings</button><button type="button" data-cat="Earring">Earrings</button><button type="button" data-cat="Pendant">Pendants</button></div><button type="button" id="backTop">Back to film</button></div>
 
 <section id="product" hidden aria-label="Product"></section>
@@ -559,6 +562,7 @@ function loop(){raf=0;
   ch.innerHTML='<b>●</b> '+name; bar.style.width=(pf*100)+'%';
   hint.style.opacity=target<0.01?1:0;
   setArrived(target>=FILM*0.93);
+  phoneSeg();
   if(shown!==target) kick();
 }
 sc.addEventListener('scroll',()=>{target=progress();kick()},{passive:true});
@@ -606,6 +610,11 @@ function setArrived(v){if(v===arrived)return; arrived=v; document.body.classList
   cloudKick();
 }
 const narrowNow=()=>innerWidth<760;
+// on phones the board shows one category at a time: scrolling on walks rings -> earrings -> pendants
+const SEGS=['Ring','Earring','Pendant'], A0=FILM*0.93; let lastSeg=-1;
+function segAt(p){return Math.max(0,Math.min(2,Math.floor((p-A0)/(1-A0)*3)))}
+const nextHint=document.getElementById('nextHint'), NEXTN=['Scroll for earrings ↓','Scroll for pendants ↓',''];
+function phoneSeg(){nextHint.classList.toggle('on',narrowNow()&&arrived&&target<0.995&&segAt(target)<2); if(!narrowNow()||!arrived){lastSeg=-1;return} nextHint.textContent=NEXTN[segAt(target)]; const g=segAt(target); if(g!==lastSeg){lastSeg=g; if(cat!==SEGS[g]) setCat(SEGS[g])}}
 function setCat(c){
   if(c==='all'&&narrowNow()) c='Ring';
   cat=c; act=nodes.filter(n=>c==='all'||n.type===c);
@@ -752,9 +761,9 @@ addEventListener('keydown',e=>{if(e.key!=='Escape')return; if(document.body.clas
 /* ---------- menu & nav ---------- */
 const mb=document.getElementById('menuBtn');
 mb.addEventListener('click',()=>{const o=document.body.classList.toggle('menu-open');mb.setAttribute('aria-expanded',o);mb.textContent=o?'Close':'Menu'});
-const goEnd=()=>{closeProduct();closePages();sc.scrollTo({top:track.offsetHeight-sc.clientHeight,behavior:reduce?'auto':'smooth'})};
+const goEnd=c=>{closeProduct();closePages(); const total=track.offsetHeight-sc.clientHeight, g=SEGS.indexOf(c); sc.scrollTo({top:(narrowNow()&&g>=0)?Math.round(total*(A0+(1-A0)*(g+.5)/3)):total,behavior:reduce?'auto':'smooth'})};
 const goTop=()=>{closeProduct();closePages();sc.scrollTo({top:0,behavior:reduce?'auto':'smooth'})};
-document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.body.classList.remove('menu-open');mb.textContent='Menu';if(a.dataset.cat)setCat(a.dataset.cat);(a.dataset.go==='top'?goTop:goEnd)()}));
+document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.body.classList.remove('menu-open');mb.textContent='Menu';if(a.dataset.cat)setCat(a.dataset.cat);(a.dataset.go==='top'?goTop:goEnd)(a.dataset.cat)}));
 document.querySelectorAll('.cats button').forEach(b=>b.addEventListener('click',()=>setCat(b.dataset.cat)));
 document.getElementById('backTop').addEventListener('click',goTop);
 
