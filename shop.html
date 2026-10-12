@@ -33,8 +33,8 @@ button{font:inherit;color:inherit}
 a:focus-visible,button:focus-visible{outline:1px solid var(--pink);outline-offset:4px}
 
 /* ---------- film ---------- */
-#track{position:relative;height:1100vh}
-#stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+#track{position:relative;height:900vh}
+#stage{position:fixed;left:0;right:0;top:0;height:100vh;height:100svh;overflow:hidden}
 #film{position:absolute;inset:0;width:100%;height:100%;display:block;background:var(--void)}
 #stage::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(7,8,9,.55),rgba(7,8,9,0) 22%,rgba(7,8,9,0) 62%,rgba(7,8,9,.7))}
@@ -214,34 +214,38 @@ body.cart-open .cpanel{transform:none}
 .phead p{margin:0;max-width:46ch;color:#c9cecc;font-size:14px}
 
 
-/* studio */
-#studio{overflow:hidden;display:flex;flex-direction:column}
-#studio[hidden]{display:none}
-#studio .crumbs{position:relative;z-index:2}
-#studio .drift{position:absolute;inset:0}
-#studio .ph{position:absolute;display:block;padding:0;margin:0;border:1px solid var(--edge);border-radius:2px;background:#000;cursor:zoom-in;
-  box-shadow:0 22px 54px rgba(0,0,0,.45);transform-origin:50% 50%;will-change:transform;transition:box-shadow .4s,border-color .4s}
-#studio .ph img{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
-#studio .ph.on{border-color:rgba(230,30,156,.7);box-shadow:0 40px 90px rgba(0,0,0,.6)}
-#studio .stext{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);width:min(540px,calc(100vw - 32px));z-index:1;margin:0;max-width:540px;background:rgba(9,10,11,.88);border:1px solid var(--edge);border-radius:3px;
-  padding:clamp(22px,3.4vw,40px);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 30px 80px rgba(0,0,0,.45)}
-#studio .stext{cursor:zoom-in;transition:scale .6s cubic-bezier(.2,.8,.2,1),box-shadow .5s,border-color .4s;animation:sfloat 14s ease-in-out infinite alternate}
-#studio .stext.zoomed{scale:1.14;z-index:4;cursor:zoom-out;border-color:rgba(230,30,156,.6);box-shadow:0 50px 120px rgba(0,0,0,.6)}
-#studio .stext:not(.zoomed):hover{scale:1.03}
-@keyframes sfloat{0%{translate:0 0;rotate:-.6deg}35%{translate:18px -14px;rotate:.4deg}70%{translate:-14px 10px;rotate:-.2deg}100%{translate:8px 16px;rotate:.6deg}}
-@media (prefers-reduced-motion:reduce){#studio .stext{animation:none}}
-#studio .stext .code{font:11px var(--f-mono);letter-spacing:.14em;color:var(--pink);text-transform:uppercase}
-#studio .stext h2{margin:8px 0 18px;font-weight:300;font-size:clamp(40px,6vw,80px);line-height:.95;text-transform:uppercase}
-#studio .stext p{margin:0 0 14px;color:#c9cecc;font-size:15px;line-height:1.6}
-#studio .slinks{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-#studio .slinks a{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--bone);text-decoration:none;border:1px solid var(--edge);border-radius:2px;padding:11px 14px;transition:color .2s,border-color .2s}
-#studio .slinks a:hover{color:var(--pink);border-color:var(--pink)}
-@media (max-width:760px){
-  #studio{overflow:auto}
-  #studio .stext.zoomed{scale:1.06}
-  #studio .stext{position:relative;left:auto;top:auto;transform:none;width:auto;margin:auto 0 12vh;padding:20px}
-  #studio .stext p{font-size:14px;line-height:1.5}
-}
+
+/* ---------- below the board: vines, studio text, ring sizer ---------- */
+#below{position:relative;z-index:30;background:linear-gradient(#f4f4f200 0,#f4f4f2d9 30vh,#f6f6f4 60vh);padding-bottom:40px}
+#below::before{content:"";position:absolute;inset:40vh 0 0;background:url(img/cart_bg.webp) center top/1600px auto repeat-y;opacity:.05;mix-blend-mode:multiply;filter:grayscale(1);pointer-events:none;-webkit-mask-image:linear-gradient(#0000,#000 50vh);mask-image:linear-gradient(#0000,#000 50vh)}
+.vines{position:relative;height:130vh;overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(#0000 0,#000 18%,#000 80%,#0000 100%);mask-image:linear-gradient(#0000 0,#000 18%,#000 80%,#0000 100%)}
+.vines img{position:absolute;left:50%;top:0;width:min(980px,118vw);transform:translateX(-50%);will-change:transform;filter:drop-shadow(0 18px 22px rgba(0,0,0,.22))}
+.vines .v1{top:-6vh}
+.vines2{height:110vh}.vines2 .v3{top:-24vh;transform:translateX(-50%) scaleX(-1)}
+.about{position:relative;z-index:2;max-width:620px;margin:-48vh auto 0;background:rgba(8,9,10,.93);color:#e9ecea;border:1px solid rgba(255,255,255,.08);border-radius:3px;
+  padding:clamp(22px,3.4vw,40px);box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.about .code{font:11px var(--f-mono);letter-spacing:.14em;color:var(--pink);text-transform:uppercase}
+.about h2{margin:8px 0 18px;font-weight:300;font-size:clamp(40px,6vw,80px);line-height:.95;text-transform:uppercase;color:#f2f2ef}
+.about p{margin:0 0 14px;font-size:15px;line-height:1.6;color:#c9cdca}
+.about .slinks{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.about .slinks a{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:#e9ecea;text-decoration:none;border:1px solid rgba(255,255,255,.3);border-radius:2px;padding:11px 14px}
+.about .slinks a:hover{color:var(--pink);border-color:var(--pink)}
+.sizerblock{position:relative;z-index:2;margin:-40vh auto 0;padding:0 clamp(16px,4vw,64px)}
+.sizerblock .phead{background:rgba(8,9,10,.93);box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.foot{position:relative;z-index:2;display:flex;justify-content:space-between;gap:12px;max-width:1280px;margin:60px auto 0;padding:0 clamp(16px,4vw,64px);font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:#555}
+.foot a{color:#111;text-decoration:none}.foot a:hover{color:#b0126f}
+/* tiles: white, 50% */
+.tile{background:rgba(255,255,255,.5);border-color:rgba(255,255,255,.5);backdrop-filter:blur(10px) saturate(1.2);-webkit-backdrop-filter:blur(10px) saturate(1.2)}
+.tile:hover{border-color:rgba(255,255,255,.95)}
+.tb{color:#141012;border-bottom-color:rgba(20,10,14,.2)}
+.tb .dots i{border-color:#141012}
+.tile.real .tb .dots i:first-child{background:#141012;border-color:#141012}
+.meta h3{color:#141012}.meta span{color:#2b2b2b}
+/* the menu stays on top of everything */
+header.bar{z-index:80;transition:background .35s ease,padding .35s ease}
+body.onwhite header.bar{background:rgba(8,9,10,.92);padding-bottom:14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.sizerblock .phead{max-width:960px}
+@media (max-width:760px){.vines{height:90vh}.about{margin-top:-30vh}.sizerblock{margin-top:-20vh}}
 
 /* sold out archive */
 .sgrid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:clamp(12px,1.6vw,20px)}
@@ -351,81 +355,18 @@ textarea.field{font:14px var(--f-body);resize:vertical}
 <div id="scroller"><div id="track">
   <div id="stage"><canvas id="film" aria-label="THCD film"></canvas><div class="dim"></div></div>
 </div>
-</div>
-<div class="loading" id="loading"></div>
-<div id="preload" role="status" aria-live="polite"><div class="pl">
-  <img src="img/logo_white.png" alt="THCD">
-  <div class="bar"><i id="plBar"></i></div>
-  <div class="row"><span>Loading</span><b id="plPct">0%</b></div>
-</div></div>
-
-<header class="bar">
-  <a class="logo" href="/" id="toTop" aria-label="THCD main page"><img src="img/logo_white.png" alt="THCD"></a>
-  <nav>
-    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menu">Menu</button>
-    <ul class="menu" id="menu">
-      <li><a href="/">Main</a></li>
-      <li><a href="#rings" data-go="end" data-cat="Ring">Rings</a></li>
-      <li><a href="#earrings" data-go="end" data-cat="Earring">Earrings</a></li>
-      <li><a href="#pendants" data-go="end" data-cat="Pendant">Pendants</a></li>
-      <li><a href="#sold-out" data-open="soldout">Sold out</a></li>
-      <li><a href="#ring-size" data-open="sizer">Ring size</a></li>
-      <li><a href="#top" data-go="top">World</a></li>
-      <li><a href="#studio" data-open="studio">Studio</a></li>
-    </ul>
-    <button class="cartbtn" id="cartBtn" type="button" aria-controls="cart">Cart<b id="cartCount">0</b></button>
-  </nav>
-</header>
-
-<div class="slogan">
-  <h1>Things<br>can dance</h1>
-  <p>Sterling silver grown in a posthuman garden. Cast by hand in Tbilisi.</p>
-</div>
-<div class="hint" id="hint">Scroll</div>
-<div class="clock" aria-hidden="true">
-  <div><span id="tc">00:00</span> / 00:14</div>
-  <div class="ch" id="ch"><b>&#9679;</b> signal</div>
-  <div class="rail"><div class="ticks"></div><i id="bar"></i></div>
-</div>
-
-<section id="board" aria-label="Pieces">
-  <canvas id="web"></canvas>
-</section>
-<div class="boardnote"><div class="cats" role="group" aria-label="Category"><button type="button" data-cat="all" class="c-all">All</button><button type="button" data-cat="Ring">Rings</button><button type="button" data-cat="Earring">Earrings</button><button type="button" data-cat="Pendant">Pendants</button></div><button type="button" id="backTop">Back to film</button></div>
-
-<section id="product" hidden aria-label="Product"></section>
-
-<section id="studio" class="page" hidden aria-label="Studio">
-  <div class="drift" id="drift" aria-hidden="true"></div>
-  <div class="crumbs"><button type="button" data-close>&larr; Board</button><span>Studio</span></div>
-  <div class="stext">
+<div id="below">
+  <div class="vines" aria-hidden="true"><img src="img/vines.webp" alt="" class="v1"></div>
+  <section class="about" id="about" aria-label="Studio">
     <div class="code">Tbilisi &middot; Georgia</div>
     <h2>Studio</h2>
     <p>Things Can Dance is a small Tbilisi-based jewelry studio. Most pieces are made by hand, one at a time: carved, cast and finished in sterling silver, so no two come out quite the same.</p>
     <p>Saw something in the archive that already found its hands? I can make a relative of it, or something new for you. Write to me and we&rsquo;ll talk it through.</p>
-    <div class="slinks">
-      <a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a>
-      <a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener">Instagram @th_c_d</a>
-    </div>
-  </div>
-</section>
-<section id="soldout" class="page" hidden aria-label="Sold out">
-  <div class="crumbs"><button type="button" data-close>&larr; Board</button><span>Archive</span></div>
-  <div class="phead">
-    <div><div class="code" id="soldCount">Archive</div><h2>Sold out</h2></div>
-    <p>One-of-a-kind rings that already found their hands. Each was cast once. Write to us if one of them calls to you and we can grow a relative.</p>
-  </div>
-  <div class="sgrid" id="sgrid"></div>
-</section>
-<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photos">
-  <div class="lbtop"><span><b id="lbName"></b> &middot; <span id="lbIdx"></span></span><button type="button" id="lbClose">Close &times;</button></div>
-  <div class="lbmain"><button class="arrow" type="button" id="lbPrev" aria-label="Previous photo">&larr;</button><div class="frame"><img id="lbImg" alt=""></div><button class="arrow" type="button" id="lbNext" aria-label="Next photo">&rarr;</button></div>
-  <div class="lbthumbs" id="lbThumbs"></div>
-</div>
-
-<section id="sizerpage" class="page" hidden aria-label="Ring size">
-  <div class="crumbs"><button type="button" data-close>&larr; Back</button><span>Sizing tool</span></div>
-  <div class="phead">
+    <div class="slinks"><a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a><a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener">Instagram @th_c_d</a></div>
+  </section>
+  <div class="vines vines2" aria-hidden="true"><img src="img/vines.webp" alt="" class="v3"></div>
+  <section class="sizerblock" id="sizerblock" aria-label="Ring size">
+<div class="phead">
     <div><div class="code">Tool &middot; on your screen</div><h2>Find your<br>ring size</h2></div>
     <p>Everything is measured right here in your browser, on a phone or a laptop. No camera, no app, and nothing is sent anywhere unless you choose to email the result.</p>
   </div>
@@ -484,7 +425,67 @@ textarea.field{font:14px var(--f-body);resize:vertical}
     <summary>Size chart, for reference</summary>
     <div class="wrap"><table><thead><tr><th>RU</th><th>EU / ISO</th><th>US</th><th>Diameter, mm</th><th>Circumference, mm</th></tr></thead><tbody id="refChartBody"></tbody></table></div>
   </details>
+  </section>
+  <footer class="foot"><span>&copy; Things Can Dance</span><a href="#top" id="footTop">Back to the film &uarr;</a></footer>
+</div>
+</div>
+<div class="loading" id="loading"></div>
+<div id="preload" role="status" aria-live="polite"><div class="pl">
+  <img src="img/logo_white.png" alt="THCD">
+  <div class="bar"><i id="plBar"></i></div>
+  <div class="row"><span>Loading</span><b id="plPct">0%</b></div>
+</div></div>
+
+<header class="bar">
+  <a class="logo" href="/" id="toTop" aria-label="THCD main page"><img src="img/logo_white.png" alt="THCD"></a>
+  <nav>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menu">Menu</button>
+    <ul class="menu" id="menu">
+      <li><a href="/">Main</a></li>
+      <li><a href="#rings" data-go="end" data-cat="Ring">Rings</a></li>
+      <li><a href="#earrings" data-go="end" data-cat="Earring">Earrings</a></li>
+      <li><a href="#pendants" data-go="end" data-cat="Pendant">Pendants</a></li>
+      <li><a href="#sold-out" data-open="soldout">Sold out</a></li>
+      <li><a href="#ring-size" data-scroll="sizerblock">Ring size</a></li>
+      <li><a href="#top" data-go="top">World</a></li>
+      <li><a href="#about" data-scroll="about">Studio</a></li>
+    </ul>
+    <button class="cartbtn" id="cartBtn" type="button" aria-controls="cart">Cart<b id="cartCount">0</b></button>
+  </nav>
+</header>
+
+<div class="slogan">
+  <h1>Things<br>can dance</h1>
+  <p>Sterling silver grown in a posthuman garden. Cast by hand in Tbilisi.</p>
+</div>
+<div class="hint" id="hint">Scroll</div>
+<div class="clock" aria-hidden="true">
+  <div><span id="tc">00:00</span> / 00:10</div>
+  <div class="ch" id="ch"><b>&#9679;</b> signal</div>
+  <div class="rail"><div class="ticks"></div><i id="bar"></i></div>
+</div>
+
+<section id="board" aria-label="Pieces">
+  <canvas id="web"></canvas>
 </section>
+<div class="boardnote"><div class="cats" role="group" aria-label="Category"><button type="button" data-cat="all" class="c-all">All</button><button type="button" data-cat="Ring">Rings</button><button type="button" data-cat="Earring">Earrings</button><button type="button" data-cat="Pendant">Pendants</button></div><button type="button" id="backTop">Back to film</button></div>
+
+<section id="product" hidden aria-label="Product"></section>
+
+<section id="soldout" class="page" hidden aria-label="Sold out">
+  <div class="crumbs"><button type="button" data-close>&larr; Board</button><span>Archive</span></div>
+  <div class="phead">
+    <div><div class="code" id="soldCount">Archive</div><h2>Sold out</h2></div>
+    <p>One-of-a-kind rings that already found their hands. Each was cast once. Write to us if one of them calls to you and we can grow a relative.</p>
+  </div>
+  <div class="sgrid" id="sgrid"></div>
+</section>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photos">
+  <div class="lbtop"><span><b id="lbName"></b> &middot; <span id="lbIdx"></span></span><button type="button" id="lbClose">Close &times;</button></div>
+  <div class="lbmain"><button class="arrow" type="button" id="lbPrev" aria-label="Previous photo">&larr;</button><div class="frame"><img id="lbImg" alt=""></div><button class="arrow" type="button" id="lbNext" aria-label="Next photo">&rarr;</button></div>
+  <div class="lbthumbs" id="lbThumbs"></div>
+</div>
+
 
 <aside id="cart" aria-label="Cart"><div class="cpanel">
   <div class="chead"><span>Cart</span><button type="button" id="cartClose">Close &times;</button></div>
@@ -519,11 +520,11 @@ if('scrollRestoration' in history) history.scrollRestoration='manual';
 document.body.classList.add('preloading');
 const sc=document.getElementById('scroller'); sc.scrollTop=0;
 const plBar=document.getElementById('plBar'), plPct=document.getElementById('plPct'), preload=document.getElementById('preload');
-const N=337, DUR=14.04, FILM=0.95;
+const N=312, DUR=10.4, FILM=0.82;
 const cv=document.getElementById('film'), cx=cv.getContext('2d');
 const track=document.getElementById('track'), loadingEl=document.getElementById('loading');
 const tc=document.getElementById('tc'), ch=document.getElementById('ch'), bar=document.getElementById('bar'), hint=document.getElementById('hint');
-const chapters=[[0,'signal'],[5,'face'],[8,'lichen'],[11,'pollination']];
+const chapters=[[0,'garden'],[3,'monument'],[8.6,'thorns']];
 const ticks=document.querySelector('.ticks');
 chapters.slice(1).forEach(([t])=>{const s=document.createElement('span');s.style.left=(t/DUR*100)+'%';ticks.appendChild(s)});
 const bmp=new Array(N); let ready=0, evenReady=0; const EVEN=Math.ceil(N/4); let EXT='.webp';
@@ -729,7 +730,7 @@ function openProduct(id){
   const qv=document.getElementById('qv');
   if(qv){document.getElementById('qm').onclick=()=>{q=Math.max(1,q-1);qv.textContent=q};document.getElementById('qp').onclick=()=>{q=Math.min(9,q+1);qv.textContent=q}}
   document.getElementById('addBtn').onclick=()=>{if(!p.real)return; if(p.sizes&&!size){document.getElementById('warn').textContent='Choose a size first';return} addToCart(p.id,size,q)};
-  const fs=document.getElementById('findSize'); if(fs) fs.onclick=()=>{pageFrom=id; openPage('sizer')};
+  const fs=document.getElementById('findSize'); if(fs) fs.onclick=()=>{closeProduct(); if(window.thcdSizerReset) window.thcdSizerReset(); const el=document.getElementById('sizerblock'); sc.scrollTo({top:sc.scrollTop+el.getBoundingClientRect().top-90,behavior:'smooth'})};
   document.getElementById('pBack').onclick=closeProduct;
   document.getElementById('pPrev').onclick=()=>openProduct(prev);
   document.getElementById('pNext').onclick=()=>openProduct(next);
@@ -747,7 +748,7 @@ document.querySelectorAll('.cats button').forEach(b=>b.addEventListener('click',
 document.getElementById('backTop').addEventListener('click',goTop);
 
 /* ---------- overlay pages: sold out + ring size ---------- */
-const pages={soldout:document.getElementById('soldout'),sizer:document.getElementById('sizerpage'),studio:document.getElementById('studio')};
+const pages={soldout:document.getElementById('soldout')};
 let pageFrom=null;
 function openPage(name){closeProduct(); if(name==='sizer'&&window.thcdSizerReset) window.thcdSizerReset(); for(const k in pages) pages[k].hidden=k!==name; const pg=pages[name]; pg.scrollTop=0; sc.style.overflow='hidden'; closeCart();}
 function closePages(){let was=false; for(const k in pages){if(!pages[k].hidden)was=true; pages[k].hidden=true} closeLb(); if(was&&prod.hidden) sc.style.overflow=''; return was}
@@ -839,49 +840,21 @@ checkoutBtn.onclick=showPay;
 setCat('all');
 size(); layout(); target=progress(); kick();
 })();
-/* ---------- studio: floating photos ---------- */
+
+/* ---------- scrolling past the board ---------- */
 (function(){
-  const st=document.getElementById('studio'), box=document.getElementById('drift');
-  // [file, x%, y%, width (fraction of min(vw, 1500)), rotation]
-  const L=[[1,.04,.17,.16,-5],[6,.17,.60,.15,4],[7,.02,.66,.11,7],[2,.70,.12,.13,6],[4,.84,.32,.13,-3],[5,.70,.64,.14,3]];
-  const M=[[1,-.05,.10,.34,-5],[7,.66,.08,.30,6],[5,.32,.15,.22,3],[6,-.04,.86,.30,4],[4,.70,.88,.26,-3]];
-  const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let items=[], raf=0, mx=-1e4, my=-1e4, last=0;
-  function build(){
-    const mob=innerWidth<=760, set=mob?M:L, base=mob?innerWidth:Math.min(innerWidth,1500);
-    box.innerHTML=''; items=set.map(([f,x,y,w,r],k)=>{
-      const el=document.createElement('button'); el.type='button'; el.className='ph'; el.tabIndex=-1;
-      const W=Math.round(base*w), H=Math.round(W*4/3);
-      el.style.cssText='left:'+(x*100)+'%;top:'+(y*100)+'%;width:'+W+'px;height:'+H+'px';
-      el.innerHTML='<img src="img/studio/s'+f+'.webp" alt="" loading="lazy">'; box.appendChild(el);
-      const it={el,r,ph:k*1.7,sp:.00011+.00004*(k%3),amp:mob?10:22,s:1,ts:1,px:0,py:0,on:false,W,H};
-      el.addEventListener('pointerenter',()=>{it.on=true}); el.addEventListener('pointerleave',()=>{it.on=false});
-      el.addEventListener('click',()=>{if(matchMedia('(hover: none)').matches) it.on=!it.on});
-      return it});
-  }
-  box.addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY});
-  function tick(t){
-    raf=0; if(st.hidden) return;
-    const dt=Math.min(50,t-(last||t)); last=t; const k=1-Math.exp(-dt/160);
-    let top=null;
-    for(const it of items){
-      const ts=it.on?(innerWidth<=760?1.9:1.6):1; it.s+=(ts-it.s)*k;
-      const dx=red?0:Math.sin(t*it.sp+it.ph)*it.amp, dy=red?0:Math.cos(t*it.sp*1.3+it.ph)*it.amp;
-      let tx=0,ty=0;
-      if(it.on){const b=it.el.getBoundingClientRect(), cx=b.left+b.width/2-it.px, cy=b.top+b.height/2-it.py;
-        tx=(innerWidth/2-cx)*.35+(mx>-1e3?(mx-cx)*.18:0); ty=(innerHeight/2-cy)*.25+(my>-1e3?(my-cy)*.18:0); top=it}
-      it.px+=(tx-it.px)*k; it.py+=(ty-it.py)*k;
-      it.el.style.transform='translate('+(dx+it.px).toFixed(1)+'px,'+(dy+it.py).toFixed(1)+'px) rotate('+(it.r*(1.6-it.s)/.6).toFixed(2)+'deg) scale('+it.s.toFixed(3)+')';
-      it.el.style.zIndex=it.on?3:(it.s>1.02?2:0); it.el.classList.toggle('on',it.on);
-    }
-    raf=requestAnimationFrame(tick);
-  }
-  const go=()=>{if(!raf&&!st.hidden){last=0;raf=requestAnimationFrame(tick)}};
-  const stx=st.querySelector('.stext');
-  stx.addEventListener('click',e=>{if(e.target.closest('a'))return; stx.classList.toggle('zoomed')});
-  st.addEventListener('click',e=>{if(!e.target.closest('.stext')) stx.classList.remove('zoomed')});
-  new MutationObserver(()=>{if(!st.hidden){if(!items.length)build(); go()}}).observe(st,{attributes:true,attributeFilter:['hidden']});
-  let rw=innerWidth; addEventListener('resize',()=>{if(Math.abs(innerWidth-rw)>40){rw=innerWidth; if(items.length) build()}});
+  const sc=document.getElementById('scroller'), track=document.getElementById('track'), board=document.getElementById('board'), note=document.querySelector('.boardnote');
+  function onScroll(){const over=Math.max(0,sc.scrollTop-(track.offsetHeight-sc.clientHeight));
+    document.body.classList.toggle('onwhite',over>innerHeight*.3);
+    const t=over?'translate3d(0,'+(-over)+'px,0)':''; board.style.transform=t; note.style.transform=over?'translate(-50%,'+(-over)+'px)':'';
+    const vs=document.querySelectorAll('#below .vines img'); vs.forEach((im,i)=>{const r=im.parentNode.getBoundingClientRect(); const k=(r.top/innerHeight); im.style.translate='0 '+(k*(i%2?-60:60)).toFixed(1)+'px'; im.style.rotate=(k*(i%2?1.5:-1.5)).toFixed(2)+'deg'})}
+  sc.addEventListener('scroll',onScroll,{passive:true}); addEventListener('resize',onScroll);
+  document.querySelectorAll('[data-scroll]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.body.classList.remove('menu-open');
+    const mb=document.getElementById('menuBtn'); if(mb) mb.textContent='Menu';
+    document.querySelectorAll('#product,.page').forEach(x=>x.hidden=true); sc.style.overflow='';
+    const el=document.getElementById(a.dataset.scroll); if(a.dataset.scroll==='sizerblock'&&window.thcdSizerReset) window.thcdSizerReset();
+    sc.scrollTo({top:sc.scrollTop+el.getBoundingClientRect().top-90,behavior:'smooth'})}));
+  const ft=document.getElementById('footTop'); if(ft) ft.addEventListener('click',e=>{e.preventDefault();sc.scrollTo({top:0,behavior:'smooth'})});
 })();
 </script>
 <script src="js/ring-size.js">
