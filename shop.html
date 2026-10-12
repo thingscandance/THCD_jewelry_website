@@ -751,7 +751,7 @@ addEventListener('keydown',e=>{if(e.key!=='Escape')return; if(document.body.clas
 /* ---------- menu & nav ---------- */
 const mb=document.getElementById('menuBtn');
 mb.addEventListener('click',()=>{const o=document.body.classList.toggle('menu-open');mb.setAttribute('aria-expanded',o);mb.textContent=o?'Close':'Menu'});
-const goEnd=()=>{closeProduct();closePages();sc.scrollTo({top:track.offsetHeight,behavior:reduce?'auto':'smooth'})};
+const goEnd=()=>{closeProduct();closePages();sc.scrollTo({top:track.offsetHeight-sc.clientHeight,behavior:reduce?'auto':'smooth'})};
 const goTop=()=>{closeProduct();closePages();sc.scrollTo({top:0,behavior:reduce?'auto':'smooth'})};
 document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.body.classList.remove('menu-open');mb.textContent='Menu';if(a.dataset.cat)setCat(a.dataset.cat);(a.dataset.go==='top'?goTop:goEnd)()}));
 document.querySelectorAll('.cats button').forEach(b=>b.addEventListener('click',()=>setCat(b.dataset.cat)));
