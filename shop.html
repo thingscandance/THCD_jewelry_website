@@ -34,7 +34,7 @@ a:focus-visible,button:focus-visible{outline:1px solid var(--pink);outline-offse
 
 /* ---------- film ---------- */
 #track{position:relative;height:900vh}
-#stage{position:fixed;left:0;right:0;top:0;height:100vh;height:100svh;overflow:hidden}
+#stage{position:fixed;left:0;right:0;top:0;height:100vh;height:100svh;overflow:hidden;pointer-events:none}
 #film{position:absolute;inset:0;width:100%;height:100%;display:block;background:var(--void)}
 #stage::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(7,8,9,.55),rgba(7,8,9,0) 22%,rgba(7,8,9,0) 62%,rgba(7,8,9,.7))}
@@ -218,11 +218,9 @@ body.cart-open .cpanel{transform:none}
 /* ---------- below the board: vines, studio text, ring sizer ---------- */
 #below{position:relative;z-index:30;background:linear-gradient(#f4f4f200 0,#f4f4f2d9 30vh,#f6f6f4 60vh);padding-bottom:40px}
 #below::before{content:"";position:absolute;inset:40vh 0 0;background:url(img/cart_bg.webp) center top/1600px auto repeat-y;opacity:.05;mix-blend-mode:multiply;filter:grayscale(1);pointer-events:none;-webkit-mask-image:linear-gradient(#0000,#000 50vh);mask-image:linear-gradient(#0000,#000 50vh)}
-.vines{position:relative;height:130vh;overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(#0000 0,#000 18%,#000 80%,#0000 100%);mask-image:linear-gradient(#0000 0,#000 18%,#000 80%,#0000 100%)}
-.vines img{position:absolute;left:50%;top:0;width:min(980px,118vw);transform:translateX(-50%);will-change:transform;filter:drop-shadow(0 18px 22px rgba(0,0,0,.22))}
-.vines .v1{top:-6vh}
-.vines2{height:110vh}.vines2 .v3{top:-24vh;transform:translateX(-50%) scaleX(-1)}
-.about{position:relative;z-index:2;max-width:620px;margin:-48vh auto 0;background:rgba(8,9,10,.93);color:#e9ecea;border:1px solid rgba(255,255,255,.08);border-radius:3px;
+.vpin{position:sticky;top:0;overflow:hidden;height:100vh;height:100svh;margin-bottom:-100vh;margin-bottom:-100svh;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0}
+.vpin img{height:100%;width:auto;max-width:none;-webkit-mask-image:linear-gradient(#0000 0,#000 9%,#000 91%,#0000 100%);mask-image:linear-gradient(#0000 0,#000 9%,#000 91%,#0000 100%);filter:drop-shadow(0 18px 22px rgba(0,0,0,.22))}
+.about{position:relative;z-index:2;max-width:620px;margin:95vh auto 0;background:rgba(8,9,10,.93);color:#e9ecea;border:1px solid rgba(255,255,255,.08);border-radius:3px;
   padding:clamp(22px,3.4vw,40px);box-shadow:0 30px 80px rgba(0,0,0,.35)}
 .about .code{font:11px var(--f-mono);letter-spacing:.14em;color:var(--pink);text-transform:uppercase}
 .about h2{margin:8px 0 18px;font-weight:300;font-size:clamp(40px,6vw,80px);line-height:.95;text-transform:uppercase;color:#f2f2ef}
@@ -230,7 +228,7 @@ body.cart-open .cpanel{transform:none}
 .about .slinks{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
 .about .slinks a{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:#e9ecea;text-decoration:none;border:1px solid rgba(255,255,255,.3);border-radius:2px;padding:11px 14px}
 .about .slinks a:hover{color:var(--pink);border-color:var(--pink)}
-.sizerblock{position:relative;z-index:2;margin:-40vh auto 0;padding:0 clamp(16px,4vw,64px)}
+.sizerblock{position:relative;z-index:2;margin:60vh auto 0;padding:0 clamp(16px,4vw,64px)}
 .sizerblock .phead{background:rgba(8,9,10,.93);box-shadow:0 30px 80px rgba(0,0,0,.3)}
 .foot{position:relative;z-index:2;display:flex;justify-content:space-between;gap:12px;max-width:1280px;margin:60px auto 0;padding:0 clamp(16px,4vw,64px);font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:#555}
 .foot a{color:#111;text-decoration:none}.foot a:hover{color:#b0126f}
@@ -245,7 +243,7 @@ body.cart-open .cpanel{transform:none}
 header.bar{z-index:80;transition:background .35s ease,padding .35s ease}
 body.onwhite header.bar{background:rgba(8,9,10,.92);padding-bottom:14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .sizerblock .phead{max-width:960px}
-@media (max-width:760px){.vines{height:90vh}.about{margin-top:-30vh}.sizerblock{margin-top:-20vh}}
+@media (max-width:760px){.vpin img{height:auto;width:118vw}.about{margin-left:16px;margin-right:16px}.sizerblock{margin-top:45vh}}
 
 /* sold out archive */
 .sgrid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:clamp(12px,1.6vw,20px)}
@@ -356,7 +354,7 @@ textarea.field{font:14px var(--f-body);resize:vertical}
   <div id="stage"><canvas id="film" aria-label="THCD film"></canvas><div class="dim"></div></div>
 </div>
 <div id="below">
-  <div class="vines" aria-hidden="true"><img src="img/vines.webp" alt="" class="v1"></div>
+  <div class="vpin" aria-hidden="true"><img src="img/vines.webp" alt=""></div>
   <section class="about" id="about" aria-label="Studio">
     <div class="code">Tbilisi &middot; Georgia</div>
     <h2>Studio</h2>
@@ -364,7 +362,6 @@ textarea.field{font:14px var(--f-body);resize:vertical}
     <p>Saw something in the archive that already found its hands? I can make a relative of it, or something new for you. Write to me and we&rsquo;ll talk it through.</p>
     <div class="slinks"><a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a><a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener">Instagram @th_c_d</a></div>
   </section>
-  <div class="vines vines2" aria-hidden="true"><img src="img/vines.webp" alt="" class="v3"></div>
   <section class="sizerblock" id="sizerblock" aria-label="Ring size">
 <div class="phead">
     <div><div class="code">Tool &middot; on your screen</div><h2>Find your<br>ring size</h2></div>
@@ -666,7 +663,20 @@ board.addEventListener('pointerleave',()=>{mouse.in=false; setHover(null)});
 let hover=null;
 function setHover(n){if(hover===n)return; if(hover&&!(held&&held.n===hover)) hover.el.style.zIndex=5; hover=n; if(n) n.el.style.zIndex=10}
 board.addEventListener('pointerover',e=>{const t=e.target.closest('.tile'); setHover(t?nodes.find(q=>q.el===t):null)});
-board.addEventListener('pointerdown',e=>{if(!arrived)return; const t=e.target.closest('.tile'); if(!t)return;
+// the board and menu are fixed layers, so scrolling over them is passed on to the page by hand
+let tscr=null, tvel=0, tlast=0;
+function wheelPass(e){if(e.ctrlKey)return; const k=e.deltaMode===1?32:e.deltaMode===2?innerHeight:1; sc.scrollTop+=e.deltaY*k; e.preventDefault()}
+[board,document.querySelector('.boardnote'),document.querySelector('header.bar')].forEach(el=>el&&el.addEventListener('wheel',wheelPass,{passive:false}));
+function coast(){if(Math.abs(tvel)<.05)return; sc.scrollTop-=tvel*16; tvel*=.94; requestAnimationFrame(coast)}
+board.addEventListener('pointerdown',e=>{if(!arrived||e.pointerType!=='touch')return; const t=e.target.closest('.tile');
+  try{board.setPointerCapture(e.pointerId)}catch(_){}
+  tvel=0; tscr={y:e.clientY,x:e.clientX,st:sc.scrollTop,n:t?nodes.find(q=>q.el===t):null,moved:0,ly:e.clientY}; tlast=performance.now()});
+board.addEventListener('pointermove',e=>{if(!tscr||e.pointerType!=='touch')return; const now=performance.now();
+  tscr.moved=Math.max(tscr.moved,Math.hypot(e.clientX-tscr.x,e.clientY-tscr.y)); sc.scrollTop=tscr.st-(e.clientY-tscr.y);
+  tvel=(e.clientY-tscr.ly)/Math.max(8,now-tlast); tscr.ly=e.clientY; tlast=now});
+function tend(e){if(!tscr)return; const h=tscr; tscr=null; if(h.moved<8){tvel=0; if(h.n&&e.type==='pointerup') openProduct(h.n.id)} else if(performance.now()-tlast<80) coast()}
+board.addEventListener('pointerup',tend); board.addEventListener('pointercancel',tend);
+board.addEventListener('pointerdown',e=>{if(!arrived||e.pointerType==='touch')return; const t=e.target.closest('.tile'); if(!t)return;
   try{board.setPointerCapture(e.pointerId)}catch(_){}
   const n=nodes.find(q=>q.el===t); mouse.x=e.clientX; mouse.y=e.clientY; mouse.in=true;
   held={n,ox:e.clientX-n.bx-n.dx,oy:e.clientY-n.by-n.dy,sx:e.clientX,sy:e.clientY,moved:0}; board.classList.add('grabbing'); t.style.zIndex=9});
@@ -846,8 +856,7 @@ size(); layout(); target=progress(); kick();
   const sc=document.getElementById('scroller'), track=document.getElementById('track'), board=document.getElementById('board'), note=document.querySelector('.boardnote');
   function onScroll(){const over=Math.max(0,sc.scrollTop-(track.offsetHeight-sc.clientHeight));
     document.body.classList.toggle('onwhite',over>innerHeight*.3);
-    const t=over?'translate3d(0,'+(-over)+'px,0)':''; board.style.transform=t; note.style.transform=over?'translate(-50%,'+(-over)+'px)':'';
-    const vs=document.querySelectorAll('#below .vines img'); vs.forEach((im,i)=>{const r=im.parentNode.getBoundingClientRect(); const k=(r.top/innerHeight); im.style.translate='0 '+(k*(i%2?-60:60)).toFixed(1)+'px'; im.style.rotate=(k*(i%2?1.5:-1.5)).toFixed(2)+'deg'})}
+    const t=over?'translate3d(0,'+(-over)+'px,0)':''; board.style.transform=t; note.style.transform=over?'translate(-50%,'+(-over)+'px)':'';}
   sc.addEventListener('scroll',onScroll,{passive:true}); addEventListener('resize',onScroll);
   document.querySelectorAll('[data-scroll]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.body.classList.remove('menu-open');
     const mb=document.getElementById('menuBtn'); if(mb) mb.textContent='Menu';
