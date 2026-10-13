@@ -193,7 +193,7 @@ body.cart-open .cpanel{transform:none}
 @media (max-width:760px){
   .menu{display:none}
   .menu-btn{display:block}
-  body.menu-open .menu{display:flex;position:fixed;inset:0;z-index:40;flex-direction:column;justify-content:center;align-items:center;gap:26px;background:rgba(7,8,9,.95)}
+  body.menu-open .menu{display:flex;position:fixed;inset:0;z-index:40;flex-direction:column;justify-content:center;align-items:center;gap:26px;background:#070809}
   body.menu-open .menu a{font-size:20px}
   .clock{width:120px}
   .pgrid{grid-template-columns:1fr}
@@ -241,7 +241,7 @@ body.cart-open .cpanel{transform:none}
 .meta h3{color:#141012}.meta span{color:#2b2b2b}
 /* the menu stays on top of everything */
 header.bar{z-index:80;transition:background .35s ease,padding .35s ease}
-body.onwhite header.bar{background:rgba(8,9,10,.92);padding-bottom:14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+body.onwhite header.bar{background:rgba(8,9,10,.95);padding-bottom:14px}
 .sizerblock .phead{max-width:960px}
 .nexthint{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 62px);transform:translateX(-50%);z-index:26;font:11px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:#fff;background:rgba(8,9,10,.7);padding:6px 10px;border-radius:2px;opacity:0;transition:opacity .5s;pointer-events:none;white-space:nowrap}
 .nexthint.on{opacity:1;animation:nh 1.6s ease-in-out infinite}@keyframes nh{50%{transform:translate(-50%,4px)}}
@@ -520,7 +520,7 @@ if('scrollRestoration' in history) history.scrollRestoration='manual';
 document.body.classList.add('preloading');
 const sc=document.getElementById('scroller'); sc.scrollTop=0;
 const plBar=document.getElementById('plBar'), plPct=document.getElementById('plPct'), preload=document.getElementById('preload');
-const N=312, DUR=10.4, FILM=0.82;
+const N=312, DUR=10.4; let FILM=innerWidth<760?0.55:0.82;   // phones: shorter film share, longer board walk
 const cv=document.getElementById('film'), cx=cv.getContext('2d');
 const track=document.getElementById('track'), loadingEl=document.getElementById('loading');
 const tc=document.getElementById('tc'), ch=document.getElementById('ch'), bar=document.getElementById('bar'), hint=document.getElementById('hint');
@@ -611,7 +611,8 @@ function setArrived(v){if(v===arrived)return; arrived=v; document.body.classList
 }
 const narrowNow=()=>innerWidth<760;
 // on phones the board shows one category at a time: scrolling on walks rings -> earrings -> pendants
-const SEGS=['Ring','Earring','Pendant'], A0=FILM*0.93; let lastSeg=-1;
+const SEGS=['Ring','Earring','Pendant']; let A0=FILM*0.93, lastSeg=-1;
+addEventListener('resize',()=>{FILM=narrowNow()?0.55:0.82; A0=FILM*0.93});
 function segAt(p){return Math.max(0,Math.min(2,Math.floor((p-A0)/(1-A0)*3)))}
 const nextHint=document.getElementById('nextHint'), NEXTN=['Scroll for earrings ↓','Scroll for pendants ↓',''];
 function phoneSeg(){nextHint.classList.toggle('on',narrowNow()&&arrived&&target<0.995&&segAt(target)<2); if(!narrowNow()||!arrived){lastSeg=-1;return} nextHint.textContent=NEXTN[segAt(target)]; const g=segAt(target); if(g!==lastSeg){lastSeg=g; if(cat!==SEGS[g]) setCat(SEGS[g])}}
