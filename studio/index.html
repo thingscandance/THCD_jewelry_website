@@ -81,12 +81,19 @@ a{color:inherit}
 /* phone: a plain column, windows keep their ratios */
 @media (max-width:760px){
   .deskwrap{height:auto!important}
-  .desk{position:static; width:auto; transform:none!important; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; background:none}
-  .win{position:relative!important; left:auto!important; top:auto!important; width:auto!important; height:auto!important; z-index:auto!important}
+  .desk{position:static; width:auto; transform:none!important; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-auto-flow:row dense; align-items:start; gap:8px; background:none}
+  .desk.tidy{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .win{position:relative!important; left:auto!important; top:auto!important; width:auto!important; height:auto!important; min-height:0!important; z-index:auto!important; touch-action:auto; transform:none!important}
   .win .body{aspect-ratio:var(--ar)}
   .win.textwin .body{aspect-ratio:auto}
-  .win.wide,.win.textwin{grid-column:1/-1}
-  .grip,.tools .hint,.tools [data-arr]{display:none}
+  .win.wide{grid-column:span 2}
+  .win[data-id="rim"],.win[data-id="wnight"],.win[data-id="club"],.win[data-id="crowd"],.win[data-id="hday"]{grid-column:1/-1}
+  .desk.tidy .win.wide{grid-column:span 1}
+  .win.textwin{grid-column:1/-1}
+  .bar{height:22px; font-size:9px; padding:0 6px; gap:6px; cursor:pointer}
+  .bar .r{display:none}
+  .tag{font-size:8.5px; left:5px; bottom:5px; padding:1px 4px}
+  .grip,.tools .hint{display:none}
   .top{grid-template-columns:auto 1fr; align-items:end}
   .meta{grid-column:1/-1; align-items:flex-start; text-align:left; flex-direction:row; flex-wrap:wrap; gap:6px 16px}
 }
@@ -181,6 +188,7 @@ function arrange(kind){
     const n=5, gap=24, cw=(DESKW-48-gap*(n-1))/n, cols=Array(n).fill(24);
     W.forEach(d=>{const c=cols.indexOf(Math.min(...cols)); place(d.id,24+c*(cw+gap),cols[c],cw); cols[c]+=els[d.id].el.offsetHeight+gap});
   } else W.forEach(d=>place(d.id,...STUDIO[d.id]));
+  desk.classList.toggle('tidy',kind==='grid');
   const b=document.getElementById('arr-grid'); if(b){b.setAttribute('aria-pressed',kind==='grid'); b.textContent=kind==='grid'?'free':'grid'}
   fit(); save();
 }
