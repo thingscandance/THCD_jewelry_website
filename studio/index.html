@@ -147,7 +147,7 @@ const W=[
  {id:'crowd',title:'HALDE/crowd',r:'16:9',w:200,img:'/studio/img/kf09.jpg',href:HALDE+'#world',wide:1},
  {id:'hday',title:'HALDE/heap_day',r:'16:9',w:200,img:'/studio/img/kf05.jpg',href:HALDE+'#world',wide:1}
 ];
-const STUDIO={f1:[24,96,168],about:[216,48,432],vio:[672,24,192],f2:[888,0,168],hero:[1008,96,408],index:[216,288,288],cage:[528,288,408],perl:[984,408,192],night:[1200,384,216],f3:[24,456,168],contact:[216,528,384],p34:[624,576,192],heap:[840,648,408],glut:[1224,672,192],rim:[24,816,360],front:[408,744,168],wnight:[600,912,408],club:[1032,912,384],crowd:[24,1080,336],hday:[1032,1176,384]};
+const STUDIO={glut:[96,48,192],f2:[1200,24,168],about:[480,144,432],f1:[72,312,168],hero:[888,312,432],index:[408,504,288],night:[960,744,192],f3:[1224,672,168],contact:[48,744,384],p34:[552,768,168],vio:[600,1056,192],cage:[168,1008,360],heap:[744,1200,408],perl:[1200,1104,192],rim:[24,1344,360],front:[456,1392,168],club:[1176,1416,264],wnight:[672,1560,408],crowd:[72,1704,360],hday:[1104,1680,312]};
 const U=24, BAR=28, DESKW=1440;
 const desk=document.getElementById('desk'), wrap=document.getElementById('wrap');
 const ratio=r=>{if(r==='txt')return null;const [a,b]=r.split(':').map(Number);return b/a};
@@ -175,12 +175,12 @@ function fit(){
   let maxY=0; for(const k in els){const o=els[k]; maxY=Math.max(maxY,o.y+o.el.offsetHeight)}
   desk.style.height=(maxY+48)+'px'; wrap.style.height=((maxY+48)*s)+'px';
 }
-function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v3',JSON.stringify(o))}catch(e){}}
+function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v4',JSON.stringify(o))}catch(e){}}
 function arrange(kind){
   W.forEach(d=>place(d.id,...STUDIO[d.id]));
   fit(); save();
 }
-let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v3')||'null')}catch(e){}
+let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v4')||'null')}catch(e){}
 if(saved&&W.every(d=>saved[d.id])) W.forEach(d=>place(d.id,...saved[d.id])); else arrange('grid');
 
 document.querySelectorAll('[data-arr]').forEach(b=>b.addEventListener('click',()=>arrange(b.dataset.arr)));
