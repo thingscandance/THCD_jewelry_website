@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&family=Doto:wght@700;900&display=swap">
 <style>
-/* Layout: the thcd.monster desk — black void, project windows on a snap grid, each keeps its film ratio; drag to compose, hover inverts, click opens */
+/* Layout: the thcd.monster desk — black void, project windows on a snap grid, each keeps its film ratio; drag to compose, hover zooms slightly, click opens */
 :root{
   --canvas:#000000; --paper:#0B0C0D; --ink:#E9ECEA; --muted:#8D9493; --edge:rgba(233,236,234,.28); --grid:rgba(233,236,234,.11); --accent:#E61E9C;
   --f-display:"Doto","Geist Mono",ui-monospace,monospace;
@@ -49,8 +49,9 @@ a{color:inherit}
 .desk{position:absolute; left:0; top:0; width:1440px; transform-origin:0 0;
   background-image:radial-gradient(circle,var(--grid) 1px,transparent 1.4px); background-size:var(--u) var(--u); background-position:-12px -12px}
 .win{position:absolute; background:var(--paper); border:1px solid var(--edge); display:flex; flex-direction:column; user-select:none; touch-action:none; cursor:pointer}
-.win:hover,.win:focus-visible,.desk.inv .win{filter:invert(1)}
-.desk.inv .win:hover{filter:none}
+.win{transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .25s}
+.win:hover,.win:focus-visible{transform:scale(1.015); border-color:var(--ink)}
+.desk.inv .win{filter:invert(1)}
 .win.drag{cursor:grabbing; box-shadow:10px 10px 0 var(--accent); border-color:var(--accent); filter:none}
 .bar{height:var(--bar); flex:none; display:flex; align-items:center; gap:10px; padding:0 8px; border-bottom:1px solid var(--edge); font-size:10.5px; letter-spacing:.02em; white-space:nowrap; overflow:hidden; cursor:grab}
 .bar .t{overflow:hidden; text-overflow:ellipsis; min-width:0}
