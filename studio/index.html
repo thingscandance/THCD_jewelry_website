@@ -126,18 +126,28 @@ a{color:inherit}
 (function(){
 const HALDE='/studio/halde.html';
 const W=[
+ {id:'f2',title:'HALDE/film_02_city',r:'9:16',w:200,img:'/studio/img/city_262.jpg',href:HALDE+'#films',tag:'10.4 s · reels'},
+ {id:'hero',title:'HALDE/film_00_main',r:'16:9',w:408,video:'/studio/video/halde_loop.mp4',poster:'/studio/img/halde_film_poster.jpg',tag:'31 s · film',href:HALDE,wide:1},
  {id:'about',kind:'text',title:'studio/about',r:'txt',w:432,h:192,html:`<div class="txt"><p class="lede">Things Can Dance makes 3D and AI videos for objects that want to move.</p><p class="body-t">Product films, vertical loops for social, and the small worlds a brand lives in.</p><span class="k">commissions · licensing of existing loops</span></div>`},
- {id:'f2',title:'HALDE/film_02_city',r:'9:16',w:264,img:'/studio/img/city_262.jpg',tag:'10.4 s · reels',href:HALDE+'#films'},
- {id:'f1',title:'HALDE/film_01_platok',r:'9:16',w:216,img:'/studio/img/platok_150.jpg',tag:'7.4 s · reels',href:HALDE+'#films'},
- {id:'hero',title:'HALDE/film_00_main',r:'16:9',w:552,video:'/studio/video/halde_loop.mp4',poster:'/studio/img/halde_film_poster.jpg',tag:'31 s · film',href:HALDE,wide:1},
+ {id:'f1',title:'HALDE/film_01_platok',r:'9:16',w:200,img:'/studio/img/platok_150.jpg',href:HALDE+'#films',tag:'7.4 s · reels'},
+ {id:'vio',title:'HALDE/violett',r:'1:1',w:200,img:'/studio/img/col_violett.jpg',href:HALDE+'#product'},
  {id:'index',kind:'text',title:'studio/index',r:'txt',w:288,h:192,html:`<div class="txt"><span class="k">projects</span><ol class="idx"><li><span class="n">01</span><a href="${HALDE}">HALDE</a><span>2026</span></li><li><span class="n">02</span><span class="open">open slot</span><span class="open">—</span></li><li><span class="n">03</span><span class="open">open slot</span><span class="open">—</span></li></ol></div>`},
- {id:'vio',title:'HALDE/violett',r:'1:1',w:240,img:'/studio/img/col_violett.jpg',href:HALDE+'#product'},
- {id:'night',title:'HALDE/heap_at_night',r:'1:1',w:288,img:'/studio/img/wear_night.jpg',href:HALDE+'#world'},
- {id:'cage',title:'HALDE/cage_branch',r:'16:9',w:480,img:'/studio/img/macro_cage.jpg',href:HALDE+'#product',wide:1},
- {id:'heap',title:'HALDE/spoil_tip',r:'16:9',w:576,img:'/studio/img/kf07.jpg',href:HALDE+'#world',wide:1},
- {id:'contact',kind:'text',title:'studio/contact',r:'txt',w:384,h:168,html:`<div class="txt"><span class="k">commissions · licensing</span><a class="mail" href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a><button class="copy" type="button" id="copymail">copy address</button><a class="ig" href="https://www.instagram.com/thcd_monster_studio/" target="_blank" rel="noopener">instagram — @thcd_monster_studio ↗</a></div>`}
+ {id:'cage',title:'HALDE/cage_branch',r:'16:9',w:200,img:'/studio/img/macro_cage.jpg',href:HALDE+'#product',wide:1},
+ {id:'perl',title:'HALDE/perlmutt',r:'1:1',w:200,img:'/studio/img/col_perlmutt.jpg',href:HALDE+'#product'},
+ {id:'night',title:'HALDE/heap_at_night',r:'1:1',w:200,img:'/studio/img/wear_night.jpg',href:HALDE+'#world'},
+ {id:'f3',title:'HALDE/film_03_heap',r:'9:16',w:200,img:'/studio/img/kf06.jpg',href:HALDE+'#films',tag:'30.8 s · reels'},
+ {id:'contact',kind:'text',title:'studio/contact',r:'txt',w:384,h:168,html:`<div class="txt"><span class="k">commissions · licensing</span><a class="mail" href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a><button class="copy" type="button" id="copymail">copy address</button><a class="ig" href="https://www.instagram.com/thcd_monster_studio/" target="_blank" rel="noopener">instagram — @thcd_monster_studio ↗</a></div>`},
+ {id:'p34',title:'HALDE/studio_three_quarter',r:'4:5',w:200,img:'/studio/img/p1_34.jpg',href:HALDE+'#product'},
+ {id:'heap',title:'HALDE/spoil_tip',r:'16:9',w:200,img:'/studio/img/kf07.jpg',href:HALDE+'#world',wide:1},
+ {id:'glut',title:'HALDE/glut',r:'1:1',w:200,img:'/studio/img/col_glut.jpg',href:HALDE+'#product'},
+ {id:'rim',title:'HALDE/cage_rim',r:'16:9',w:200,img:'/studio/img/macro_cage2.jpg',href:HALDE+'#product',wide:1},
+ {id:'front',title:'HALDE/rim_front',r:'4:5',w:200,img:'/studio/img/cage2_front.jpg',href:HALDE+'#product'},
+ {id:'wnight',title:'HALDE/night',r:'16:9',w:200,img:'/studio/img/world_night.jpg',href:HALDE+'#world',wide:1},
+ {id:'club',title:'HALDE/club',r:'16:9',w:200,img:'/studio/img/kf08.jpg',href:HALDE+'#world',wide:1},
+ {id:'crowd',title:'HALDE/crowd',r:'16:9',w:200,img:'/studio/img/kf09.jpg',href:HALDE+'#world',wide:1},
+ {id:'hday',title:'HALDE/heap_day',r:'16:9',w:200,img:'/studio/img/kf05.jpg',href:HALDE+'#world',wide:1}
 ];
-const STUDIO={f2:[1176,0,264],about:[480,144,432],f1:[48,312,216],hero:[792,360,552],index:[384,528,288],night:[936,792,288],contact:[48,936,384],vio:[552,960,240],heap:[768,1152,576],cage:[240,1248,480]};
+const STUDIO={f1:[24,96,168],about:[216,48,432],vio:[672,24,192],f2:[888,0,168],hero:[1008,96,408],index:[216,288,288],cage:[528,288,408],perl:[984,408,192],night:[1200,384,216],f3:[24,456,168],contact:[216,528,384],p34:[624,576,192],heap:[840,648,408],glut:[1224,672,192],rim:[24,816,360],front:[408,744,168],wnight:[600,912,408],club:[1032,912,384],crowd:[24,1080,336],hday:[1032,1176,384]};
 const U=24, BAR=28, DESKW=1440;
 const desk=document.getElementById('desk'), wrap=document.getElementById('wrap');
 const ratio=r=>{if(r==='txt')return null;const [a,b]=r.split(':').map(Number);return b/a};
@@ -165,12 +175,12 @@ function fit(){
   let maxY=0; for(const k in els){const o=els[k]; maxY=Math.max(maxY,o.y+o.el.offsetHeight)}
   desk.style.height=(maxY+48)+'px'; wrap.style.height=((maxY+48)*s)+'px';
 }
-function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v2',JSON.stringify(o))}catch(e){}}
+function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v3',JSON.stringify(o))}catch(e){}}
 function arrange(kind){
   W.forEach(d=>place(d.id,...STUDIO[d.id]));
   fit(); save();
 }
-let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v2')||'null')}catch(e){}
+let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v3')||'null')}catch(e){}
 if(saved&&W.every(d=>saved[d.id])) W.forEach(d=>place(d.id,...saved[d.id])); else arrange('grid');
 
 document.querySelectorAll('[data-arr]').forEach(b=>b.addEventListener('click',()=>arrange(b.dataset.arr)));
