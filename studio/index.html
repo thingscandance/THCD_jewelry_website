@@ -65,7 +65,7 @@ a{color:inherit}
 .txt{padding:14px 14px 16px; display:flex; flex-direction:column; gap:10px}
 .txt .lede{font-family:var(--f-body); font-weight:300; font-size:24px; line-height:1.15; letter-spacing:-.015em; text-wrap:balance; margin:0}
 .txt .body-t{font-family:var(--f-body); font-weight:300; font-size:13px; line-height:1.55}
-.txt .mail{font-family:var(--f-body); font-weight:300; font-size:20px; letter-spacing:-.01em; text-decoration:none; overflow-wrap:anywhere}
+.txt .mail{font-family:var(--f-body); font-weight:300; font-size:17px; letter-spacing:-.01em; text-decoration:none; overflow-wrap:anywhere}
 .txt .mail:hover,.txt .ig:hover{color:var(--accent)}
 .txt .ig{text-decoration:none; font-size:12px}
 .txt p{margin:0; max-width:60ch}
@@ -112,7 +112,7 @@ a{color:inherit}
 
 <div class="tools" role="toolbar" aria-label="Layout">
   <span class="label">layout</span>
-  <button class="btn" type="button" data-arr="grid" id="arr-grid">grid</button>
+  <button class="btn" type="button" data-arr="grid" id="arr-grid" aria-pressed="false">grid</button>
   <span class="hint">drag a bar to move · corner to resize · click to open</span>
 </div>
 
@@ -177,13 +177,17 @@ function fit(){
 }
 function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v4',JSON.stringify(o))}catch(e){}}
 function arrange(kind){
-  W.forEach(d=>place(d.id,...STUDIO[d.id]));
+  if(kind==='grid'){ // tidy columns: every window the same width, stacked with equal gaps
+    const n=5, gap=24, cw=(DESKW-48-gap*(n-1))/n, cols=Array(n).fill(24);
+    W.forEach(d=>{const c=cols.indexOf(Math.min(...cols)); place(d.id,24+c*(cw+gap),cols[c],cw); cols[c]+=els[d.id].el.offsetHeight+gap});
+  } else W.forEach(d=>place(d.id,...STUDIO[d.id]));
+  const b=document.getElementById('arr-grid'); if(b){b.setAttribute('aria-pressed',kind==='grid'); b.textContent=kind==='grid'?'free':'grid'}
   fit(); save();
 }
 let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v4')||'null')}catch(e){}
-if(saved&&W.every(d=>saved[d.id])) W.forEach(d=>place(d.id,...saved[d.id])); else arrange('grid');
+if(saved&&W.every(d=>saved[d.id])) W.forEach(d=>place(d.id,...saved[d.id])); else arrange('free');
 
-document.querySelectorAll('[data-arr]').forEach(b=>b.addEventListener('click',()=>arrange(b.dataset.arr)));
+document.getElementById('arr-grid').addEventListener('click',e=>arrange(e.currentTarget.getAttribute('aria-pressed')==='true'?'free':'grid'));
 
 // drag / resize / click
 let act=null;
