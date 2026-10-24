@@ -87,7 +87,7 @@ a{color:inherit}
   .win .body{aspect-ratio:var(--ar)}
   .win.textwin .body{aspect-ratio:auto}
   .win.wide{grid-column:span 2}
-  .win[data-id="rim"],.win[data-id="wnight"],.win[data-id="club"],.win[data-id="crowd"],.win[data-id="hday"]{grid-column:1/-1}
+  .win[data-id="rim"],.win[data-id="wnight"],.win[data-id="club"],.win[data-id="crowd"],.win[data-id="hday"],.win[data-id="t_construct"]{grid-column:1/-1}
   .desk.tidy .win.wide{grid-column:span 1}
   .win.textwin{grid-column:1/-1}
   .bar{height:22px; font-size:9px; padding:0 6px; gap:6px; cursor:pointer}
@@ -131,14 +131,14 @@ a{color:inherit}
 
 <script>
 (function(){
-const HALDE='/studio/halde.html';
+const HALDE='/studio/halde.html', TRACE='/studio/trace.html';
 const W=[
  {id:'f2',title:'HALDE/film_02_city',r:'9:16',w:200,img:'/studio/img/city_262.jpg',href:HALDE+'#films',tag:'10.4 s · reels'},
  {id:'hero',title:'HALDE/film_00_main',r:'16:9',w:408,video:'/studio/video/halde_loop.mp4',poster:'/studio/img/halde_film_poster.jpg',tag:'31 s · film',href:HALDE,wide:1},
  {id:'about',kind:'text',title:'studio/about',r:'txt',w:432,h:192,html:`<div class="txt"><p class="lede">Things Can Dance makes 3D and AI videos for objects that want to move.</p><p class="body-t">Product films, vertical loops for social, and the small worlds a brand lives in.</p><span class="k">commissions · licensing of existing loops</span></div>`},
  {id:'f1',title:'HALDE/film_01_platok',r:'9:16',w:200,img:'/studio/img/platok_150.jpg',href:HALDE+'#films',tag:'7.4 s · reels'},
  {id:'vio',title:'HALDE/violett',r:'1:1',w:200,img:'/studio/img/col_violett.jpg',href:HALDE+'#product'},
- {id:'index',kind:'text',title:'studio/index',r:'txt',w:288,h:192,html:`<div class="txt"><span class="k">projects</span><ol class="idx"><li><span class="n">01</span><a href="${HALDE}">HALDE</a><span>2026</span></li><li><span class="n">02</span><span class="open">open slot</span><span class="open">—</span></li><li><span class="n">03</span><span class="open">open slot</span><span class="open">—</span></li></ol></div>`},
+ {id:'index',kind:'text',title:'studio/index',r:'txt',w:288,h:192,html:`<div class="txt"><span class="k">projects</span><ol class="idx"><li><span class="n">01</span><a href="${HALDE}">HALDE</a><span>2026</span></li><li><span class="n">02</span><a href="${TRACE}">TRACE</a><span>2026</span></li><li><span class="n">03</span><span class="open">open slot</span><span class="open">—</span></li></ol></div>`},
  {id:'cage',title:'HALDE/cage_branch',r:'16:9',w:200,img:'/studio/img/macro_cage.jpg',href:HALDE+'#product',wide:1},
  {id:'perl',title:'HALDE/perlmutt',r:'1:1',w:200,img:'/studio/img/col_perlmutt.jpg',href:HALDE+'#product'},
  {id:'night',title:'HALDE/heap_at_night',r:'1:1',w:200,img:'/studio/img/wear_night.jpg',href:HALDE+'#world'},
@@ -152,9 +152,16 @@ const W=[
  {id:'wnight',title:'HALDE/night',r:'16:9',w:200,img:'/studio/img/world_night.jpg',href:HALDE+'#world',wide:1},
  {id:'club',title:'HALDE/club',r:'16:9',w:200,img:'/studio/img/kf08.jpg',href:HALDE+'#world',wide:1},
  {id:'crowd',title:'HALDE/crowd',r:'16:9',w:200,img:'/studio/img/kf09.jpg',href:HALDE+'#world',wide:1},
- {id:'hday',title:'HALDE/heap_day',r:'16:9',w:200,img:'/studio/img/kf05.jpg',href:HALDE+'#world',wide:1}
+ {id:'hday',title:'HALDE/heap_day',r:'16:9',w:200,img:'/studio/img/kf05.jpg',href:HALDE+'#world',wide:1},
+ {id:'t_film',title:'TRACE/film_01_first_trace',r:'9:16',w:200,video:'/studio/video/trace_film01.mp4',poster:'/studio/img/trace_k05.jpg',tag:'10.8 s · reels',href:TRACE},
+ {id:'t_section',title:'TRACE/k11_section',r:'9:16',w:200,img:'/studio/img/trace_k11.jpg',href:TRACE+'#keyframes'},
+ {id:'t_bottle',title:'TRACE/bottle_etched',r:'4:5',w:200,img:'/studio/img/trace_bottle.jpg',href:TRACE+'#packaging'},
+ {id:'t_construct',title:'TRACE/construction',r:'16:10',w:200,img:'/studio/img/trace_bb_construction.jpg',href:TRACE+'#identity',wide:1},
+ {id:'t_carton',title:'TRACE/carton_deboss',r:'4:5',w:200,img:'/studio/img/trace_carton.jpg',href:TRACE+'#packaging'},
+ {id:'t_eye',title:'TRACE/k09_eye',r:'9:16',w:200,img:'/studio/img/trace_k09.jpg',href:TRACE+'#keyframes'},
+ {id:'t_trace',title:'TRACE/k12_trace',r:'9:16',w:200,img:'/studio/img/trace_k12.jpg',href:TRACE+'#keyframes'}
 ];
-const STUDIO={glut:[96,48,192],f2:[1200,24,168],about:[480,144,432],f1:[72,312,168],hero:[888,312,432],index:[408,504,288],night:[960,744,192],f3:[1224,672,168],contact:[48,744,384],p34:[552,768,168],vio:[600,1056,192],cage:[168,1008,360],heap:[744,1200,408],perl:[1200,1104,192],rim:[24,1344,360],front:[456,1392,168],club:[1176,1416,264],wnight:[672,1560,408],crowd:[72,1704,360],hday:[1104,1680,312]};
+const STUDIO={glut:[96,48,192],f2:[1200,24,168],about:[480,144,432],f1:[72,312,168],hero:[888,312,432],index:[408,504,288],night:[960,744,192],f3:[1224,672,168],contact:[48,744,384],p34:[552,768,168],vio:[600,1056,192],cage:[168,1008,360],heap:[744,1200,408],perl:[1200,1104,192],rim:[24,1344,360],front:[456,1392,168],club:[1176,1416,264],wnight:[672,1560,408],crowd:[72,1704,360],hday:[1104,1680,312],t_film:[48,2016,240],t_section:[336,2088,192],t_bottle:[576,2016,264],t_construct:[888,2016,408],t_carton:[576,2400,216],t_eye:[888,2352,168],t_trace:[1104,2352,192]};
 const U=24, BAR=28, DESKW=1440;
 const desk=document.getElementById('desk'), wrap=document.getElementById('wrap');
 const ratio=r=>{if(r==='txt')return null;const [a,b]=r.split(':').map(Number);return b/a};
@@ -168,7 +175,7 @@ W.forEach(d=>{
   const rr=ratio(d.r); if(rr) el.style.setProperty('--ar',d.r.replace(':','/'));
   el.setAttribute('aria-label',d.title+(d.href?' — open project':''));
   el.innerHTML=`<div class="bar"><i></i><span class="t">${d.title}</span><span class="r">${d.r==='txt'?'':d.r}</span></div>
-   <div class="body">${d.img?`<img src="${d.img}" alt="${d.title.split('/')[1].replace(/_/g,' ')}" draggable="false">`:''}${d.video?`<video src="${d.video}" poster="${d.poster}" muted autoplay loop playsinline preload="auto" aria-label="HALDE film loop"></video>`:''}${d.html||''}${d.tag?`<span class="tag">${d.tag}</span>`:''}</div>
+   <div class="body">${d.img?`<img src="${d.img}" alt="${d.title.split('/')[1].replace(/_/g,' ')}" draggable="false">`:''}${d.video?`<video src="${d.video}" poster="${d.poster}" muted autoplay loop playsinline preload="auto" aria-label="${d.title.split('/')[0]} film loop"></video>`:''}${d.html||''}${d.tag?`<span class="tag">${d.tag}</span>`:''}</div>
    <div class="grip" aria-hidden="true"></div>`;
   desk.appendChild(el); els[d.id]={el,d};
 });

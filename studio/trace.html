@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="TRACE /01: identity, packaging and a strobe film for an eau de parfum. THCD video_studio.">
+<title>TRACE · THCD video_studio</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&family=Doto:wght@700;900&display=swap">
+<style>
+/* Layout: same desk as HALDE — titled windows on the black void, each image at its real ratio; sections follow the case: film, keyframes, packaging, identity */
+:root{
+  --canvas:#000000; --paper:#0B0C0D; --ink:#E9ECEA; --muted:#8D9493; --edge:rgba(233,236,234,.28); --grid:rgba(233,236,234,.11); --accent:#E61E9C;
+  --trace-paper:#ECEAE6; --trace-ink:#111214; --trace-cold:#1A222C; --trace-membrane:#E8C6C4;
+  --f-display:"Doto","Geist Mono",ui-monospace,monospace;
+  --f-ui:"Geist Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --f-body:"Geist",ui-sans-serif,system-ui,sans-serif;
+  color-scheme:dark;
+}
+:root{padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0; background:var(--canvas); color:var(--ink); font-family:var(--f-ui); font-size:12px; line-height:1.55;
+  background-image:radial-gradient(circle,var(--grid) 1px,transparent 1.4px); background-size:24px 24px;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:0 64px}
+img{max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.page{max-width:1280px; margin:0 auto; display:flex; flex-direction:column; gap:72px}
+
+.nav{display:flex; justify-content:space-between; align-items:center; gap:16px; padding-block:22px 14px; border-bottom:1px solid var(--edge); flex-wrap:wrap}
+.nav a{text-decoration:none}
+.nav a:hover{color:var(--accent)}
+.nav .thcd-logo{width:clamp(90px,8vw,120px); height:auto; display:block}
+.nav .r{display:flex; gap:16px; flex-wrap:wrap; align-items:center; font-size:11px; letter-spacing:.06em}
+.nav span{color:var(--muted)}
+
+.head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:32px; align-items:end}
+.title{font-family:var(--f-display); font-weight:900; font-size:clamp(72px,15vw,220px); line-height:.8; margin:0; letter-spacing:-.03em}
+.lede{font-family:var(--f-body); font-weight:300; letter-spacing:-.02em; font-size:clamp(24px,2.8vw,38px); line-height:1.1; margin:0; text-wrap:balance}
+.facts{display:grid; grid-template-columns:auto 1fr; gap:6px 18px; margin:20px 0 0}
+.facts dt{color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-size:10px; padding-top:2px}
+.facts dd{margin:0; font-family:var(--f-body); font-weight:300; font-size:14px}
+
+.sec{display:flex; flex-direction:column; gap:18px; scroll-margin-top:24px}
+.sec-h{display:flex; align-items:baseline; gap:14px; border-top:1px solid var(--edge); padding-top:10px; flex-wrap:wrap}
+.sec-h h2{font-family:var(--f-display); font-weight:900; font-size:40px; line-height:1; margin:0}
+.sec-h p{margin:0; color:var(--muted); max-width:60ch; font-family:var(--f-body); font-weight:300; font-size:14px}
+
+.win{background:var(--paper); border:1px solid var(--edge); display:flex; flex-direction:column; min-width:0}
+.win{transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .25s, box-shadow .35s; transform-origin:50% 50%; position:relative}
+.win:hover{transform:scale(1.015); border-color:var(--ink); z-index:2}
+.win:active,.win.on{transform:scale(1.035); border-color:var(--accent); box-shadow:0 30px 80px rgba(0,0,0,.7); z-index:3}
+.film{cursor:pointer}
+.film video{display:block; width:100%; height:100%; object-fit:cover; background:#000}
+.film .play{position:absolute; left:50%; top:50%; translate:-50% -50%; font-size:11px; letter-spacing:.14em; text-transform:uppercase; padding:8px 14px; border:1px solid var(--ink); background:rgba(0,0,0,.55); pointer-events:none; transition:opacity .25s}
+.film.on .play{opacity:0}
+@media (prefers-reduced-motion:reduce){.win{transition:none}.win:hover,.win:active,.win.on{transform:none}}
+.bar{height:28px; display:flex; align-items:center; gap:10px; padding:0 8px; border-bottom:1px solid var(--edge); font-size:10.5px; white-space:nowrap; overflow:hidden}
+.bar i{width:9px; height:9px; border:1px solid var(--edge); flex:none}
+.bar .t{overflow:hidden; text-overflow:ellipsis; min-width:0}
+.bar .r{margin-left:auto; color:var(--muted); font-variant-numeric:tabular-nums}
+.shot{position:relative; overflow:hidden; max-width:100%}
+.shot img{display:block; width:100%; height:100%; object-fit:cover}
+.cap{padding:8px; border-top:1px solid var(--edge); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.cap span:last-child{color:var(--muted)}
+
+.g{display:grid; gap:16px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.r169{aspect-ratio:16/9}.r916{aspect-ratio:9/16}.r45{aspect-ratio:4/5}.r1610{aspect-ratio:16/10}
+
+.filmrow{display:grid; grid-template-columns:minmax(0,420px) minmax(0,1fr); gap:16px; align-items:start}
+.notes{display:flex; flex-direction:column}
+.quote{font-family:var(--f-body); font-weight:300; letter-spacing:-.015em; font-size:clamp(20px,2.2vw,28px); line-height:1.2; margin:0; padding:16px; text-wrap:balance}
+.quote em{font-style:normal; color:var(--accent)}
+.steps{list-style:none; margin:0; padding:0 16px 16px; display:flex; flex-direction:column}
+.steps li{display:grid; grid-template-columns:2.4em 1fr; gap:8px; padding:9px 0; border-top:1px solid var(--grid); font-family:var(--f-body); font-weight:300; font-size:14px}
+.steps .n{font-family:var(--f-display); font-weight:900; font-size:15px; line-height:1.2}
+
+.brand{display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); gap:16px}
+.logo{background:var(--trace-cold); display:grid; place-items:center; padding:48px 24px; min-height:220px; border:1px solid var(--edge)}
+.logo img{width:min(420px,80%)}
+.sw{min-height:220px; display:flex; flex-direction:column; justify-content:flex-end; padding:12px; gap:2px; font-size:11px; border:1px solid var(--edge)}
+.sw.paper{background:var(--trace-paper); color:var(--trace-ink)}
+.sw.cold{background:var(--trace-cold); color:#FFFFFF}
+.sw.membrane{background:var(--trace-membrane); color:var(--trace-ink)}
+
+.next{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:end; border-top:1px solid var(--edge); padding-top:14px}
+.next .big{font-family:var(--f-display); font-weight:900; font-size:clamp(36px,6vw,80px); line-height:.9; margin:0}
+.next .links{display:flex; flex-direction:column; gap:8px; align-items:flex-end}
+.next .links a{text-decoration:none; font-size:12px}
+.next .links a:hover{color:var(--accent)}
+.next .links .mail{font-family:var(--f-body); font-weight:300; font-size:20px}
+
+@media (max-width:760px){
+  .head,.filmrow,.next{grid-template-columns:1fr}
+  .g4,.g3{grid-template-columns:1fr 1fr}
+  .g2{grid-template-columns:1fr}
+  .brand{grid-template-columns:1fr 1fr}
+  .brand .logo{grid-column:1/-1}
+  .page{gap:48px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="nav">
+    <a href="https://thcd.monster/" aria-label="Things Can Dance, home"><img class="thcd-logo" src="/studio/img/thcd_logo.png" alt="Things Can Dance"></a>
+    <div class="r"><a href="/studio/">← video_studio</a><a href="/studio/halde.html">01 / HALDE</a><span>02 / TRACE / 2026</span></div>
+  </nav>
+
+  <header class="head">
+    <div>
+      <h1 class="title">TRACE</h1>
+    </div>
+    <div>
+      <p class="lede">An eau de parfum that studies what remains on skin after contact.</p>
+      <dl class="facts">
+        <dt>type</dt><dd>self-initiated brand concept</dd>
+        <dt>scope</dt><dd>logotype, packaging, keyframes, strobe film, sound</dd>
+        <dt>film</dt><dd>1 vertical of 3, 10.8 s</dd>
+        <dt>tools</dt><dd>Nano Banana, Kling; edit and sound built in code</dd>
+      </dl>
+    </div>
+  </header>
+
+  <section class="sec" id="film">
+    <div class="sec-h"><h2>film</h2><p>The logo never moves. Images strobe underneath it, two or three frames each, and twice the strobe falls into a short video.</p></div>
+    <div class="filmrow">
+      <div class="win film" id="mainfilm" tabindex="0" role="button" aria-label="Play the TRACE film with sound">
+        <div class="bar"><i></i><span class="t">TRACE/film_01_first_trace</span><span class="r">9:16 · 10.8 s · sound</span></div>
+        <div class="shot r916"><video src="/studio/video/trace_film01.mp4" poster="/studio/img/trace_k05.jpg" playsinline preload="metadata"></video><span class="play">play ▸</span></div>
+      </div>
+      <div class="win notes">
+        <div class="bar"><i></i><span class="t">studio/notes</span><span class="r"></span></div>
+        <p class="quote">Clear glass, a living cap, a pale heroine. The product leaves its <em>shape</em> on her cheek: the trace the brand is named after.</p>
+        <ol class="steps">
+          <li><span class="n">01</span><span>Paper world: the carton, the fold, the bottle. The logo locks onto the deboss and the etched glass.</span></li>
+          <li><span class="n">02</span><span>A white flash, then the cold world: membrane, skin, the bottle cut in half.</span></li>
+          <li><span class="n">03</span><span>The bottle leaves her cheek; its outline stays.</span></li>
+          <li><span class="n">04</span><span>Packshot on paper. A glass ping, then black.</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="keyframes">
+    <div class="sec-h"><h2>keyframes</h2><p>Fourteen stills hold the film together. Products are generated blank; every letter on glass and paper is set by hand afterwards.</p></div>
+    <div class="g g4">
+      <div class="win"><div class="bar"><i></i><span class="t">k02_carton</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k02.jpg" alt="Paper carton with a blind-debossed logo" loading="lazy"></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">k04_open</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k04.jpg" alt="Open carton from above, the resin cap inside" loading="lazy"></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">k05_bottle</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k05.jpg" alt="Clear bottle with an etched logo" loading="lazy"></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">k06_cap</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k06.jpg" alt="Macro of the translucent pink resin cap" loading="lazy"></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">k07_membrane</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k07.jpg" alt="Pink and sage organic growth around a dark hollow" loading="lazy"></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">k09_eye</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k09.jpg" alt="Macro of a pale eye with frosted lashes" loading="lazy"></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">k10_contact</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k10.jpg" alt="The bottle pressed against her cheek" loading="lazy"></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">k12_trace</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k12.jpg" alt="The pink outline of the bottle left on her cheek" loading="lazy"></div></div>
+    </div>
+    <div class="g g2">
+      <div class="win"><div class="bar"><i></i><span class="t">k11_section</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k11.jpg" alt="The bottle cut in half, a wisp of membrane floating inside" loading="lazy"></div>
+        <div class="cap"><span>cut clean through, nothing spills</span><span>k11</span></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">k08_heroine</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k08.jpg" alt="Profile of the pale heroine with wet skin" loading="lazy"></div>
+        <div class="cap"><span>the heroine</span><span>k08</span></div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="packaging">
+    <div class="sec-h"><h2>packaging</h2><p>Heavy clear glass with an acid-etched logo that reads on paper and in the dark. A cast resin cap, never two alike. An uncoated paper carton, blind-debossed.</p></div>
+    <div class="g g3">
+      <div class="win"><div class="bar"><i></i><span class="t">bottle_etched</span><span class="r">4:5</span></div><div class="shot r45"><img src="/studio/img/trace_bottle.jpg" alt="Bottle with etched logo and resin cap on paper" loading="lazy"></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">carton_deboss</span><span class="r">4:5</span></div><div class="shot r45"><img src="/studio/img/trace_carton.jpg" alt="Paper carton with a blind-debossed logo" loading="lazy"></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">k13_packshot</span><span class="r">4:5</span></div><div class="shot r45"><img src="/studio/img/trace_k13.jpg" alt="Bottle and carton side by side on paper" loading="lazy" style="object-position:50% 85%"></div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="identity">
+    <div class="sec-h"><h2>identity</h2><p>Hand-drawn monoline capitals with one gesture: a dot that fell out of the C. Overshoots, thinner horizontals and optical spacing keep the hairline even.</p></div>
+    <div class="brand">
+      <div class="logo"><img src="/studio/img/trace_logo_white.svg" alt="TRACE wordmark"></div>
+      <div class="sw paper"><b>Paper</b><span>#ECEAE6</span></div>
+      <div class="sw cold"><b>Cold</b><span>#1A222C</span></div>
+      <div class="sw membrane"><b>Membrane</b><span>#E8C6C4</span></div>
+    </div>
+    <div class="g g2">
+      <div class="win"><div class="bar"><i></i><span class="t">bb04_construction</span><span class="r">16:10</span></div><div class="shot r1610"><img src="/studio/img/trace_bb_construction.jpg" alt="Brand book page: logotype construction and optical corrections" loading="lazy"></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">bb05_logo_system</span><span class="r">16:10</span></div><div class="shot r1610"><img src="/studio/img/trace_bb_system.jpg" alt="Brand book page: primary logo, reversed, regular cut and monogram" loading="lazy"></div></div>
+    </div>
+  </section>
+
+  <footer class="next">
+    <p class="big">03 / open slot</p>
+    <div class="links">
+      <a class="mail" href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a>
+      <a href="https://www.instagram.com/thcd_monster_studio/" target="_blank" rel="noopener">instagram — @thcd_monster_studio ↗</a>
+    </div>
+  </footer>
+</div>
+<script>
+(function(){
+  const w=document.getElementById('mainfilm'), v=w.querySelector('video');
+  const toggle=()=>{ if(v.paused){v.play().then(()=>w.classList.add('on')).catch(()=>{})} else {v.pause(); w.classList.remove('on')} };
+  w.addEventListener('click',toggle);
+  w.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
+  v.addEventListener('ended',()=>w.classList.remove('on'));
+})();
+</script>
+</body>
+</html>
