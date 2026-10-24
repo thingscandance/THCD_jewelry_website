@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="THCD video_studio: 3D and AI videos for objects that want to move.">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/img/icon-180.png">
+<title>THCD video_studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&family=Doto:wght@700;900&display=swap">
+<style>
+/* Layout: the thcd.monster desk — black void, project windows on a snap grid, each keeps its film ratio; drag to compose, hover inverts, click opens */
+:root{
+  --canvas:#000000; --paper:#0B0C0D; --ink:#E9ECEA; --muted:#8D9493; --edge:rgba(233,236,234,.28); --grid:rgba(233,236,234,.11); --accent:#E61E9C;
+  --f-display:"Doto","Geist Mono",ui-monospace,monospace;
+  --f-ui:"Geist Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --f-body:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --bar:28px; --u:24px; color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--canvas); color:var(--ink); font-family:var(--f-ui); font-size:12px; line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:0 40px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* top */
+.top{display:grid; grid-template-columns:auto 1fr auto; align-items:end; gap:16px 28px; padding-block:24px 18px; border-bottom:1px solid var(--edge)}
+.logo{display:block; width:clamp(110px,11vw,160px); height:auto}
+.sect{font-family:var(--f-ui); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); padding-bottom:4px}
+.sect b{color:var(--accent); font-weight:400}
+.meta{display:flex; flex-direction:column; align-items:flex-end; gap:6px; text-align:right; font-size:11px; letter-spacing:.06em}
+.meta a{text-decoration:none; color:var(--ink)}
+.meta a:hover{color:var(--accent)}
+.crumb{color:var(--muted)!important}
+
+.tools{display:flex; flex-wrap:wrap; align-items:center; gap:8px 6px; padding-block:12px}
+.tools .label{color:var(--muted); margin-right:6px; text-transform:uppercase; letter-spacing:.08em; font-size:10px}
+.btn{font:inherit; font-size:11px; color:var(--ink); background:var(--paper); border:1px solid var(--edge); padding:5px 10px; cursor:pointer}
+.btn:hover{background:var(--ink); color:var(--paper)}
+.btn[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.tools .hint{margin-left:auto; color:var(--muted)}
+
+/* desk */
+.deskwrap{position:relative; width:100%}
+.desk{position:absolute; left:0; top:0; width:1440px; transform-origin:0 0;
+  background-image:radial-gradient(circle,var(--grid) 1px,transparent 1.4px); background-size:var(--u) var(--u); background-position:-12px -12px}
+.win{position:absolute; background:var(--paper); border:1px solid var(--edge); display:flex; flex-direction:column; user-select:none; touch-action:none; cursor:pointer}
+.win:hover,.win:focus-visible,.desk.inv .win{filter:invert(1)}
+.desk.inv .win:hover{filter:none}
+.win.drag{cursor:grabbing; box-shadow:10px 10px 0 var(--accent); border-color:var(--accent); filter:none}
+.bar{height:var(--bar); flex:none; display:flex; align-items:center; gap:10px; padding:0 8px; border-bottom:1px solid var(--edge); font-size:10.5px; letter-spacing:.02em; white-space:nowrap; overflow:hidden; cursor:grab}
+.bar .t{overflow:hidden; text-overflow:ellipsis; min-width:0}
+.bar .r{margin-left:auto; color:var(--muted); font-variant-numeric:tabular-nums}
+.bar i{width:6px; height:6px; border-radius:50%; border:1px solid var(--muted); flex:none}
+.win.live .bar i{background:var(--accent); border-color:var(--accent)}
+.body{position:relative; flex:1; overflow:hidden}
+.body img,.body video{display:block; width:100%; height:100%; object-fit:cover; max-width:none; pointer-events:none}
+.grip{position:absolute; right:-1px; bottom:-1px; width:16px; height:16px; cursor:nwse-resize;
+  background:linear-gradient(135deg,transparent 50%,var(--ink) 50%)}
+.tag{position:absolute; left:8px; bottom:8px; font-size:10px; padding:2px 6px; background:var(--paper); border:1px solid var(--edge)}
+.txt{padding:14px 14px 16px; display:flex; flex-direction:column; gap:10px}
+.txt .lede{font-family:var(--f-body); font-weight:300; font-size:24px; line-height:1.15; letter-spacing:-.015em; text-wrap:balance; margin:0}
+.txt .body-t{font-family:var(--f-body); font-weight:300; font-size:13px; line-height:1.55}
+.txt .mail{font-family:var(--f-body); font-weight:300; font-size:20px; letter-spacing:-.01em; text-decoration:none; overflow-wrap:anywhere}
+.txt .mail:hover,.txt .ig:hover{color:var(--accent)}
+.txt .ig{text-decoration:none; font-size:12px}
+.txt p{margin:0; max-width:60ch}
+.txt .k{color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-size:10px}
+.idx{list-style:none; margin:0; padding:0; display:flex; flex-direction:column}
+.idx li{display:grid; grid-template-columns:2.6em 1fr auto; gap:8px; padding:7px 0; border-top:1px solid var(--grid)}
+.idx li:first-child{border-top:0}
+.idx .n{font-family:var(--f-display); font-weight:900; font-size:15px; line-height:1}
+.idx .open{color:var(--muted)}
+.big{font-family:var(--f-display); font-weight:900; font-size:64px; line-height:.9; margin:0}
+.copy{font:inherit; font-size:11px; background:none; border:1px solid var(--edge); color:var(--ink); padding:3px 8px; cursor:pointer; justify-self:start}
+
+/* phone: a plain column, windows keep their ratios */
+@media (max-width:760px){
+  .deskwrap{height:auto!important}
+  .desk{position:static; width:auto; transform:none!important; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; background:none}
+  .win{position:relative!important; left:auto!important; top:auto!important; width:auto!important; height:auto!important; z-index:auto!important}
+  .win .body{aspect-ratio:var(--ar)}
+  .win.textwin .body{aspect-ratio:auto}
+  .win.wide,.win.textwin{grid-column:1/-1}
+  .grip,.tools .hint,.tools [data-arr]{display:none}
+  .top{grid-template-columns:auto 1fr; align-items:end}
+  .meta{grid-column:1/-1; align-items:flex-start; text-align:left; flex-direction:row; flex-wrap:wrap; gap:6px 16px}
+}
+.foot{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px 16px; padding-block:28px 0; margin-top:24px; border-top:1px solid var(--edge); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+.foot a{color:var(--ink); text-decoration:none}
+.foot a:hover{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){.win{transition:none}}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+
+
+<header class="top">
+  <a href="https://thcd.monster/" aria-label="Things Can Dance, home"><img class="logo" src="/studio/img/thcd_logo.png" alt="Things Can Dance"></a>
+  <h1 class="sect"><b>02.</b>video_studio</h1>
+  <div class="meta">
+    <a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener">@th_c_d</a>
+    <a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a>
+    <a class="crumb" href="https://thcd.monster/">← thcd.monster</a>
+  </div>
+</header>
+
+<div class="tools" role="toolbar" aria-label="Layout">
+  <span class="label">layout</span>
+  <button class="btn" type="button" data-arr="studio" id="arr-studio">studio</button>
+  <button class="btn" type="button" data-arr="grid" id="arr-grid">grid</button>
+  <button class="btn" type="button" data-arr="scatter" id="arr-scatter">scatter</button>
+  <button class="btn" type="button" id="invert" aria-pressed="false">invert all</button>
+  <span class="hint">drag a bar to move · corner to resize · click to open</span>
+</div>
+
+<div class="deskwrap" id="wrap">
+  <div class="desk" id="desk"></div>
+</div>
+
+<footer class="foot"><span>things can dance · 2026</span><span><a href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener">@th_c_d</a> · <a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a></span></footer>
+
+<script>
+(function(){
+const HALDE='/studio/halde.html';
+const W=[
+ {id:'about',kind:'text',title:'studio/about',r:'txt',w:432,h:192,html:`<div class="txt"><p class="lede">Things Can Dance makes 3D and AI videos for objects that want to move.</p><p class="body-t">Product films, vertical loops for social, and the small worlds a brand lives in.</p><span class="k">commissions · licensing of existing loops</span></div>`},
+ {id:'f2',title:'HALDE/film_02_city',r:'9:16',w:264,img:'/studio/img/city_262.jpg',tag:'10.4 s · reels',href:HALDE+'#films'},
+ {id:'f1',title:'HALDE/film_01_platok',r:'9:16',w:216,img:'/studio/img/platok_150.jpg',tag:'7.4 s · reels',href:HALDE+'#films'},
+ {id:'hero',title:'HALDE/film_00_main',r:'16:9',w:552,video:'/studio/video/halde_loop.mp4',poster:'/studio/img/halde_film_poster.jpg',tag:'31 s · film',href:HALDE,wide:1},
+ {id:'index',kind:'text',title:'studio/index',r:'txt',w:288,h:192,html:`<div class="txt"><span class="k">projects</span><ol class="idx"><li><span class="n">01</span><a href="${HALDE}">HALDE</a><span>2026</span></li><li><span class="n">02</span><span class="open">open slot</span><span class="open">—</span></li><li><span class="n">03</span><span class="open">open slot</span><span class="open">—</span></li></ol></div>`},
+ {id:'vio',title:'HALDE/violett',r:'1:1',w:240,img:'/studio/img/col_violett.jpg',href:HALDE+'#product'},
+ {id:'night',title:'HALDE/heap_at_night',r:'1:1',w:288,img:'/studio/img/wear_night.jpg',href:HALDE+'#world'},
+ {id:'cage',title:'HALDE/cage_branch',r:'16:9',w:480,img:'/studio/img/macro_cage.jpg',href:HALDE+'#product',wide:1},
+ {id:'heap',title:'HALDE/spoil_tip',r:'16:9',w:576,img:'/studio/img/kf07.jpg',href:HALDE+'#world',wide:1},
+ {id:'contact',kind:'text',title:'studio/contact',r:'txt',w:384,h:168,html:`<div class="txt"><span class="k">commissions · licensing</span><a class="mail" href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a><button class="copy" type="button" id="copymail">copy address</button><a class="ig" href="https://www.instagram.com/th_c_d/" target="_blank" rel="noopener">instagram — @th_c_d ↗</a></div>`}
+];
+const STUDIO={about:[48,48],f2:[504,48],hero:[816,48],f1:[48,312],index:[288,312],vio:[816,408],night:[1080,408],cage:[288,600],heap:[816,768],contact:[48,936]};
+const U=24, BAR=28, DESKW=1440;
+const desk=document.getElementById('desk'), wrap=document.getElementById('wrap');
+const ratio=r=>{if(r==='txt')return null;const [a,b]=r.split(':').map(Number);return b/a};
+const els={};
+let z=10;
+
+W.forEach(d=>{
+  const el=document.createElement('div');
+  el.className='win'+(d.kind==='text'?' textwin':'')+(d.wide?' wide':'')+(d.href?' live':'');
+  el.tabIndex=0; el.dataset.id=d.id;
+  const rr=ratio(d.r); if(rr) el.style.setProperty('--ar',d.r.replace(':','/'));
+  el.setAttribute('aria-label',d.title+(d.href?' — open project':''));
+  el.innerHTML=`<div class="bar"><i></i><span class="t">${d.title}</span><span class="r">${d.r==='txt'?'':d.r}</span></div>
+   <div class="body">${d.img?`<img src="${d.img}" alt="${d.title.split('/')[1].replace(/_/g,' ')}" draggable="false">`:''}${d.video?`<video src="${d.video}" poster="${d.poster}" muted autoplay loop playsinline preload="auto" aria-label="HALDE film loop"></video>`:''}${d.html||''}${d.tag?`<span class="tag">${d.tag}</span>`:''}</div>
+   <div class="grip" aria-hidden="true"></div>`;
+  desk.appendChild(el); els[d.id]={el,d};
+});
+
+function size(d,w){return d.kind==='text'?[w,d.h*(w/d.w)]:[w,Math.round(w*ratio(d.r))+BAR]}
+function place(id,x,y,w){const o=els[id];o.x=x;o.y=y;o.w=w;const [ww,hh]=size(o.d,w);o.h=hh;
+  Object.assign(o.el.style,{left:x+'px',top:y+'px',width:ww+'px',height:o.d.kind==='text'?'auto':hh+'px',minHeight:o.d.kind==='text'?hh+'px':''})}
+function fit(){
+  if(innerWidth<=760){wrap.style.height='';return}
+  const s=wrap.clientWidth/DESKW; desk.style.transform=`scale(${s})`;
+  let maxY=0; for(const k in els){const o=els[k]; maxY=Math.max(maxY,o.y+o.el.offsetHeight)}
+  desk.style.height=(maxY+48)+'px'; wrap.style.height=((maxY+48)*s)+'px';
+}
+function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk',JSON.stringify(o))}catch(e){}}
+function arrange(kind){
+  if(kind==='studio'){W.forEach(d=>place(d.id,...STUDIO[d.id],d.w))}
+  if(kind==='grid'){ // masonry into 4 columns of 336
+    const cols=[48,48,48,48], cw=312, gap=24;
+    W.forEach(d=>{let c=cols.indexOf(Math.min(...cols)); const x=48+c*(cw+gap); place(d.id,x,cols[c],cw); cols[c]+=Math.ceil((els[d.id].el.offsetHeight+gap)/U)*U})
+  }
+  if(kind==='scatter'){W.forEach(d=>{const w=Math.round((d.w*(0.7+Math.random()*0.5))/U)*U; const x=Math.round(Math.random()*(DESKW-w-48)/U)*U+24; const y=Math.round(Math.random()*900/U)*U+24; place(d.id,x,y,Math.max(144,w))})}
+  fit(); save();
+}
+let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk')||'null')}catch(e){}
+if(saved&&W.every(d=>saved[d.id])) W.forEach(d=>place(d.id,...saved[d.id])); else arrange('studio');
+
+document.querySelectorAll('[data-arr]').forEach(b=>b.addEventListener('click',()=>arrange(b.dataset.arr)));
+const inv=document.getElementById('invert');
+inv.addEventListener('click',()=>{const on=desk.classList.toggle('inv');inv.setAttribute('aria-pressed',on)});
+
+// drag / resize / click
+let act=null;
+desk.addEventListener('pointerdown',e=>{
+  if(innerWidth<=760)return;
+  const el=e.target.closest('.win'); if(!el||e.target.closest('a,button'))return;
+  const o=els[el.dataset.id], s=wrap.clientWidth/DESKW;
+  act={o,s,sx:e.clientX,sy:e.clientY,x:o.x,y:o.y,w:o.w,mode:e.target.classList.contains('grip')?'size':'move',moved:false};
+  el.style.zIndex=++z; el.setPointerCapture(e.pointerId);
+});
+desk.addEventListener('pointermove',e=>{
+  if(!act)return; const dx=(e.clientX-act.sx)/act.s, dy=(e.clientY-act.sy)/act.s;
+  if(!act.moved&&Math.hypot(dx,dy)<5)return; act.moved=true; act.o.el.classList.add('drag');
+  const snap=v=>Math.round(v/U)*U;
+  if(act.mode==='move')place(act.o.d.id,Math.max(0,Math.min(DESKW-act.w,snap(act.x+dx))),Math.max(0,snap(act.y+dy)),act.w);
+  else place(act.o.d.id,act.x,act.y,Math.max(144,Math.min(DESKW-act.x,snap(act.w+dx))));
+});
+const end=e=>{if(!act)return;const a=act;act=null;a.o.el.classList.remove('drag');
+  if(a.moved){fit();save()} else if(a.o.d.href) location.href=a.o.d.href};
+desk.addEventListener('pointerup',end); desk.addEventListener('pointercancel',()=>{if(act){act.o.el.classList.remove('drag');act=null}});
+desk.addEventListener('click',e=>{ if(innerWidth>760)return; const el=e.target.closest('.win'); if(!el||e.target.closest('a,button'))return; const h=els[el.dataset.id].d.href; if(h)location.href=h});
+desk.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const el=e.target.closest('.win');const h=el&&els[el.dataset.id].d.href;if(h)location.href=h});
+
+document.getElementById('copymail').addEventListener('click',e=>{const b=e.currentTarget;
+  navigator.clipboard.writeText('marina.marbl@gmail.com').then(()=>b.textContent='copied',()=>{b.textContent='select the address above'})});
+
+addEventListener('resize',fit);
+document.fonts&&document.fonts.ready.then(fit); fit();
+
+// one strobe pass on load, on the 120 BPM eighth-note grid
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  W.forEach((d,i)=>{const el=els[d.id].el; setTimeout(()=>{el.style.filter='invert(1)'; setTimeout(()=>el.style.filter='',125)},250+i*250)});
+}
+})();
+</script>
+
+</body>
+</html>
