@@ -51,7 +51,6 @@ a{color:inherit}
 .win{position:absolute; background:var(--paper); border:1px solid var(--edge); display:flex; flex-direction:column; user-select:none; touch-action:none; cursor:pointer}
 .win{transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .25s}
 .win:hover,.win:focus-visible{transform:scale(1.015); border-color:var(--ink)}
-.desk.inv .win{filter:invert(1)}
 .win.drag{cursor:grabbing; box-shadow:10px 10px 0 var(--accent); border-color:var(--accent); filter:none}
 .bar{height:var(--bar); flex:none; display:flex; align-items:center; gap:10px; padding:0 8px; border-bottom:1px solid var(--edge); font-size:10.5px; letter-spacing:.02em; white-space:nowrap; overflow:hidden; cursor:grab}
 .bar .t{overflow:hidden; text-overflow:ellipsis; min-width:0}
@@ -113,10 +112,7 @@ a{color:inherit}
 
 <div class="tools" role="toolbar" aria-label="Layout">
   <span class="label">layout</span>
-  <button class="btn" type="button" data-arr="studio" id="arr-studio">studio</button>
   <button class="btn" type="button" data-arr="grid" id="arr-grid">grid</button>
-  <button class="btn" type="button" data-arr="scatter" id="arr-scatter">scatter</button>
-  <button class="btn" type="button" id="invert" aria-pressed="false">invert all</button>
   <span class="hint">drag a bar to move · corner to resize · click to open</span>
 </div>
 
@@ -141,7 +137,7 @@ const W=[
  {id:'heap',title:'HALDE/spoil_tip',r:'16:9',w:576,img:'/studio/img/kf07.jpg',href:HALDE+'#world',wide:1},
  {id:'contact',kind:'text',title:'studio/contact',r:'txt',w:384,h:168,html:`<div class="txt"><span class="k">commissions · licensing</span><a class="mail" href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a><button class="copy" type="button" id="copymail">copy address</button><a class="ig" href="https://www.instagram.com/thcd_monster_studio/" target="_blank" rel="noopener">instagram — @thcd_monster_studio ↗</a></div>`}
 ];
-const STUDIO={about:[48,48],f2:[504,48],hero:[816,48],f1:[48,312],index:[288,312],vio:[816,408],night:[1080,408],cage:[288,600],heap:[816,768],contact:[48,936]};
+const STUDIO={f2:[1176,0,264],about:[480,144,432],f1:[48,312,216],hero:[792,360,552],index:[384,528,288],night:[936,792,288],contact:[48,936,384],vio:[552,960,240],heap:[768,1152,576],cage:[240,1248,480]};
 const U=24, BAR=28, DESKW=1440;
 const desk=document.getElementById('desk'), wrap=document.getElementById('wrap');
 const ratio=r=>{if(r==='txt')return null;const [a,b]=r.split(':').map(Number);return b/a};
@@ -169,22 +165,15 @@ function fit(){
   let maxY=0; for(const k in els){const o=els[k]; maxY=Math.max(maxY,o.y+o.el.offsetHeight)}
   desk.style.height=(maxY+48)+'px'; wrap.style.height=((maxY+48)*s)+'px';
 }
-function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk',JSON.stringify(o))}catch(e){}}
+function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v2',JSON.stringify(o))}catch(e){}}
 function arrange(kind){
-  if(kind==='studio'){W.forEach(d=>place(d.id,...STUDIO[d.id],d.w))}
-  if(kind==='grid'){ // masonry into 4 columns of 336
-    const cols=[48,48,48,48], cw=312, gap=24;
-    W.forEach(d=>{let c=cols.indexOf(Math.min(...cols)); const x=48+c*(cw+gap); place(d.id,x,cols[c],cw); cols[c]+=Math.ceil((els[d.id].el.offsetHeight+gap)/U)*U})
-  }
-  if(kind==='scatter'){W.forEach(d=>{const w=Math.round((d.w*(0.7+Math.random()*0.5))/U)*U; const x=Math.round(Math.random()*(DESKW-w-48)/U)*U+24; const y=Math.round(Math.random()*900/U)*U+24; place(d.id,x,y,Math.max(144,w))})}
+  W.forEach(d=>place(d.id,...STUDIO[d.id]));
   fit(); save();
 }
-let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk')||'null')}catch(e){}
-if(saved&&W.every(d=>saved[d.id])) W.forEach(d=>place(d.id,...saved[d.id])); else arrange('studio');
+let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v2')||'null')}catch(e){}
+if(saved&&W.every(d=>saved[d.id])) W.forEach(d=>place(d.id,...saved[d.id])); else arrange('grid');
 
 document.querySelectorAll('[data-arr]').forEach(b=>b.addEventListener('click',()=>arrange(b.dataset.arr)));
-const inv=document.getElementById('invert');
-inv.addEventListener('click',()=>{const on=desk.classList.toggle('inv');inv.setAttribute('aria-pressed',on)});
 
 // drag / resize / click
 let act=null;
