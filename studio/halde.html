@@ -101,6 +101,21 @@ a.win{text-decoration:none}
   .g2{grid-template-columns:1fr}
   .page{gap:48px}
 }
+
+/* scroll-through: the next project waits under the footer; keep scrolling at the bottom to enter it */
+.contact{display:flex; justify-content:space-between; align-items:end; gap:16px; flex-wrap:wrap; border-top:1px solid var(--edge); padding-top:14px}
+.contact .mail{font-family:var(--f-body); font-weight:300; font-size:20px; text-decoration:none}
+.contact a{text-decoration:none}
+.contact a:hover{color:var(--accent)}
+.nextp{display:block; text-decoration:none; min-height:92vh; border-top:1px solid var(--edge); padding-top:14px; position:relative}
+.nextp .k{color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-size:10px; display:flex; justify-content:space-between}
+.nextp .big{font-family:var(--f-display); font-weight:900; font-size:clamp(72px,15vw,220px); line-height:.8; margin:18px 0 22px; letter-spacing:-.03em}
+.nextp .strip{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px}
+.nextp .strip .win{pointer-events:none}
+.nextp .meter{position:sticky; bottom:16px; margin-top:24px; height:2px; background:var(--grid)}
+.nextp .meter b{display:block; height:100%; width:0; background:var(--accent); transition:width .12s linear}
+.nextp:hover .big{color:var(--accent)}
+@media (max-width:760px){.nextp .strip{grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}}
 </style>
 </head>
 <body>
@@ -190,13 +205,17 @@ a.win{text-decoration:none}
     </div>
   </section>
 
-  <footer class="next">
-    <a class="big" href="/studio/trace.html" style="text-decoration:none">02 / TRACE →</a>
-    <div class="links">
-      <a class="mail" href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a>
-      <a href="https://www.instagram.com/thcd_monster_studio/" target="_blank" rel="noopener">instagram — @thcd_monster_studio ↗</a>
-    </div>
-  </footer>
+  <div class="contact">
+    <a class="mail" href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a>
+    <a href="https://www.instagram.com/thcd_monster_studio/" target="_blank" rel="noopener">instagram — @thcd_monster_studio ↗</a>
+  </div>
+
+  <a class="nextp" id="nextp" href="/studio/trace.html" aria-label="Next project: TRACE">
+    <span class="k"><span>next project · 02</span><span>keep scrolling ↓</span></span>
+    <p class="big">TRACE</p>
+    <div class="strip"><div class="win"><div class="bar"><i></i><span class="t">TRACE/k05_bottle</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k05.jpg" alt="" loading="lazy"></div></div><div class="win"><div class="bar"><i></i><span class="t">TRACE/k11_section</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k11.jpg" alt="" loading="lazy"></div></div><div class="win"><div class="bar"><i></i><span class="t">TRACE/k12_trace</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k12.jpg" alt="" loading="lazy"></div></div></div>
+    <div class="meter" aria-hidden="true"><b></b></div>
+  </a>
 </div>
 <script>
 (function(){
@@ -205,6 +224,24 @@ a.win{text-decoration:none}
   w.addEventListener('click',toggle);
   w.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
   v.addEventListener('ended',()=>w.classList.remove('on'));
+})();
+</script>
+
+<script>
+(function(){
+  // at the bottom of the page, keep scrolling (wheel, touch or arrow keys) to fill the line and open the next project
+  const box=document.getElementById('nextp'); if(!box) return;
+  const bar=box.querySelector('.meter b'), href=box.getAttribute('href');
+  let p=0, gone=false, decay=null;
+  const atEnd=()=>innerHeight+scrollY>=document.documentElement.scrollHeight-4;
+  const push=d=>{ if(gone||!atEnd()) return; p=Math.min(1,p+d); bar.style.width=(p*100)+'%';
+    clearTimeout(decay); decay=setTimeout(()=>{p=0; bar.style.width='0%'},700);
+    if(p>=1){gone=true; location.href=href} };
+  addEventListener('wheel',e=>{ if(e.deltaY>0) push(Math.min(e.deltaY,120)/600) },{passive:true});
+  let ty=null;
+  addEventListener('touchstart',e=>{ty=e.touches[0].clientY},{passive:true});
+  addEventListener('touchmove',e=>{ if(ty===null) return; const d=ty-e.touches[0].clientY; ty=e.touches[0].clientY; if(d>0) push(d/260) },{passive:true});
+  addEventListener('keydown',e=>{ if(['ArrowDown','PageDown',' '].includes(e.key)) push(.25) });
 })();
 </script>
 </body>

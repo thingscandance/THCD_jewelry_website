@@ -133,35 +133,35 @@ a{color:inherit}
 (function(){
 const HALDE='/studio/halde.html', TRACE='/studio/trace.html';
 const W=[
- {id:'f2',title:'HALDE/film_02_city',r:'9:16',w:200,img:'/studio/img/city_262.jpg',href:HALDE+'#films',tag:'10.4 s · reels'},
- {id:'hero',title:'HALDE/film_00_main',r:'16:9',w:408,video:'/studio/video/halde_loop.mp4',poster:'/studio/img/halde_film_poster.jpg',tag:'31 s · film',href:HALDE,wide:1},
  {id:'about',kind:'text',title:'studio/about',r:'txt',w:432,h:192,html:`<div class="txt"><p class="lede">Things Can Dance makes 3D and AI videos for objects that want to move.</p><p class="body-t">Product films, vertical loops for social, and the small worlds a brand lives in.</p><span class="k">commissions · licensing of existing loops</span></div>`},
- {id:'f1',title:'HALDE/film_01_platok',r:'9:16',w:200,img:'/studio/img/platok_150.jpg',href:HALDE+'#films',tag:'7.4 s · reels'},
- {id:'vio',title:'HALDE/violett',r:'1:1',w:200,img:'/studio/img/col_violett.jpg',href:HALDE+'#product'},
+ {id:'hero',title:'HALDE/film_00_main',r:'16:9',w:408,video:'/studio/video/halde_loop.mp4',poster:'/studio/img/halde_film_poster.jpg',tag:'31 s · film',href:HALDE,wide:1},
+ {id:'t_film',title:'TRACE/film_01_first_trace',r:'9:16',w:200,video:'/studio/video/trace_film01.mp4',poster:'/studio/img/trace_k05.jpg',tag:'10.8 s · reels',href:TRACE},
  {id:'index',kind:'text',title:'studio/index',r:'txt',w:288,h:192,html:`<div class="txt"><span class="k">projects</span><ol class="idx"><li><span class="n">01</span><a href="${HALDE}">HALDE</a><span>2026</span></li><li><span class="n">02</span><a href="${TRACE}">TRACE</a><span>2026</span></li><li><span class="n">03</span><span class="open">open slot</span><span class="open">—</span></li></ol></div>`},
- {id:'cage',title:'HALDE/cage_branch',r:'16:9',w:200,img:'/studio/img/macro_cage.jpg',href:HALDE+'#product',wide:1},
- {id:'perl',title:'HALDE/perlmutt',r:'1:1',w:200,img:'/studio/img/col_perlmutt.jpg',href:HALDE+'#product'},
- {id:'night',title:'HALDE/heap_at_night',r:'1:1',w:200,img:'/studio/img/wear_night.jpg',href:HALDE+'#world'},
- {id:'f3',title:'HALDE/film_03_heap',r:'9:16',w:200,img:'/studio/img/kf06.jpg',href:HALDE+'#films',tag:'30.8 s · reels'},
- {id:'contact',kind:'text',title:'studio/contact',r:'txt',w:384,h:168,html:`<div class="txt"><span class="k">commissions · licensing</span><a class="mail" href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a><button class="copy" type="button" id="copymail">copy address</button><a class="ig" href="https://www.instagram.com/thcd_monster_studio/" target="_blank" rel="noopener">instagram — @thcd_monster_studio ↗</a></div>`},
- {id:'p34',title:'HALDE/studio_three_quarter',r:'4:5',w:200,img:'/studio/img/p1_34.jpg',href:HALDE+'#product'},
- {id:'heap',title:'HALDE/spoil_tip',r:'16:9',w:200,img:'/studio/img/kf07.jpg',href:HALDE+'#world',wide:1},
+ {id:'f2',title:'HALDE/film_02_city',r:'9:16',w:200,img:'/studio/img/city_262.jpg',href:HALDE+'#films',tag:'10.4 s · reels'},
+ {id:'t_section',title:'TRACE/k11_section',r:'9:16',w:200,img:'/studio/img/trace_k11.jpg',href:TRACE+'#keyframes'},
  {id:'glut',title:'HALDE/glut',r:'1:1',w:200,img:'/studio/img/col_glut.jpg',href:HALDE+'#product'},
+ {id:'t_bottle',title:'TRACE/bottle_etched',r:'4:5',w:200,img:'/studio/img/trace_bottle.jpg',href:TRACE+'#packaging'},
+ {id:'f1',title:'HALDE/film_01_platok',r:'9:16',w:200,img:'/studio/img/platok_150.jpg',href:HALDE+'#films',tag:'7.4 s · reels'},
+ {id:'night',title:'HALDE/heap_at_night',r:'1:1',w:200,img:'/studio/img/wear_night.jpg',href:HALDE+'#world'},
+ {id:'t_eye',title:'TRACE/k09_eye',r:'9:16',w:200,img:'/studio/img/trace_k09.jpg',href:TRACE+'#keyframes'},
+ {id:'contact',kind:'text',title:'studio/contact',r:'txt',w:384,h:168,html:`<div class="txt"><span class="k">commissions · licensing</span><a class="mail" href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a><button class="copy" type="button" id="copymail">copy address</button><a class="ig" href="https://www.instagram.com/thcd_monster_studio/" target="_blank" rel="noopener">instagram — @thcd_monster_studio ↗</a></div>`},
+ {id:'cage',title:'HALDE/cage_branch',r:'16:9',w:200,img:'/studio/img/macro_cage.jpg',href:HALDE+'#product',wide:1},
+ {id:'t_construct',title:'TRACE/construction',r:'16:10',w:200,img:'/studio/img/trace_bb_construction.jpg',href:TRACE+'#identity',wide:1},
+ {id:'p34',title:'HALDE/studio_three_quarter',r:'4:5',w:200,img:'/studio/img/p1_34.jpg',href:HALDE+'#product'},
+ {id:'perl',title:'HALDE/perlmutt',r:'1:1',w:200,img:'/studio/img/col_perlmutt.jpg',href:HALDE+'#product'},
+ {id:'t_carton',title:'TRACE/carton_deboss',r:'4:5',w:200,img:'/studio/img/trace_carton.jpg',href:TRACE+'#packaging'},
+ {id:'f3',title:'HALDE/film_03_heap',r:'9:16',w:200,img:'/studio/img/kf06.jpg',href:HALDE+'#films',tag:'30.8 s · reels'},
+ {id:'vio',title:'HALDE/violett',r:'1:1',w:200,img:'/studio/img/col_violett.jpg',href:HALDE+'#product'},
+ {id:'t_trace',title:'TRACE/k12_trace',r:'9:16',w:200,img:'/studio/img/trace_k12.jpg',href:TRACE+'#keyframes'},
+ {id:'heap',title:'HALDE/spoil_tip',r:'16:9',w:200,img:'/studio/img/kf07.jpg',href:HALDE+'#world',wide:1},
  {id:'rim',title:'HALDE/cage_rim',r:'16:9',w:200,img:'/studio/img/macro_cage2.jpg',href:HALDE+'#product',wide:1},
  {id:'front',title:'HALDE/rim_front',r:'4:5',w:200,img:'/studio/img/cage2_front.jpg',href:HALDE+'#product'},
  {id:'wnight',title:'HALDE/night',r:'16:9',w:200,img:'/studio/img/world_night.jpg',href:HALDE+'#world',wide:1},
  {id:'club',title:'HALDE/club',r:'16:9',w:200,img:'/studio/img/kf08.jpg',href:HALDE+'#world',wide:1},
  {id:'crowd',title:'HALDE/crowd',r:'16:9',w:200,img:'/studio/img/kf09.jpg',href:HALDE+'#world',wide:1},
- {id:'hday',title:'HALDE/heap_day',r:'16:9',w:200,img:'/studio/img/kf05.jpg',href:HALDE+'#world',wide:1},
- {id:'t_film',title:'TRACE/film_01_first_trace',r:'9:16',w:200,video:'/studio/video/trace_film01.mp4',poster:'/studio/img/trace_k05.jpg',tag:'10.8 s · reels',href:TRACE},
- {id:'t_section',title:'TRACE/k11_section',r:'9:16',w:200,img:'/studio/img/trace_k11.jpg',href:TRACE+'#keyframes'},
- {id:'t_bottle',title:'TRACE/bottle_etched',r:'4:5',w:200,img:'/studio/img/trace_bottle.jpg',href:TRACE+'#packaging'},
- {id:'t_construct',title:'TRACE/construction',r:'16:10',w:200,img:'/studio/img/trace_bb_construction.jpg',href:TRACE+'#identity',wide:1},
- {id:'t_carton',title:'TRACE/carton_deboss',r:'4:5',w:200,img:'/studio/img/trace_carton.jpg',href:TRACE+'#packaging'},
- {id:'t_eye',title:'TRACE/k09_eye',r:'9:16',w:200,img:'/studio/img/trace_k09.jpg',href:TRACE+'#keyframes'},
- {id:'t_trace',title:'TRACE/k12_trace',r:'9:16',w:200,img:'/studio/img/trace_k12.jpg',href:TRACE+'#keyframes'}
+ {id:'hday',title:'HALDE/heap_day',r:'16:9',w:200,img:'/studio/img/kf05.jpg',href:HALDE+'#world',wide:1}
 ];
-const STUDIO={glut:[96,48,192],f2:[1200,24,168],about:[480,144,432],f1:[72,312,168],hero:[888,312,432],index:[408,504,288],night:[960,744,192],f3:[1224,672,168],contact:[48,744,384],p34:[552,768,168],vio:[600,1056,192],cage:[168,1008,360],heap:[744,1200,408],perl:[1200,1104,192],rim:[24,1344,360],front:[456,1392,168],club:[1176,1416,264],wnight:[672,1560,408],crowd:[72,1704,360],hday:[1104,1680,312],t_film:[48,2016,240],t_section:[336,2088,192],t_bottle:[576,2016,264],t_construct:[888,2016,408],t_carton:[576,2400,216],t_eye:[888,2352,168],t_trace:[1104,2352,192]};
+const STUDIO={about:[528,24,432],hero:[48,24,432],t_film:[1128,72,240],index:[504,264,288],f2:[840,264,192],t_section:[240,312,168],glut:[24,336,192],t_bottle:[480,528,216],f1:[1152,552,168],night:[24,600,168],t_eye:[744,672,216],contact:[48,840,384],cage:[1008,912,360],t_construct:[24,1080,408],p34:[504,864,192],perl:[720,1128,168],t_carton:[1104,1152,216],f3:[456,1176,192],vio:[912,1176,168],t_trace:[672,1368,192],heap:[96,1368,360],rim:[960,1512,312],front:[456,1608,216],wnight:[48,1680,408],club:[1080,1752,312],crowd:[696,1800,360],hday:[96,2016,360]};
 const U=24, BAR=28, DESKW=1440;
 const desk=document.getElementById('desk'), wrap=document.getElementById('wrap');
 const ratio=r=>{if(r==='txt')return null;const [a,b]=r.split(':').map(Number);return b/a};
@@ -189,7 +189,7 @@ function fit(){
   let maxY=0; for(const k in els){const o=els[k]; maxY=Math.max(maxY,o.y+o.el.offsetHeight)}
   desk.style.height=(maxY+48)+'px'; wrap.style.height=((maxY+48)*s)+'px';
 }
-function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v4',JSON.stringify(o))}catch(e){}}
+function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v5',JSON.stringify(o))}catch(e){}}
 function arrange(kind){
   if(kind==='grid'){ // tidy columns: every window the same width, stacked with equal gaps
     const n=5, gap=24, cw=(DESKW-48-gap*(n-1))/n, cols=Array(n).fill(24);
@@ -199,7 +199,7 @@ function arrange(kind){
   const b=document.getElementById('arr-grid'); if(b){b.setAttribute('aria-pressed',kind==='grid'); b.textContent=kind==='grid'?'free':'grid'}
   fit(); save();
 }
-let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v4')||'null')}catch(e){}
+let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v5')||'null')}catch(e){}
 if(saved&&W.every(d=>saved[d.id])) W.forEach(d=>place(d.id,...saved[d.id])); else arrange('free');
 
 document.getElementById('arr-grid').addEventListener('click',e=>arrange(e.currentTarget.getAttribute('aria-pressed')==='true'?'free':'grid'));
