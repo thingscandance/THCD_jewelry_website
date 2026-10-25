@@ -87,7 +87,7 @@ a{color:inherit}
   .win .body{aspect-ratio:var(--ar)}
   .win.textwin .body{aspect-ratio:auto}
   .win.wide{grid-column:span 2}
-  .win[data-id="rim"],.win[data-id="wnight"],.win[data-id="club"],.win[data-id="crowd"],.win[data-id="hday"],.win[data-id="t_construct"]{grid-column:1/-1}
+  .win[data-id="rim"],.win[data-id="wnight"],.win[data-id="club"],.win[data-id="hday"],.win[data-id="t_construct"]{grid-column:1/-1}
   .desk.tidy .win.wide{grid-column:span 1}
   .win.textwin{grid-column:1/-1}
   .bar{height:22px; font-size:9px; padding:0 6px; gap:6px; cursor:pointer}
@@ -158,10 +158,9 @@ const W=[
  {id:'front',title:'HALDE/rim_front',r:'4:5',w:200,img:'/studio/img/cage2_front.jpg',href:HALDE+'#product'},
  {id:'wnight',title:'HALDE/night',r:'16:9',w:200,img:'/studio/img/world_night.jpg',href:HALDE+'#world',wide:1},
  {id:'club',title:'HALDE/club',r:'16:9',w:200,img:'/studio/img/kf08.jpg',href:HALDE+'#world',wide:1},
- {id:'crowd',title:'HALDE/crowd',r:'16:9',w:200,img:'/studio/img/kf09.jpg',href:HALDE+'#world',wide:1},
  {id:'hday',title:'HALDE/heap_day',r:'16:9',w:200,img:'/studio/img/kf05.jpg',href:HALDE+'#world',wide:1}
 ];
-const STUDIO={about:[528,24,432],hero:[48,24,432],t_film:[1128,72,240],index:[504,264,288],f2:[840,264,192],t_section:[240,312,168],glut:[24,336,192],t_bottle:[480,528,216],f1:[1152,552,168],night:[24,600,168],t_eye:[744,672,216],contact:[48,840,384],cage:[1008,912,360],t_construct:[24,1080,408],p34:[504,864,192],perl:[720,1128,168],t_carton:[1104,1152,216],f3:[456,1176,192],vio:[912,1176,168],t_trace:[672,1368,192],heap:[96,1368,360],rim:[960,1512,312],front:[456,1608,216],wnight:[48,1680,408],club:[1080,1752,312],crowd:[696,1800,360],hday:[96,2016,360]};
+const STUDIO={about:[528,24,432],hero:[48,24,432],t_film:[1128,72,240],index:[504,264,288],f2:[840,264,192],t_section:[240,312,168],glut:[24,336,192],t_bottle:[480,528,216],f1:[1152,552,168],night:[24,600,168],t_eye:[744,672,216],contact:[48,840,384],cage:[1008,912,360],t_construct:[24,1080,408],p34:[504,864,192],perl:[720,1128,168],t_carton:[1104,1152,216],f3:[456,1176,192],vio:[912,1176,168],t_trace:[672,1368,192],heap:[96,1368,360],rim:[960,1512,312],front:[456,1608,216],wnight:[48,1680,408],club:[1080,1752,312],hday:[648,1824,384]};
 const U=24, BAR=28, DESKW=1440;
 const desk=document.getElementById('desk'), wrap=document.getElementById('wrap');
 const ratio=r=>{if(r==='txt')return null;const [a,b]=r.split(':').map(Number);return b/a};
@@ -189,7 +188,7 @@ function fit(){
   let maxY=0; for(const k in els){const o=els[k]; maxY=Math.max(maxY,o.y+o.el.offsetHeight)}
   desk.style.height=(maxY+48)+'px'; wrap.style.height=((maxY+48)*s)+'px';
 }
-function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v5',JSON.stringify(o))}catch(e){}}
+function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v6',JSON.stringify(o))}catch(e){}}
 function arrange(kind){
   if(kind==='grid'){ // tidy columns: every window the same width, stacked with equal gaps
     const n=5, gap=24, cw=(DESKW-48-gap*(n-1))/n, cols=Array(n).fill(24);
@@ -199,7 +198,7 @@ function arrange(kind){
   const b=document.getElementById('arr-grid'); if(b){b.setAttribute('aria-pressed',kind==='grid'); b.textContent=kind==='grid'?'free':'grid'}
   fit(); save();
 }
-let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v5')||'null')}catch(e){}
+let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v6')||'null')}catch(e){}
 if(saved&&W.every(d=>saved[d.id])) W.forEach(d=>place(d.id,...saved[d.id])); else arrange('free');
 
 document.getElementById('arr-grid').addEventListener('click',e=>arrange(e.currentTarget.getAttribute('aria-pressed')==='true'?'free':'grid'));
