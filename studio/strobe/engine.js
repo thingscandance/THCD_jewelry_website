@@ -172,7 +172,7 @@ export class Renderer {
         if (j !== f.hl) g.filter = 'grayscale(1)';
         cover(g, m.bmp || m.thumb, m.w, m.h, x, y, tw, th); g.filter = 'none'; g.restore();
         g.fillStyle = '#111214'; g.font = `500 16px ${o.font}`; g.fillText(String(j + 1).padStart(2, '0'), x, y + th + 22);
-        if (j === f.hl) { g.strokeStyle = '#C8281E'; g.lineWidth = 3; g.strokeRect(x - 6, y - 6, tw + 12, th + 12); }
+        if (j === f.hl) { g.strokeStyle = '#E61E9C'; g.lineWidth = 9; g.strokeRect(x - 8, y - 8, tw + 16, th + 16); g.strokeStyle = '#FFFFFF'; g.lineWidth = 2; g.strokeRect(x - 2, y - 2, tw + 4, th + 4); }
       }
     }
     if (o.look === 'mix') { if (f.t !== 'black' && f.t !== 'flash' && (f.t === 'vid' || rng((f.k || 1) * 7919 + 3)() < .5)) this.look('bwgrain', idx); }   // cut by cut: black and white or colour; clips always black and white
@@ -194,6 +194,7 @@ export class Renderer {
       if (kind === 'bwgrain') this.grain(.2, r);
       return;
     }
+    if (kind === 'bwvhs') { this.look('vhs', idx); cg.drawImage(this.scratch, 0, 0); g.filter = 'grayscale(1) contrast(1.15)'; g.drawImage(this.copy, 0, 0); g.filter = 'none'; return; }
     if (kind === 'vhs') {
       g.filter = 'saturate(1.3) contrast(1.06) blur(0.8px)'; g.drawImage(this.copy, 0, 0); g.filter = 'none';
       const img = g.getImageData(0, 0, W, H), d = img.data, src = new Uint8ClampedArray(d);
@@ -252,7 +253,7 @@ export class Renderer {
     let sum = 0; for (let p = 0; p < px.length; p += 16) sum += px[p] + px[p + 1] + px[p + 2];
     const dark = sum / (px.length / 16 * 3) < 135;
     const col = dark ? '#FFFFFF' : '#111214', logo = dark ? L.white : L.ink;
-    if (f.t === 'black' && f.intro) { const t = Math.min(1, (f.i + 1) / 8); g.save(); g.beginPath(); g.rect(300, LY, 480 * t, L.h); g.clip(); g.drawImage(L.white, 300, LY); g.restore(); return; }
+    if (f.t === 'black' && f.intro) { g.drawImage(L.white, 300, LY); return; }          // the logo is simply there from the first frame
     if (!f.nologo && f.t !== 'flash') g.drawImage(logo, 300, LY);
     if (f.t === 'black' && f.outro) { g.drawImage(L.white, 300, LY); return; }
     if (f.t === 'flash') return;
