@@ -64,7 +64,7 @@ export function compile(list, opt) {
     const m = B[j];
     if (j === sheetAt) {
       const pool = imgs.slice(0, 12);
-      push(Array.from({ length: 10 }, (_, i) => ({ t: 'sheet', items: pool, hl: Math.floor(i * pool.length / 10) })), { shutter: 5, every: 2 });
+      push(Array.from({ length: 10 }, (_, i) => ({ t: 'sheet', items: pool, hl: Math.floor(i * pool.length / 10), nologo: true })), { shutter: 5, every: 2 });
     }
     if (m.type === 'video') { push(clip(m, { glitch: glitchy() ? 1 : 0 }), { clip: true, hiss: m.flags.hiss }); last = m; continue; }
     const nxt = B[j + 1];
@@ -230,13 +230,17 @@ export class Renderer {
   }
 
   glitch(n, seed) {
-    const g = this.g, r = rng(seed * 7919 + 13);
+    // strips of the frame break away: 'mono' turns them black and white with grain, 'invert' turns them negative,
+    // 'mix' picks one of the two for every strip
+    const g = this.g, r = rng(seed * 7919 + 13), style = this.opt.gstyle || 'mono';
     for (let s = 0; s < n; s++) {
       const h = Math.floor(18 + r() * 200), y = Math.floor(r() * (H - h));
       const x0 = r() < .6 ? 0 : Math.floor(r() * W * .5), x1 = r() < .6 ? W : Math.min(W, x0 + 200 + Math.floor(r() * (W - x0 - 200)));
       const w = x1 - x0; if (w < 20) continue;
+      const inv = style === 'invert' || (style === 'mix' && r() < .5);
       const img = g.getImageData(x0, y, w, h), d = img.data;
       for (let p = 0; p < d.length; p += 4) {
+        if (inv) { d[p] = 255 - d[p]; d[p + 1] = 255 - d[p + 1]; d[p + 2] = 255 - d[p + 2]; continue; }
         let v = (d[p] + d[p + 1] + d[p + 2]) / 3; v = (v - 128) * 1.35 + 128 + (r() - .5) * 2 * 255 * .1;
         v = v < 0 ? 0 : v > 255 ? 255 : v; d[p] = d[p + 1] = d[p + 2] = v;
       }

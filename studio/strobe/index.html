@@ -42,6 +42,12 @@ button,input,textarea{font:inherit; color:inherit}
 .bar{height:28px; display:flex; align-items:center; gap:10px; padding:0 8px; border-bottom:1px solid var(--edge); font-size:10.5px; white-space:nowrap; overflow:hidden}
 .bar i{width:9px; height:9px; border:1px solid var(--edge); flex:none}
 .bar .r{margin-left:auto; color:var(--muted)}
+.bar{overflow:visible} .win{position:relative}
+.help{position:relative; display:inline-grid; place-items:center; width:16px; height:16px; border:1px solid var(--edge); border-radius:50%; font-size:10px; color:var(--muted); cursor:help; flex:none}
+.help:hover,.help:focus{color:var(--ink); border-color:var(--accent); outline:none}
+.help .tip{position:absolute; left:-8px; top:24px; z-index:20; width:min(360px,80vw); white-space:normal; padding:10px 12px; background:#111214; border:1px solid var(--accent); color:var(--ink); font-family:var(--f-body); font-weight:300; font-size:13px; line-height:1.45; opacity:0; pointer-events:none; transition:opacity .15s}
+.help .tip b{font-weight:500} .help .tip i{color:var(--accent); font-style:normal}
+.help:hover .tip,.help:focus .tip{opacity:1}
 .body{padding:12px; display:flex; flex-direction:column; gap:10px}
 .btn{background:transparent; border:1px solid var(--edge); padding:7px 12px; cursor:pointer; text-transform:lowercase; letter-spacing:.04em}
 .btn:hover{border-color:var(--ink)} .btn.on{border-color:var(--ink); background:var(--ink); color:#000} .btn.main{border-color:var(--accent); color:var(--accent)} .btn:disabled{opacity:.4; cursor:wait}
@@ -103,7 +109,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
   <div class="app">
     <div class="col">
       <section class="win">
-        <div class="bar"><i></i><span>strobe/media</span><span class="r">photos · clips</span></div>
+        <div class="bar"><i></i><span>strobe/media</span><span class="help" tabindex="0" role="button" aria-label="how to use media">?<span class="tip" role="tooltip">Drop photos and videos here, or press choose files. Click a frame to put it into the cut; frames go in the order you click. Tags on each frame: <b>logo on product</b> means this frame already shows your logo, so the overlay hides and a deep hit sounds; <b>end</b> makes it the final packshot; <b>hiss</b> adds a hiss on that cut. The label under a frame becomes its FIG. caption.</span></span><span class="r">photos · clips</span></div>
         <div class="body">
           <div id="drop">drop photos and videos here, or <button class="btn" id="pick" type="button">choose files</button>
             <input id="files" type="file" accept="image/*,video/*" multiple hidden></div>
@@ -113,7 +119,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
       </section>
 
       <section class="win">
-        <div class="bar"><i></i><span>strobe/search</span><span class="r">describe in English</span></div>
+        <div class="bar"><i></i><span>strobe/search</span><span class="help" tabindex="0" role="button" aria-label="how to use search">?<span class="tip" role="tooltip">Find frames by describing them in English, for example <i>a man jumping at night</i> or <i>silver ring on black</i>. Press <b>find</b>: every frame gets a rank number, and the four best glow pink. <b>add top 4 to cut</b> puts those four into the cut. The first search downloads a small AI model (about 90 MB) into your browser; your files are never uploaded.</span></span><span class="r">describe in English</span></div>
         <div class="body">
           <div class="row"><input type="text" id="q" placeholder="e.g. glass bottle on white paper" style="flex:1"><button class="btn" id="go" type="button">find</button><button class="btn" id="top" type="button">add top 4 to cut</button></div>
           <span class="muted" id="sst">The first search loads a small model into the browser.</span>
@@ -121,15 +127,15 @@ input[type=range]{width:100%; accent-color:var(--accent)}
       </section>
 
       <section class="win">
-        <div class="bar"><i></i><span>strobe/script</span><span class="r">one beat per line</span></div>
+        <div class="bar"><i></i><span>strobe/script</span><span class="help" tabindex="0" role="button" aria-label="how to use script">?<span class="tip" role="tooltip">Write the reel as a list, one beat per line, in English: <i>night facade</i>, <i>man jumping</i>, <i>silver ring</i>, <i>end: ring on black</i>. <b>build the cut from the script</b> picks the closest frame for every line, in that order, without repeating a frame. A line that starts with <i>end:</i> becomes the packshot. The grey lines in the box are only an example; type your own.</span></span><span class="r">one beat per line</span></div>
         <div class="body">
-          <textarea id="script" spellcheck="false" placeholder="white paper&#10;carton with the logo&#10;glass bottle&#10;skin, close&#10;snake&#10;a spiral&#10;end: bottle and box"></textarea>
+          <textarea id="script" spellcheck="false" placeholder="example (replace with your own):&#10;night facade&#10;man jumping&#10;silver ring&#10;skin, close&#10;a spiral&#10;end: ring on black"></textarea>
           <div class="row"><button class="btn" id="build" type="button">build the cut from the script</button><span class="muted">each line picks the closest frame; start a line with "end:" for the packshot</span></div>
         </div>
       </section>
 
       <section class="win">
-        <div class="bar"><i></i><span>strobe/cut</span><span class="r" id="len">—</span></div>
+        <div class="bar"><i></i><span>strobe/cut</span><span class="help" tabindex="0" role="button" aria-label="how to use cut">?<span class="tip" role="tooltip">The order of your reel. Drag frames to reorder, double-click to take one out. If nothing is picked, all frames are used in upload order. <b>another edit</b> keeps the frames and reshuffles rhythm, splits, punch-ins and glitches.</span></span><span class="r" id="len">—</span></div>
         <div class="body">
           <div id="cut"></div>
           <div class="row"><span class="muted" id="cutnote"></span></div>
@@ -138,7 +144,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
       </section>
 
       <section class="win" id="settings">
-        <div class="bar"><i></i><span>strobe/settings</span><span class="r"></span></div>
+        <div class="bar"><i></i><span>strobe/settings</span><span class="help" tabindex="0" role="button" aria-label="how to use settings">?<span class="tip" role="tooltip">Your logo (typed or a file) and its font, the small captions in the corners, how many frames each still holds, how much glitch and of which kind, the look of the whole reel, and which devices are used.</span></span><span class="r"></span></div>
         <div class="body">
           <div class="grid">
             <label>logo text<input type="text" id="logo" value="STROBE"></label>
@@ -160,6 +166,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
             <label>end tag<input type="text" id="tag" value="[ 01 ]"></label>
             <label>frames per still <input type="range" id="tempo" min="2" max="4" step="1" value="2"></label>
             <label>glitch <input type="range" id="glitch" min="0" max="100" value="25"></label>
+            <label>glitch style<select id="gstyle"><option value="mono" selected>b/w strips</option><option value="invert">inverted strips</option><option value="mix">both</option></select></label>
             <label>look<select id="look"><option value="mix" selected>mix: colour and b/w</option><option value="clean">clean</option><option value="bw">black and white</option><option value="bwgrain">black and white, grain</option><option value="vhs">vhs</option><option value="bwvhs">b/w vhs</option></select></label>
           </div>
           <div class="checks">
@@ -176,7 +183,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 
     <div class="col prevwin">
       <section class="win">
-        <div class="bar"><i></i><span>strobe/preview</span><span class="r">9:16</span></div>
+        <div class="bar"><i></i><span>strobe/preview</span><span class="help" tabindex="0" role="button" aria-label="how to use preview">?<span class="tip" role="tooltip">Drag the slider to see any frame of the cut. <b>preview with sound</b> renders a small version to watch; <b>export 1080×1920</b> renders the full MP4 for Instagram.</span></span><span class="r">9:16</span></div>
         <div class="screen"><canvas id="cv" width="540" height="960"></canvas><video id="pv" playsinline controls muted hidden></video></div>
         <div class="row" id="exlook" style="padding:8px 12px 0"><span class="muted">example</span><button class="btn on" data-l="mix" type="button">colour + b/w</button><button class="btn" data-l="vhs" type="button">vhs</button><button class="btn" data-l="bwvhs" type="button">b/w vhs</button></div>
         <div class="prog"><b id="bar"></b></div>
