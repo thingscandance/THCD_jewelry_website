@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="TRACE /01: identity, packaging and a strobe film for an eau de parfum. THCD video_studio.">
+<meta name="description" content="TRACE /01: identity, packaging and three strobe films for an eau de parfum. THCD video_studio.">
 <title>TRACE · THCD video_studio</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -136,30 +136,41 @@ a{color:inherit}
       <p class="lede">An eau de parfum that studies what remains on skin after contact.</p>
       <dl class="facts">
         <dt>type</dt><dd>self-initiated brand concept</dd>
-        <dt>scope</dt><dd>logotype, packaging, keyframes, strobe film, sound</dd>
-        <dt>film</dt><dd>1 vertical of 3, 10.8 s</dd>
+        <dt>scope</dt><dd>logotype, packaging, keyframes, strobe films, sound</dd>
+        <dt>films</dt><dd>3 verticals, 7 to 11 s each</dd>
         <dt>tools</dt><dd>Nano Banana, Kling; edit and sound built in code</dd>
       </dl>
     </div>
   </header>
 
   <section class="sec" id="film">
-    <div class="sec-h"><h2>film</h2><p>The logo never moves. Images strobe underneath it, two or three frames each, and twice the strobe falls into a short video.</p></div>
-    <div class="filmrow">
-      <div class="win film" id="mainfilm" tabindex="0" role="button" aria-label="Play the TRACE film with sound">
-        <div class="bar"><i></i><span class="t">TRACE/film_01_first_trace</span><span class="r">9:16 · 10.8 s · sound</span></div>
+    <div class="sec-h"><h2>films</h2><p>Three verticals, one rule: the logo never moves. Images strobe underneath it, two or three frames each, and the strobe keeps falling into short videos.</p></div>
+    <div class="g g3">
+      <div class="win film" tabindex="0" role="button" aria-label="Play TRACE film 01 with sound">
+        <div class="bar"><i></i><span class="t">TRACE/01_first_trace</span><span class="r">9:16 · 10.8 s</span></div>
         <div class="shot r916"><video src="/studio/video/trace_film01.mp4" poster="/studio/img/trace_k05.jpg" playsinline preload="metadata"></video><span class="play">play ▸</span></div>
+        <div class="cap"><span>the bottle leaves its shape on her cheek</span><span>01</span></div>
       </div>
-      <div class="win notes">
-        <div class="bar"><i></i><span class="t">studio/notes</span><span class="r"></span></div>
-        <p class="quote">Clear glass, a living cap, a pale heroine. The product leaves its <em>shape</em> on her cheek: the trace the brand is named after.</p>
-        <ol class="steps">
-          <li><span class="n">01</span><span>Paper world: the carton, the fold, the bottle. The logo locks onto the deboss and the etched glass.</span></li>
-          <li><span class="n">02</span><span>A white flash, then the cold world: membrane, skin, the bottle cut in half.</span></li>
-          <li><span class="n">03</span><span>The bottle leaves her cheek; its outline stays.</span></li>
-          <li><span class="n">04</span><span>Packshot on paper. A glass ping, then black.</span></li>
-        </ol>
+      <div class="win film" tabindex="0" role="button" aria-label="Play TRACE film 02 with sound">
+        <div class="bar"><i></i><span class="t">TRACE/02_snake</span><span class="r">9:16 · 7.3 s</span></div>
+        <div class="shot r916"><video src="/studio/video/trace_reel02.mp4" poster="/studio/img/trace_reel02_poster.jpg" playsinline preload="metadata"></video><span class="play">play ▸</span></div>
+        <div class="cap"><span>a pale snake and the heroine fight over the bottle</span><span>02</span></div>
       </div>
+      <div class="win film" tabindex="0" role="button" aria-label="Play TRACE film 03 with sound">
+        <div class="bar"><i></i><span class="t">TRACE/03_vortex</span><span class="r">9:16 · 9.3 s</span></div>
+        <div class="shot r916"><video src="/studio/video/trace_reel03.mp4" poster="/studio/img/trace_reel03_poster.jpg" playsinline preload="metadata"></video><span class="play">play ▸</span></div>
+        <div class="cap"><span>everything turns clockwise under the logo</span><span>03</span></div>
+      </div>
+    </div>
+    <div class="win notes">
+      <div class="bar"><i></i><span class="t">studio/notes</span><span class="r"></span></div>
+      <p class="quote">Clear glass, a living cap, a pale heroine. The product leaves its <em>shape</em> on her, and each film finds another way to say it.</p>
+      <ol class="steps">
+        <li><span class="n">01</span><span>Paper world first: the carton, the fold, the bottle. The logo locks onto the deboss and the etched glass.</span></li>
+        <li><span class="n">02</span><span>A white flash, then the cold world: membrane, skin, a snake, a cut bottle, black water.</span></li>
+        <li><span class="n">03</span><span>Video only where a still can't do it: a head turning, a lunge, a scream, hair closing into a circle.</span></li>
+        <li><span class="n">04</span><span>Packshot on paper, then silence. Sound is synthesised: drone, cut clicks, a hiss, a hit when the logo meets the glass.</span></li>
+      </ol>
     </div>
   </section>
 
@@ -220,11 +231,15 @@ a{color:inherit}
 </div>
 <script>
 (function(){
-  const w=document.getElementById('mainfilm'), v=w.querySelector('video');
-  const toggle=()=>{ if(v.paused){v.play().then(()=>w.classList.add('on')).catch(()=>{})} else {v.pause(); w.classList.remove('on')} };
-  w.addEventListener('click',toggle);
-  w.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
-  v.addEventListener('ended',()=>w.classList.remove('on'));
+  const films=[...document.querySelectorAll('.film')];
+  films.forEach(w=>{
+    const v=w.querySelector('video');
+    const toggle=()=>{ if(v.paused){ films.forEach(o=>{ if(o!==w){ o.querySelector('video').pause(); o.classList.remove('on') } });
+        v.play().then(()=>w.classList.add('on')).catch(()=>{}) } else { v.pause(); w.classList.remove('on') } };
+    w.addEventListener('click',toggle);
+    w.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
+    v.addEventListener('ended',()=>w.classList.remove('on'));
+  });
 })();
 </script>
 
