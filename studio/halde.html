@@ -116,6 +116,13 @@ a.win{text-decoration:none}
 .nextp .meter b{display:block; height:100%; width:0; background:var(--accent); transition:width .12s linear}
 .nextp:hover .big{color:var(--accent)}
 @media (max-width:760px){.nextp .strip{grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}}
+
+/* about this project */
+.about{display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:32px; border-top:1px solid var(--edge); padding-top:10px}
+.about h2{font-family:var(--f-display); font-weight:900; font-size:40px; line-height:1; margin:0}
+.about .txt{display:flex; flex-direction:column; gap:14px; max-width:62ch}
+.about .txt p{margin:0; font-family:var(--f-body); font-weight:300; font-size:clamp(17px,1.5vw,21px); line-height:1.38; letter-spacing:-.01em; text-wrap:pretty}
+@media (max-width:760px){.about{grid-template-columns:1fr; gap:12px}}
 </style>
 </head>
 <body>
@@ -140,13 +147,22 @@ a.win{text-decoration:none}
     </div>
   </header>
 
+  <section class="about" id="about">
+    <h2>about this project</h2>
+    <div class="txt">
+      <p>Headphones are a technology of withdrawal. They cut a private room out of public noise, and every room built this way has an outside where the rest is left.</p>
+      <p>A Halde is a spoil tip, the black hill of waste rock a mine leaves behind: everything removed so that one substance could be extracted. Listening works the same way. To hear one thing, the world is heaped up and kept out of earshot. HALDE puts that heap on display instead of hiding it.</p>
+      <p>The silver cage is the border made visible: ornament that also works as a fence, thorns that keep the world at a distance while staying beautiful enough to be worn in it. The films keep strict time at 120 BPM. On the beat the frame inverts, the click of the magnet replaces a drum, and 300 ms of silence mark the logo, the one moment the noise stops.</p>
+    </div>
+  </section>
+
   <div class="win film" id="mainfilm" tabindex="0" role="button" aria-label="Play the HALDE film with sound">
     <div class="bar"><i></i><span class="t">HALDE/film_00_main</span><span class="r">16:9 · 31 s · sound</span></div>
     <div class="shot r169"><video src="/studio/video/halde_film_720.mp4" poster="/studio/img/halde_film_poster.jpg" playsinline preload="metadata"></video><span class="play">play ▸</span></div>
   </div>
 
   <section class="sec" id="name">
-    <div class="sec-h"><h2>name</h2><p>Where the word comes from, and why it fits a pair of headphones.</p></div>
+    <div class="sec-h"><h2>name</h2><p>A word from mining, borrowed for listening.</p></div>
     <div class="name">
       <div class="win"><div class="bar"><i></i><span class="t">HALDE/spoil_tip</span><span class="r">16:9</span></div>
         <div class="shot r169"><img src="/studio/img/kf07.jpg" alt="Wide shot of a black spoil heap"></div></div>
@@ -160,13 +176,13 @@ a.win{text-decoration:none}
     <div class="g g3 films">
       <div class="win"><div class="bar"><i></i><span class="t">film_01_platok</span><span class="r">9:16</span></div>
         <div class="shot r916"><img src="/studio/img/platok_150.jpg" alt="Hand throwing a scarf toward the camera"></div>
-        <div class="cap"><span>hand, scarf, strobe</span><span>7.4 s</span></div></div>
+        <div class="cap"><span></span><span>7.4 s</span></div></div>
       <div class="win"><div class="bar"><i></i><span class="t">film_02_city</span><span class="r">9:16</span></div>
         <div class="shot r916"><img src="/studio/img/city_262.jpg" alt="Headphones spinning inside the thorn cage"></div>
-        <div class="cap"><span>cage, click, strobe</span><span>10.4 s</span></div></div>
+        <div class="cap"><span></span><span>10.4 s</span></div></div>
       <div class="win"><div class="bar"><i></i><span class="t">film_03_heap</span><span class="r">9:16</span></div>
         <div class="shot r916"><img src="/studio/img/kf06.jpg" alt="Close-up on the spoil heap"></div>
-        <div class="cap"><span>the heap, the crowd</span><span>30.8 s</span></div></div>
+        <div class="cap"><span></span><span>30.8 s</span></div></div>
     </div>
   </section>
 
@@ -186,7 +202,7 @@ a.win{text-decoration:none}
   </section>
 
   <section class="sec" id="world">
-    <div class="sec-h"><h2>world</h2><p>The heap at night and by day, the club.</p></div>
+    <div class="sec-h"><h2>world</h2><p>The silence the headphones make, built as a landscape, and the club it gets carried into.</p></div>
     <div class="win"><div class="bar"><i></i><span class="t">night</span><span class="r">16:9</span></div><div class="shot r169"><img src="/studio/img/world_night.jpg" alt="The heap at night"></div></div>
     <div class="g g3">
       <div class="win"><div class="bar"><i></i><span class="t">heap_day</span><span class="r">16:9</span></div><div class="shot r169"><img src="/studio/img/kf05.jpg" alt="The heap in daylight"></div></div>

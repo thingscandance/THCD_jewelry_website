@@ -119,6 +119,13 @@ a{color:inherit}
 .nextp .meter b{display:block; height:100%; width:0; background:var(--accent); transition:width .12s linear}
 .nextp:hover .big{color:var(--accent)}
 @media (max-width:760px){.nextp .strip{grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}}
+
+/* about this project */
+.about{display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:32px; border-top:1px solid var(--edge); padding-top:10px}
+.about h2{font-family:var(--f-display); font-weight:900; font-size:40px; line-height:1; margin:0}
+.about .txt{display:flex; flex-direction:column; gap:14px; max-width:62ch}
+.about .txt p{margin:0; font-family:var(--f-body); font-weight:300; font-size:clamp(17px,1.5vw,21px); line-height:1.38; letter-spacing:-.01em; text-wrap:pretty}
+@media (max-width:760px){.about{grid-template-columns:1fr; gap:12px}}
 </style>
 </head>
 <body>
@@ -137,45 +144,41 @@ a{color:inherit}
       <dl class="facts">
         <dt>type</dt><dd>self-initiated brand concept</dd>
         <dt>scope</dt><dd>logotype, packaging, keyframes, strobe films, sound</dd>
-        <dt>films</dt><dd>3 verticals, 7 to 11 s each</dd>
+        <dt>films</dt><dd>3 verticals, 7 to 10 s each</dd>
         <dt>tools</dt><dd>Nano Banana, Kling; edit and sound built in code</dd>
       </dl>
     </div>
   </header>
 
+  <section class="about" id="about">
+    <h2>about this project</h2>
+    <div class="txt">
+      <p>Perfume is usually sold as presence: a cloud that arrives before the body does. TRACE starts at the other end, with what is left once the body has gone.</p>
+      <p>A trace is an index in Peirce&rsquo;s sense. It doesn&rsquo;t depict anything; it points to a contact that has already happened, like a footprint or the warmth left on a chair. So the brand never shows the scent. It shows pressure and its afterimage: glass on skin, an outline that outlasts the touch, a membrane held inside a bottle that has been cut open.</p>
+      <p>The wordmark carries the same logic in one glyph. The dot has slipped out of the C and stays close, displaced but still part of the name. In the films the logo is the only thing that doesn&rsquo;t move. Images pass through it two or three frames at a time, too fast to settle, so what the viewer keeps is an afterimage of frames they never fully saw.</p>
+    </div>
+  </section>
+
   <section class="sec" id="film">
-    <div class="sec-h"><h2>films</h2><p>Three verticals, one rule: the logo never moves. Images strobe underneath it, two or three frames each, and the strobe keeps falling into short videos.</p></div>
+    <div class="sec-h"><h2>films</h2><p>Three verticals on one constraint: the logo is the only fixed point. The strobe turns watching into remembering, and each film ends on what is left behind.</p></div>
     <div class="g g3">
       <div class="win film" tabindex="0" role="button" aria-label="Play TRACE film 01 with sound">
-        <div class="bar"><i></i><span class="t">TRACE/01_first_trace</span><span class="r">9:16 · 10.8 s</span></div>
+        <div class="bar"><i></i><span class="t">TRACE/01_first_trace</span><span class="r">9:16 · 10.3 s</span></div>
         <div class="shot r916"><video src="/studio/video/trace_film01.mp4" poster="/studio/img/trace_k05.jpg" playsinline preload="metadata"></video><span class="play">play ▸</span></div>
-        <div class="cap"><span>the bottle leaves its shape on her cheek</span><span>01</span></div>
       </div>
       <div class="win film" tabindex="0" role="button" aria-label="Play TRACE film 02 with sound">
         <div class="bar"><i></i><span class="t">TRACE/02_snake</span><span class="r">9:16 · 7.3 s</span></div>
         <div class="shot r916"><video src="/studio/video/trace_reel02.mp4" poster="/studio/img/trace_reel02_poster.jpg" playsinline preload="metadata"></video><span class="play">play ▸</span></div>
-        <div class="cap"><span>a pale snake and the heroine fight over the bottle</span><span>02</span></div>
       </div>
       <div class="win film" tabindex="0" role="button" aria-label="Play TRACE film 03 with sound">
-        <div class="bar"><i></i><span class="t">TRACE/03_vortex</span><span class="r">9:16 · 9.3 s</span></div>
+        <div class="bar"><i></i><span class="t">TRACE/03_vortex</span><span class="r">9:16 · 9.8 s</span></div>
         <div class="shot r916"><video src="/studio/video/trace_reel03.mp4" poster="/studio/img/trace_reel03_poster.jpg" playsinline preload="metadata"></video><span class="play">play ▸</span></div>
-        <div class="cap"><span>everything turns clockwise under the logo</span><span>03</span></div>
       </div>
-    </div>
-    <div class="win notes">
-      <div class="bar"><i></i><span class="t">studio/notes</span><span class="r"></span></div>
-      <p class="quote">Clear glass, a living cap, a pale heroine. The product leaves its <em>shape</em> on her, and each film finds another way to say it.</p>
-      <ol class="steps">
-        <li><span class="n">01</span><span>Paper world first: the carton, the fold, the bottle. The logo locks onto the deboss and the etched glass.</span></li>
-        <li><span class="n">02</span><span>A white flash, then the cold world: membrane, skin, a snake, a cut bottle, black water.</span></li>
-        <li><span class="n">03</span><span>Video only where a still can't do it: a head turning, a lunge, a scream, hair closing into a circle.</span></li>
-        <li><span class="n">04</span><span>Packshot on paper, then silence. Sound is synthesised: drone, cut clicks, a hiss, a hit when the logo meets the glass.</span></li>
-      </ol>
     </div>
   </section>
 
   <section class="sec" id="keyframes">
-    <div class="sec-h"><h2>keyframes</h2><p>Fourteen stills hold the film together. Products are generated blank; every letter on glass and paper is set by hand afterwards.</p></div>
+    <div class="sec-h"><h2>keyframes</h2><p>Products are generated blank. Every letter on glass and paper is set by hand afterwards, the only part of each image that isn&rsquo;t a prediction.</p></div>
     <div class="g g4">
       <div class="win"><div class="bar"><i></i><span class="t">k02_carton</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k02.jpg" alt="Paper carton with a blind-debossed logo" loading="lazy"></div></div>
       <div class="win"><div class="bar"><i></i><span class="t">k04_open</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k04.jpg" alt="Open carton from above, the resin cap inside" loading="lazy"></div></div>
@@ -187,13 +190,12 @@ a{color:inherit}
       <div class="win"><div class="bar"><i></i><span class="t">k12_trace</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k12.jpg" alt="The pink outline of the bottle left on her cheek" loading="lazy"></div></div>
     </div>
     <div class="g g2">
-      <div class="win"><div class="bar"><i></i><span class="t">k11_section</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k11.jpg" alt="The bottle cut in half, a wisp of membrane floating inside" loading="lazy"></div>
-        <div class="cap"><span>cut clean through, nothing spills</span><span>k11</span></div></div>
+      <div class="win"><div class="bar"><i></i><span class="t">k11_section</span><span class="r">9:16</span></div><div class="shot r916"><img src="/studio/img/trace_k11.jpg" alt="The bottle cut in half, a wisp of membrane floating inside" loading="lazy"></div></div>
     </div>
   </section>
 
   <section class="sec" id="packaging">
-    <div class="sec-h"><h2>packaging</h2><p>Heavy clear glass with an acid-etched logo that reads on paper and in the dark. A cast resin cap, never two alike. An uncoated paper carton, blind-debossed.</p></div>
+    <div class="sec-h"><h2>packaging</h2><p>Clear glass that holds nothing but its etched name, a resin cap cast so that no two are alike, an uncoated carton that takes the logo as an imprint rather than ink. Everything is made to register touch.</p></div>
     <div class="g g3">
       <div class="win"><div class="bar"><i></i><span class="t">bottle_etched</span><span class="r">4:5</span></div><div class="shot r45"><img src="/studio/img/trace_bottle.jpg" alt="Bottle with etched logo and resin cap on paper" loading="lazy"></div></div>
       <div class="win"><div class="bar"><i></i><span class="t">carton_deboss</span><span class="r">4:5</span></div><div class="shot r45"><img src="/studio/img/trace_carton.jpg" alt="Paper carton with a blind-debossed logo" loading="lazy"></div></div>
@@ -202,7 +204,7 @@ a{color:inherit}
   </section>
 
   <section class="sec" id="identity">
-    <div class="sec-h"><h2>identity</h2><p>Hand-drawn monoline capitals with one gesture: a dot that fell out of the C. Overshoots, thinner horizontals and optical spacing keep the hairline even.</p></div>
+    <div class="sec-h"><h2>identity</h2><p>Monoline capitals drawn by hand, corrected optically so the hairline stays even. One gesture carries the idea: a mark that has left its place and still belongs to it.</p></div>
     <div class="brand">
       <div class="logo"><img src="/studio/img/trace_logo_white.svg" alt="TRACE wordmark"></div>
       <div class="sw paper"><b>Paper</b><span>#ECEAE6</span></div>
