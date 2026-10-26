@@ -149,7 +149,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
             <label>end tag<input type="text" id="tag" value="[ 01 ]"></label>
             <label>frames per still <input type="range" id="tempo" min="2" max="4" step="1" value="2"></label>
             <label>glitch <input type="range" id="glitch" min="0" max="100" value="25"></label>
-            <label>look<select id="look"><option value="clean">clean</option><option value="bw">black and white</option><option value="bwgrain" selected>black and white, grain</option><option value="vhs">vhs</option></select></label>
+            <label>look<select id="look"><option value="mix" selected>mix: colour and b/w</option><option value="clean">clean</option><option value="bw">black and white</option><option value="bwgrain">black and white, grain</option><option value="vhs">vhs</option></select></label>
           </div>
           <div class="checks">
             <label><input type="checkbox" id="splits" checked> split screens</label>
@@ -167,7 +167,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
       <section class="win">
         <div class="bar"><i></i><span>strobe/preview</span><span class="r">9:16</span></div>
         <div class="screen"><canvas id="cv" width="540" height="960"></canvas><video id="pv" playsinline controls muted hidden></video></div>
-        <div class="row" id="exlook" style="padding:8px 12px 0"><span class="muted">example</span><button class="btn on" data-l="bwgrain" type="button">b/w grain</button><button class="btn" data-l="vhs" type="button">vhs</button></div>
+        <div class="row" id="exlook" style="padding:8px 12px 0"><span class="muted">example</span><button class="btn on" data-l="mix" type="button">colour + b/w</button><button class="btn" data-l="vhs" type="button">vhs</button></div>
         <div class="prog"><b id="bar"></b></div>
         <div class="body">
           <input type="range" id="scrub" min="0" max="0" value="0" aria-label="scrub through the cut">

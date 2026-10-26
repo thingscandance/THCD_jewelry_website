@@ -175,7 +175,8 @@ export class Renderer {
         if (j === f.hl) { g.strokeStyle = '#C8281E'; g.lineWidth = 3; g.strokeRect(x - 6, y - 6, tw + 12, th + 12); }
       }
     }
-    if (o.look && o.look !== 'clean' && f.t !== 'black' && f.t !== 'flash') this.look(o.look, idx);
+    if (o.look === 'mix') { if (f.t !== 'black' && f.t !== 'flash' && rng((f.k || 1) * 7919 + 3)() < .5) this.look('bwgrain', idx); }   // cut by cut: black and white or colour
+    else if (o.look && o.look !== 'clean' && f.t !== 'black' && f.t !== 'flash') this.look(o.look, idx);
     if (f.glitch) this.glitch(f.glitch, idx);
     this.overlay(f, idx, cut, total);
     g.restore();

@@ -210,14 +210,14 @@ async function make(full) {
 function status(t) { $('#status').textContent = t; }
 
 // ---------------- examples: silver pieces from the THCD shop and a clip from its world ----------------
-const EX = ['branch', 'double', 'drip', 'drop', 'figure', 'glitter', 'innerhome', 'quartz', 'rain', 'slay1', 'slay2', 'stump', 'thistle', 'xeno'];
+// example set: four night jumps and a clip from the THCD world (the shop photos are not offered for reuse)
 async function loadExamples() {
   status('loading the example frames…');
-  $('#logo').value = 'THCD'; $('#tl').value = 'THCD — 2026'; $('#bl').value = 'SILVER — HANDMADE'; $('#br').value = 'THCD.MONSTER'; $('#tag').value = '[ STROBE ]';
+  $('#logo').value = 'THCD'; $('#tl').value = 'THCD — 2026'; $('#bl').value = 'NIGHT — JUMPS'; $('#br').value = 'THCD.MONSTER'; $('#tag').value = '[ STROBE ]';
   const vid = document.createElement('video').canPlayType('video/webm; codecs="vp9"') ? 'world.webm' : 'world.mp4';
-  const urls = [...EX.slice(0, 6).map(n => `/img/${n}_photo.webp`), `./examples/${vid}`, ...EX.slice(6).map(n => `/img/${n}_photo.webp`)];
+  const urls = ['./examples/jump_01.jpg', './examples/jump_02.jpg', `./examples/${vid}`, './examples/jump_03.jpg', './examples/jump_04.jpg'];
   const files = [];
-  for (const u of urls) { const b = await (await fetch(u)).blob(); files.push(new File([b], u.split('/').pop().replace('_photo', ''), { type: b.type || (u.endsWith('.webm') ? 'video/webm' : u.endsWith('.mp4') ? 'video/mp4' : 'image/webp') })); }
+  for (const u of urls) { const b = await (await fetch(u)).blob(); files.push(new File([b], u.split('/').pop(), { type: b.type || (u.endsWith('.webm') ? 'video/webm' : u.endsWith('.mp4') ? 'video/mp4' : 'image/jpeg') })); }
   await addFiles(files);
   const last = media[media.length - 1]; if (last) { last.flags.end = true; drawMedia(); refresh(); }
 }
@@ -249,7 +249,7 @@ refresh();
 (function example() {
   const v = $('#pv'), pick = $('#exlook');
   const set = l => { v.src = `./examples/example_${l}.mp4`; v.poster = './examples/example_poster.jpg'; v.muted = true; v.loop = true; v.hidden = false; $('#cv').hidden = true; v.play().catch(() => {}); };
-  set('bwgrain');
+  set('mix');
   pick.querySelectorAll('button').forEach(b => b.onclick = () => { pick.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); set(b.dataset.l); });
   status('example: silver pieces from thcd.monster, made here · unmute for sound');
 })();
