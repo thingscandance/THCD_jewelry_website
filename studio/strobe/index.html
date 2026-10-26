@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="STROBE: a reel machine. Drop photos and clips, describe what you want to see, get a vertical strobe cut with sound. Runs in your browser. THCD video_studio.">
+<title>STROBE · THCD video_studio</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500&family=Geist+Mono:wght@400;500&family=Doto:wght@700;900&display=swap">
+<style>
+:root{
+  --canvas:#000; --paper:#0B0C0D; --ink:#E9ECEA; --muted:#8D9493; --edge:rgba(233,236,234,.28); --grid:rgba(233,236,234,.11); --accent:#E61E9C;
+  --f-display:"Doto","Geist Mono",ui-monospace,monospace; --f-ui:"Geist Mono",ui-monospace,Menlo,monospace; --f-body:"Geist",ui-sans-serif,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--canvas); color:var(--ink); font-family:var(--f-ui); font-size:12px; line-height:1.55;
+  background-image:radial-gradient(circle,var(--grid) 1px,transparent 1.4px); background-size:24px 24px;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:0 64px}
+a{color:inherit}
+button,input,textarea{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.page{max-width:1280px; margin:0 auto; display:flex; flex-direction:column; gap:48px}
+.nav{display:flex; justify-content:space-between; align-items:center; gap:16px; padding-block:22px 14px; border-bottom:1px solid var(--edge); flex-wrap:wrap}
+.nav a{text-decoration:none} .nav a:hover{color:var(--accent)}
+.nav .thcd-logo{width:clamp(90px,8vw,120px); height:auto; display:block}
+.nav .r{display:flex; gap:16px; flex-wrap:wrap; align-items:center; font-size:11px; letter-spacing:.06em}
+.nav span{color:var(--muted)}
+.head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:32px; align-items:end}
+.title{font-family:var(--f-display); font-weight:900; font-size:clamp(64px,13vw,200px); line-height:.8; margin:0; letter-spacing:-.03em}
+.lede{font-family:var(--f-body); font-weight:300; letter-spacing:-.02em; font-size:clamp(22px,2.6vw,34px); line-height:1.12; margin:0; text-wrap:balance}
+.facts{display:grid; grid-template-columns:auto 1fr; gap:6px 18px; margin:20px 0 0}
+.facts dt{color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-size:10px; padding-top:2px}
+.facts dd{margin:0; font-family:var(--f-body); font-weight:300; font-size:14px}
+
+.app{display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:16px; align-items:start}
+.col{display:flex; flex-direction:column; gap:16px; min-width:0}
+.win{background:var(--paper); border:1px solid var(--edge); display:flex; flex-direction:column; min-width:0}
+.bar{height:28px; display:flex; align-items:center; gap:10px; padding:0 8px; border-bottom:1px solid var(--edge); font-size:10.5px; white-space:nowrap; overflow:hidden}
+.bar i{width:9px; height:9px; border:1px solid var(--edge); flex:none}
+.bar .r{margin-left:auto; color:var(--muted)}
+.body{padding:12px; display:flex; flex-direction:column; gap:10px}
+.btn{background:transparent; border:1px solid var(--edge); padding:7px 12px; cursor:pointer; text-transform:lowercase; letter-spacing:.04em}
+.btn:hover{border-color:var(--ink)} .btn.main{border-color:var(--accent); color:var(--accent)} .btn:disabled{opacity:.4; cursor:wait}
+.row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.muted{color:var(--muted)}
+input[type=text],textarea{background:#000; border:1px solid var(--edge); padding:8px 10px; width:100%; min-width:0}
+textarea{min-height:120px; resize:vertical; font-family:var(--f-ui); line-height:1.6}
+
+#drop{border:1px dashed var(--edge); padding:22px; text-align:center; color:var(--muted); transition:border-color .2s}
+#drop.over{border-color:var(--accent); color:var(--ink)}
+#media{display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:10px}
+.tile{border:1px solid var(--edge); display:flex; flex-direction:column; min-width:0}
+.tile.in{border-color:var(--ink)} .tile.hit{border-color:var(--accent)}
+.tile .th{cursor:pointer; position:relative; aspect-ratio:9/16; overflow:hidden; background:#111}
+.tile .th canvas{width:100%; height:100%; display:block}
+.tile.in .th::after{content:"in cut"; position:absolute; left:6px; top:6px; font-size:9.5px; padding:1px 5px; background:var(--ink); color:#000}
+.tile .meta{display:flex; gap:8px; padding:5px 6px 0; font-size:10px; color:var(--muted)}
+.tile .score{margin-left:auto; color:var(--accent)}
+.tile .lab{border:0; border-top:1px solid var(--grid); margin-top:5px; padding:5px 6px; font-size:10.5px; background:transparent}
+.tile .flags{display:flex; flex-wrap:wrap; gap:4px; padding:0 6px 6px}
+.tile .flags button{border:1px solid var(--grid); background:transparent; font-size:9.5px; padding:1px 5px; cursor:pointer; color:var(--muted)}
+.tile .flags button.on{border-color:var(--accent); color:var(--accent)}
+#cut{display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; min-height:118px}
+.chip{flex:none; display:flex; flex-direction:column; gap:3px; font-size:10px; color:var(--muted); cursor:grab}
+.chip canvas{width:54px; height:96px; display:block; border:1px solid var(--edge)}
+#settings .grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
+#settings label{display:flex; flex-direction:column; gap:4px; font-size:10.5px; color:var(--muted)}
+#settings .checks{display:flex; flex-wrap:wrap; gap:6px 14px}
+#settings .checks label{flex-direction:row; align-items:center; gap:6px; color:var(--ink)}
+input[type=range]{width:100%; accent-color:var(--accent)}
+.prevwin{position:sticky; top:16px}
+.screen{aspect-ratio:9/16; background:#000; position:relative}
+.screen canvas,.screen video{position:absolute; inset:0; width:100%; height:100%; display:block}
+[hidden]{display:none !important}
+.prog{height:2px; background:var(--grid)} .prog b{display:block; height:100%; width:0; background:var(--accent); transition:width .1s}
+#status{min-height:1.5em}
+@media (max-width:900px){ .app{grid-template-columns:1fr} .prevwin{position:static} .head{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="nav">
+    <a href="https://thcd.monster/" aria-label="Things Can Dance, home"><img class="thcd-logo" src="/studio/img/thcd_logo.png" alt="Things Can Dance"></a>
+    <div class="r"><a href="/studio/">← video_studio</a><a href="/studio/halde.html">01 / HALDE</a><a href="/studio/trace.html">02 / TRACE</a><span>03 / STROBE / tool</span></div>
+  </nav>
+
+  <header class="head">
+    <h1 class="title">STROBE</h1>
+    <div>
+      <p class="lede">A reel machine. Drop photos and clips, describe what you want to see, get a vertical strobe cut with sound.</p>
+      <dl class="facts">
+        <dt>runs</dt><dd>entirely in your browser; nothing is uploaded</dd>
+        <dt>does</dt><dd>search by description, script to cut, speed ramps, splits, contact sheet, glitch, sound</dd>
+        <dt>out</dt><dd id="mp4note">9:16, 24 fps</dd>
+      </dl>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="col">
+      <section class="win">
+        <div class="bar"><i></i><span>strobe/media</span><span class="r">photos · clips</span></div>
+        <div class="body">
+          <div id="drop">drop photos and videos here, or <button class="btn" id="pick" type="button">choose files</button>
+            <input id="files" type="file" accept="image/*,video/*" multiple hidden></div>
+          <p class="muted" id="empty">Click a frame to put it into the cut. Mark the frame where the product already carries the logo, the packshot for the end, and cuts that should hiss.</p>
+          <div id="media"></div>
+        </div>
+      </section>
+
+      <section class="win">
+        <div class="bar"><i></i><span>strobe/search</span><span class="r">describe in English</span></div>
+        <div class="body">
+          <div class="row"><input type="text" id="q" placeholder="e.g. glass bottle on white paper" style="flex:1"><button class="btn" id="go" type="button">find</button><button class="btn" id="top" type="button">add top 4 to cut</button></div>
+          <span class="muted" id="sst">The first search loads a small model into the browser.</span>
+        </div>
+      </section>
+
+      <section class="win">
+        <div class="bar"><i></i><span>strobe/script</span><span class="r">one beat per line</span></div>
+        <div class="body">
+          <textarea id="script" spellcheck="false" placeholder="white paper&#10;carton with the logo&#10;glass bottle&#10;skin, close&#10;snake&#10;a spiral&#10;end: bottle and box"></textarea>
+          <div class="row"><button class="btn" id="build" type="button">build the cut from the script</button><span class="muted">each line picks the closest frame; start a line with "end:" for the packshot</span></div>
+        </div>
+      </section>
+
+      <section class="win">
+        <div class="bar"><i></i><span>strobe/cut</span><span class="r" id="len">—</span></div>
+        <div class="body">
+          <div id="cut"></div>
+          <div class="row"><span class="muted" id="cutnote"></span></div>
+          <div class="row"><button class="btn" id="auto" type="button">use all frames</button><button class="btn" id="shuffle" type="button">another edit</button><button class="btn" id="clear" type="button">clear</button><span class="muted">drag to reorder · double-click to remove</span></div>
+        </div>
+      </section>
+
+      <section class="win" id="settings">
+        <div class="bar"><i></i><span>strobe/settings</span><span class="r"></span></div>
+        <div class="body">
+          <div class="grid">
+            <label>logo text<input type="text" id="logo" value="STROBE"></label>
+            <label>or a logo file (png / svg)<input type="file" id="logofile" accept="image/png,image/svg+xml,image/webp"></label>
+            <label>top left<input type="text" id="tl" value="STROBE — 2026"></label>
+            <label>bottom left<input type="text" id="bl" value="A REEL MACHINE"></label>
+            <label>bottom right<input type="text" id="br" value="© 2026 THCD."></label>
+            <label>end tag<input type="text" id="tag" value="[ 01 ]"></label>
+            <label>frames per still <input type="range" id="tempo" min="2" max="4" step="1" value="2"></label>
+            <label>glitch <input type="range" id="glitch" min="0" max="100" value="25"></label>
+          </div>
+          <div class="checks">
+            <label><input type="checkbox" id="splits" checked> split screens</label>
+            <label><input type="checkbox" id="sheet" checked> contact sheet</label>
+            <label><input type="checkbox" id="punch" checked> punch-ins</label>
+            <label><input type="checkbox" id="marks" checked> marks & timecode</label>
+            <label><input type="checkbox" id="safe" checked> instagram 4:5 safe</label>
+            <label><input type="checkbox" id="sound" checked> sound</label>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="col prevwin">
+      <section class="win">
+        <div class="bar"><i></i><span>strobe/preview</span><span class="r">9:16</span></div>
+        <div class="screen"><canvas id="cv" width="540" height="960"></canvas><video id="pv" playsinline controls hidden></video></div>
+        <div class="prog"><b id="bar"></b></div>
+        <div class="body">
+          <input type="range" id="scrub" min="0" max="0" value="0" aria-label="scrub through the cut">
+          <div class="row"><button class="btn" id="prev" type="button">preview with sound</button><button class="btn main" id="exp" type="button">export 1080×1920</button></div>
+          <span class="muted" id="status">drop some frames to begin</span>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
