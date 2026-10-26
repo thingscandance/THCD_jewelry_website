@@ -175,10 +175,56 @@ export class Renderer {
         if (j === f.hl) { g.strokeStyle = '#C8281E'; g.lineWidth = 3; g.strokeRect(x - 6, y - 6, tw + 12, th + 12); }
       }
     }
+    if (o.look && o.look !== 'clean' && f.t !== 'black' && f.t !== 'flash') this.look(o.look, idx);
     if (f.glitch) this.glitch(f.glitch, idx);
     this.overlay(f, idx, cut, total);
     g.restore();
     return this.scratch;
+  }
+
+  // ---- looks: black and white, black and white with grain, VHS ----
+  look(kind, idx) {
+    const g = this.g;
+    if (!this.copy) { this.copy = document.createElement('canvas'); this.copy.width = W; this.copy.height = H; this.cg = this.copy.getContext('2d'); }
+    const cg = this.cg, r = rng(idx * 104729 + 7);
+    cg.drawImage(this.scratch, 0, 0);
+    if (kind === 'bw' || kind === 'bwgrain') {
+      g.filter = 'grayscale(1) contrast(1.18) brightness(1.02)'; g.drawImage(this.copy, 0, 0); g.filter = 'none';
+      if (kind === 'bwgrain') this.grain(.42, r);
+      return;
+    }
+    if (kind === 'vhs') {
+      g.filter = 'saturate(1.3) contrast(1.06) blur(0.8px)'; g.drawImage(this.copy, 0, 0); g.filter = 'none';
+      const img = g.getImageData(0, 0, W, H), d = img.data, src = new Uint8ClampedArray(d);
+      const band0 = r() < .5 ? Math.floor(r() * H) : -1, bandH = 40 + Math.floor(r() * 160);
+      for (let y = 0; y < H; y++) {
+        let jit = 0;
+        if (band0 >= 0 && y >= band0 && y < band0 + bandH) jit = Math.round((r() - .3) * 26);          // tracking band
+        if (y > H - 70) jit = Math.round(18 + r() * 30);                                                // head-switching at the bottom
+        const row = y * W * 4;
+        for (let x = 0; x < W; x++) {
+          const i = row + x * 4;
+          const xr = Math.min(W - 1, Math.max(0, x - jit + 5)), xg = Math.min(W - 1, Math.max(0, x - jit)), xb = Math.min(W - 1, Math.max(0, x - jit - 4));
+          d[i] = src[row + xr * 4]; d[i + 1] = src[row + xg * 4 + 1]; d[i + 2] = src[row + xb * 4 + 2];
+        }
+      }
+      g.putImageData(img, 0, 0);
+      g.fillStyle = 'rgba(0,0,0,.16)'; for (let y = 0; y < H; y += 4) g.fillRect(0, y, W, 2);           // scanlines
+      g.fillStyle = 'rgba(255,255,255,.5)'; for (let k = 0; k < 6; k++) { const y = H - 70 + r() * 60; g.fillRect(r() * W * .6, y, 60 + r() * 300, 1 + r() * 2); }
+      this.grain(.18, r);
+      return;
+    }
+  }
+  grain(amount, r) {
+    if (!this.noise) {                                                             // a few grain tiles, made once
+      this.noise = Array.from({ length: 4 }, () => { const c = document.createElement('canvas'); c.width = 540; c.height = 960; const x = c.getContext('2d'); const im = x.createImageData(540, 960);
+        for (let i = 0; i < im.data.length; i += 4) { const v = 128 + (Math.random() + Math.random() + Math.random() - 1.5) * 150; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } x.putImageData(im, 0, 0); return c; });
+    }
+    const g = this.g, t = this.noise[Math.floor(r() * 4)];
+    g.save(); g.globalCompositeOperation = 'overlay'; g.globalAlpha = amount;
+    const ox = -Math.floor(r() * 540), oy = -Math.floor(r() * 960);
+    for (let x = ox; x < W; x += 540) for (let y = oy; y < H; y += 960) g.drawImage(t, x, y, 540, 960);
+    g.restore();
   }
 
   glitch(n, seed) {

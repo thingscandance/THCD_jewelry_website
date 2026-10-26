@@ -25,7 +25,7 @@ async function logo() {
   return logoCache.logo;
 }
 async function rendererOpt() {
-  return { font: FONT, mono: MONO, logo: await logo(), tl: $('#tl').value, bl: $('#bl').value, br: $('#br').value, tag: $('#tag').value, marks: $('#marks').checked, safe: $('#safe').checked };
+  return { look: $('#look').value, font: FONT, mono: MONO, logo: await logo(), tl: $('#tl').value, bl: $('#bl').value, br: $('#br').value, tag: $('#tag').value, marks: $('#marks').checked, safe: $('#safe').checked };
 }
 
 // ---------------- loading media ----------------
@@ -57,6 +57,7 @@ async function addFiles(files) {
     } catch (e) { status(`skipped ${file.name}: ${e.message}`); }
   }
   status(`${media.length} items`);
+  $('#pv').hidden = true; $('#pv').loop = false; $('#cv').hidden = false; $('#exlook').hidden = true;
   drawMedia(); refresh();
   if (clipReady) embedAll();
 }
@@ -208,7 +209,21 @@ async function make(full) {
 }
 function status(t) { $('#status').textContent = t; }
 
+// ---------------- examples: silver pieces from the THCD shop and a clip from its world ----------------
+const EX = ['branch', 'double', 'drip', 'drop', 'figure', 'glitter', 'innerhome', 'quartz', 'rain', 'slay1', 'slay2', 'stump', 'thistle', 'xeno'];
+async function loadExamples() {
+  status('loading the example frames…');
+  $('#logo').value = 'THCD'; $('#tl').value = 'THCD — 2026'; $('#bl').value = 'SILVER — HANDMADE'; $('#br').value = 'THCD.MONSTER'; $('#tag').value = '[ STROBE ]';
+  const vid = document.createElement('video').canPlayType('video/webm; codecs="vp9"') ? 'world.webm' : 'world.mp4';
+  const urls = [...EX.slice(0, 6).map(n => `/img/${n}_photo.webp`), `./examples/${vid}`, ...EX.slice(6).map(n => `/img/${n}_photo.webp`)];
+  const files = [];
+  for (const u of urls) { const b = await (await fetch(u)).blob(); files.push(new File([b], u.split('/').pop().replace('_photo', ''), { type: b.type || (u.endsWith('.webm') ? 'video/webm' : u.endsWith('.mp4') ? 'video/mp4' : 'image/webp') })); }
+  await addFiles(files);
+  const last = media[media.length - 1]; if (last) { last.flags.end = true; drawMedia(); refresh(); }
+}
+
 // ---------------- wiring ----------------
+$('#examples').onclick = loadExamples;
 const fileIn = $('#files');
 $('#pick').onclick = () => fileIn.click();
 fileIn.onchange = () => { addFiles(fileIn.files); fileIn.value = ''; };
@@ -222,9 +237,19 @@ $('#build').onclick = fromScript;
 $('#auto').onclick = () => { cut = []; drawMedia(); refresh(); };
 $('#shuffle').onclick = () => { seed = (seed * 48271) % 2147483647; refresh(); };
 $('#clear').onclick = () => { cut = []; lastScores = null; drawMedia(); refresh(); };
-$('#scrub').oninput = () => { $('#pv').hidden = true; $('#cv').hidden = false; drawFrame(); };
+$('#scrub').oninput = () => { $('#pv').hidden = true; $('#pv').loop = false; $('#cv').hidden = false; $('#exlook').hidden = true; drawFrame(); };
 $('#prev').onclick = () => make(false);
 $('#exp').onclick = () => make(true);
-document.querySelectorAll('#settings input').forEach(i => i.addEventListener(i.type === 'text' ? 'change' : 'input', () => refresh()));
+document.querySelectorAll('#settings input, #settings select').forEach(i => i.addEventListener(i.type === 'text' || i.tagName === 'SELECT' ? 'change' : 'input', () => refresh()));
 $('#mp4note').textContent = canMP4() ? 'exports MP4 (H.264 + AAC)' : 'this browser records WebM in real time; Chrome or Safari export MP4';
 refresh();
+// until frames are added, the preview plays an example cut made with the tool from the THCD silver pieces
+(function example() {
+  const v = $('#pv'), pick = $('#exlook');
+  const set = l => { v.src = `./examples/example_${l}.mp4`; v.poster = './examples/example_poster.jpg'; v.muted = true; v.loop = true; v.hidden = false; $('#cv').hidden = true; v.play().catch(() => {}); };
+  set('bwgrain');
+  pick.querySelectorAll('button').forEach(b => b.onclick = () => { pick.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); set(b.dataset.l); });
+  status('example: silver pieces from thcd.monster, made here · unmute for sound');
+})();
+// for scripting the tool from the console
+window.strobe = { get plan() { return plan; }, renderSound, wavBlob, seed: () => seed };

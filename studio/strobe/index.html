@@ -44,10 +44,10 @@ button,input,textarea{font:inherit; color:inherit}
 .bar .r{margin-left:auto; color:var(--muted)}
 .body{padding:12px; display:flex; flex-direction:column; gap:10px}
 .btn{background:transparent; border:1px solid var(--edge); padding:7px 12px; cursor:pointer; text-transform:lowercase; letter-spacing:.04em}
-.btn:hover{border-color:var(--ink)} .btn.main{border-color:var(--accent); color:var(--accent)} .btn:disabled{opacity:.4; cursor:wait}
+.btn:hover{border-color:var(--ink)} .btn.on{border-color:var(--ink); background:var(--ink); color:#000} .btn.main{border-color:var(--accent); color:var(--accent)} .btn:disabled{opacity:.4; cursor:wait}
 .row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
 .muted{color:var(--muted)}
-input[type=text],textarea{background:#000; border:1px solid var(--edge); padding:8px 10px; width:100%; min-width:0}
+input[type=text],textarea,select{background:#000; border:1px solid var(--edge); padding:8px 10px; width:100%; min-width:0}
 textarea{min-height:120px; resize:vertical; font-family:var(--f-ui); line-height:1.6}
 
 #drop{border:1px dashed var(--edge); padding:22px; text-align:center; color:var(--muted); transition:border-color .2s}
@@ -105,7 +105,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
       <section class="win">
         <div class="bar"><i></i><span>strobe/media</span><span class="r">photos · clips</span></div>
         <div class="body">
-          <div id="drop">drop photos and videos here, or <button class="btn" id="pick" type="button">choose files</button>
+          <div id="drop">drop photos and videos here, or <button class="btn" id="pick" type="button">choose files</button> or <button class="btn" id="examples" type="button">try the examples</button>
             <input id="files" type="file" accept="image/*,video/*" multiple hidden></div>
           <p class="muted" id="empty">Click a frame to put it into the cut. Mark the frame where the product already carries the logo, the packshot for the end, and cuts that should hiss.</p>
           <div id="media"></div>
@@ -149,6 +149,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
             <label>end tag<input type="text" id="tag" value="[ 01 ]"></label>
             <label>frames per still <input type="range" id="tempo" min="2" max="4" step="1" value="2"></label>
             <label>glitch <input type="range" id="glitch" min="0" max="100" value="25"></label>
+            <label>look<select id="look"><option value="clean">clean</option><option value="bw">black and white</option><option value="bwgrain" selected>black and white, grain</option><option value="vhs">vhs</option></select></label>
           </div>
           <div class="checks">
             <label><input type="checkbox" id="splits" checked> split screens</label>
@@ -165,7 +166,8 @@ input[type=range]{width:100%; accent-color:var(--accent)}
     <div class="col prevwin">
       <section class="win">
         <div class="bar"><i></i><span>strobe/preview</span><span class="r">9:16</span></div>
-        <div class="screen"><canvas id="cv" width="540" height="960"></canvas><video id="pv" playsinline controls hidden></video></div>
+        <div class="screen"><canvas id="cv" width="540" height="960"></canvas><video id="pv" playsinline controls muted hidden></video></div>
+        <div class="row" id="exlook" style="padding:8px 12px 0"><span class="muted">example</span><button class="btn on" data-l="bwgrain" type="button">b/w grain</button><button class="btn" data-l="vhs" type="button">vhs</button></div>
         <div class="prog"><b id="bar"></b></div>
         <div class="body">
           <input type="range" id="scrub" min="0" max="0" value="0" aria-label="scrub through the cut">
