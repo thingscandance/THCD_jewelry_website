@@ -112,7 +112,7 @@ function seek(v, t) {
   });
 }
 
-export function makeLogo(text, file, font) {
+export function makeLogo(text, file, font, weight = '200') {
   // returns { white, ink } canvases, 480 px wide
   const build = async () => {
     let src;
@@ -120,12 +120,12 @@ export function makeLogo(text, file, font) {
       src = await createImageBitmap(file);
     } else {
       const c = document.createElement('canvas'); const g = c.getContext('2d');
-      const size = 140; g.font = `200 ${size}px ${font}`;
+      const size = 140; g.font = `${weight} ${size}px ${font}`;
       const spacing = size * .12; const chars = [...text];
       const widths = chars.map(ch => g.measureText(ch).width);
       const tw = widths.reduce((a, b) => a + b, 0) + spacing * (chars.length - 1);
       c.width = Math.ceil(tw) + 20; c.height = Math.ceil(size * 1.25);
-      g.font = `200 ${size}px ${font}`; g.fillStyle = '#000'; g.textBaseline = 'alphabetic';
+      g.font = `${weight} ${size}px ${font}`; g.fillStyle = '#000'; g.textBaseline = 'alphabetic';
       let x = 10; chars.forEach((ch, i) => { g.fillText(ch, x, size * .98); x += widths[i] + spacing; });
       src = c;
     }
@@ -257,7 +257,7 @@ export class Renderer {
     if (f.t === 'black' && f.outro) { g.drawImage(L.white, 300, LY); return; }
     if (f.t === 'flash') return;
     const top = o.safe ? 316 : 60, bot = H - top;
-    g.fillStyle = col; g.font = `500 22px ${o.font}`; g.textBaseline = 'alphabetic';
+    g.fillStyle = col; g.font = `${o.fontWeight || 500} 22px ${o.font}`; g.textBaseline = 'alphabetic';
     g.textAlign = 'left'; g.fillText(o.tl, 44, top + 18);
     g.textAlign = 'right'; g.fillText(`${String(cut).padStart(3, '0')} / ${String(total).padStart(3, '0')}`, W - 44, top + 18);
     if (f.end) { g.textAlign = 'left'; g.fillText(o.bl, 44, bot); g.textAlign = 'right'; g.fillText(o.tag, W - 44, bot); }

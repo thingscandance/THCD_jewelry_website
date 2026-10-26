@@ -9,7 +9,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500&family=Geist+Mono:wght@400;500&family=Doto:wght@700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500&family=Geist+Mono:wght@400;500&family=Doto:wght@700;900&family=Inter:wght@200;500&family=Space+Grotesk:wght@300;500&family=Unbounded:wght@300&family=Syne:wght@500&family=Playfair+Display:wght@400&family=Cormorant+Garamond:wght@300&family=Instrument+Serif&family=IBM+Plex+Mono:wght@300;500&family=UnifrakturMaguntia&family=Pirata+One&display=swap">
 <style>
 :root{
   --canvas:#000; --paper:#0B0C0D; --ink:#E9ECEA; --muted:#8D9493; --edge:rgba(233,236,234,.28); --grid:rgba(233,236,234,.11); --accent:#E61E9C;
@@ -142,7 +142,18 @@ input[type=range]{width:100%; accent-color:var(--accent)}
         <div class="body">
           <div class="grid">
             <label>logo text<input type="text" id="logo" value="STROBE"></label>
-            <label>or a logo file (png / svg)<span class="row"><button class="btn" id="logopick" type="button">choose logo file</button><span class="muted" id="logoname">none</span></span><input type="file" id="logofile" accept="image/png,image/svg+xml,image/webp" hidden></label>
+            <label>or a logo file (png / svg)<span class="row"><button class="btn" id="logopick" type="button">choose logo file</button><button class="btn" id="logoclear" type="button">use text</button><span class="muted" id="logoname">none</span></span><input type="file" id="logofile" accept="image/png,image/svg+xml,image/webp" hidden></label>
+            <label>logo font<select id="logofont">
+              <option value="200|Geist" selected>Geist thin</option><option value="200|Inter">Inter thin</option><option value="300|Space Grotesk">Space Grotesk</option>
+              <option value="300|Unbounded">Unbounded</option><option value="500|Syne">Syne</option><option value="400|Playfair Display">Playfair Display</option>
+              <option value="300|Cormorant Garamond">Cormorant Garamond</option><option value="400|Instrument Serif">Instrument Serif</option><option value="700|Doto">Doto (dots)</option>
+              <option value="300|IBM Plex Mono">IBM Plex Mono</option><option value="400|UnifrakturMaguntia">UnifrakturMaguntia (blackletter)</option><option value="400|Pirata One">Pirata One</option>
+              <option value="custom" disabled>uploaded font</option></select></label>
+            <label>text font<select id="textfont">
+              <option value="500|Geist" selected>Geist</option><option value="500|Geist Mono">Geist Mono</option><option value="500|Inter">Inter</option>
+              <option value="500|Space Grotesk">Space Grotesk</option><option value="500|IBM Plex Mono">IBM Plex Mono</option><option value="400|Instrument Serif">Instrument Serif</option>
+              <option value="custom" disabled>uploaded font</option></select></label>
+            <label>your own font (ttf / otf / woff)<span class="row"><button class="btn" id="fontpick" type="button">choose font file</button></span><input type="file" id="fontfile" accept=".ttf,.otf,.woff,.woff2,font/*" hidden></label>
             <label>top left<input type="text" id="tl" value="STROBE — 2026"></label>
             <label>bottom left<input type="text" id="bl" value="A REEL MACHINE"></label>
             <label>bottom right<input type="text" id="br" value="© 2026 THCD."></label>

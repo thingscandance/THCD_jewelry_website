@@ -17,15 +17,20 @@ const S = () => ({
   splits: $('#splits').checked, sheet: $('#sheet').checked, punch: $('#punch').checked,
   marks: $('#marks').checked, safe: $('#safe').checked, sound: $('#sound').checked, seed,
 });
-let logoCache = { key: '', logo: null };
+let logoCache = { key: '', logo: null }, exampleLogo = null, customFont = null;
+// "weight|family" values from the font menus; an uploaded font file becomes its own family
+const fontOf = sel => { const v = $(sel).value; if (v === 'custom' && customFont) return ['400', `"${customFont}"`]; const [w, f] = v.split('|'); return [w, `"${f}", ui-sans-serif, sans-serif`]; };
 async function logo() {
-  const file = $('#logofile').files[0] || null, text = $('#logo').value.trim() || 'STROBE';
-  const key = text + '|' + (file ? file.name + file.size : '');
-  if (logoCache.key !== key) { await document.fonts.load(`200 140px ${FONT}`); logoCache = { key, logo: await makeLogo(text, file, FONT) }; }
+  const file = $('#logofile').files[0] || exampleLogo, text = $('#logo').value.trim() || 'STROBE';
+  const [w, fam] = fontOf('#logofont');
+  const key = text + '|' + w + fam + '|' + (file ? file.name + file.size : '');
+  if (logoCache.key !== key) { try { await document.fonts.load(`${w} 140px ${fam}`, text); } catch (e) {} logoCache = { key, logo: await makeLogo(text, file, fam, w) }; }
   return logoCache.logo;
 }
 async function rendererOpt() {
-  return { look: $('#look').value, font: FONT, mono: MONO, logo: await logo(), tl: $('#tl').value, bl: $('#bl').value, br: $('#br').value, tag: $('#tag').value, marks: $('#marks').checked, safe: $('#safe').checked };
+  const [tw, tfam] = fontOf('#textfont');
+  try { await document.fonts.load(`${tw} 22px ${tfam}`); } catch (e) {}
+  return { look: $('#look').value, font: tfam, fontWeight: tw, mono: MONO, logo: await logo(), tl: $('#tl').value, bl: $('#bl').value, br: $('#br').value, tag: $('#tag').value, marks: $('#marks').checked, safe: $('#safe').checked };
 }
 
 // ---------------- loading media ----------------
@@ -213,6 +218,7 @@ function status(t) { $('#status').textContent = t; }
 // example set: four night jumps and a clip from the THCD world (the shop photos are not offered for reuse)
 async function loadExamples() {
   status('loading the example frames…');
+  exampleLogo = new File([await (await fetch('/studio/img/thcd_logo.png')).blob()], 'thcd_logo.png', { type: 'image/png' }); $('#logoname').textContent = 'thcd_logo.png';
   $('#logo').value = 'THCD'; $('#tl').value = 'THCD — 2026'; $('#bl').value = 'NIGHT — JUMPS'; $('#br').value = 'THCD.MONSTER'; $('#tag').value = '[ STROBE ]';
   const vid = document.createElement('video').canPlayType('video/webm; codecs="vp9"') ? 'world.webm' : 'world.mp4';
   const urls = ['./examples/jump_01.jpg', './examples/jump_02.jpg', './examples/jump_03.jpg', './examples/jump_04.jpg', `./examples/${vid}`];
@@ -225,7 +231,16 @@ async function loadExamples() {
 // ---------------- wiring ----------------
 $('#examples').onclick = loadExamples;
 $('#logopick').onclick = () => $('#logofile').click();
-$('#logofile').addEventListener('change', () => { $('#logoname').textContent = $('#logofile').files[0] ? $('#logofile').files[0].name : 'none'; });
+$('#logofile').addEventListener('change', () => { exampleLogo = null; $('#logoname').textContent = $('#logofile').files[0] ? $('#logofile').files[0].name : 'none'; refresh(); });
+$('#logoclear').onclick = () => { $('#logofile').value = ''; exampleLogo = null; $('#logoname').textContent = 'none'; refresh(); };
+$('#fontpick').onclick = () => $('#fontfile').click();
+$('#fontfile').addEventListener('change', async () => {
+  const f = $('#fontfile').files[0]; if (!f) return;
+  const name = 'Custom ' + f.name.replace(/\.[^.]+$/, '');
+  try { const face = new FontFace(name, await f.arrayBuffer()); await face.load(); document.fonts.add(face); customFont = name;
+    for (const sel of ['#logofont', '#textfont']) { const o = $(sel).querySelector('option[value=custom]'); o.disabled = false; o.textContent = 'uploaded: ' + f.name; }
+    $('#logofont').value = 'custom'; refresh(); } catch (e) { status('could not read that font: ' + e.message); }
+});
 const fileIn = $('#files');
 $('#pick').onclick = () => fileIn.click();
 fileIn.onchange = () => { addFiles(fileIn.files); fileIn.value = ''; };
