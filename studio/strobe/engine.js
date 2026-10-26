@@ -130,7 +130,7 @@ export function makeLogo(text, file, font, weight = '200') {
       src = c;
     }
     const w = 480, h = Math.round(480 * src.height / src.width);
-    const tint = col => { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.drawImage(src, 0, 0, w, h); g.globalCompositeOperation = 'source-in'; g.fillStyle = col; g.fillRect(0, 0, w, h); return c; };
+    const tint = col => { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(src, 0, 0, w, h); g.globalCompositeOperation = 'source-in'; g.fillStyle = col; g.fillRect(0, 0, w, h); return c; };
     return { white: tint('#ffffff'), ink: tint('#111214'), h };
   };
   return build();
@@ -138,7 +138,7 @@ export function makeLogo(text, file, font, weight = '200') {
 
 // ---------- renderer ----------
 export class Renderer {
-  constructor(opt) { this.opt = opt; this.scratch = document.createElement('canvas'); this.scratch.width = W; this.scratch.height = H; this.g = this.scratch.getContext('2d', { willReadFrequently: true }); }
+  constructor(opt) { this.opt = opt; this.scratch = document.createElement('canvas'); this.scratch.width = W; this.scratch.height = H; this.g = this.scratch.getContext('2d', { willReadFrequently: true }); this.g.imageSmoothingEnabled = true; this.g.imageSmoothingQuality = 'high'; }
 
   async frameSource(m, time) {
     if (m.type === 'image') return [m.bmp, m.w, m.h];
@@ -148,7 +148,7 @@ export class Renderer {
 
   async paint(f, idx, cut, total) {
     const g = this.g, o = this.opt;
-    g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+    g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
     if (f.t === 'flash') { g.fillStyle = '#F6F5F2'; g.fillRect(0, 0, W, H); }
     else if (f.t === 'img' || f.t === 'vid') {
       const [src, sw, sh] = await this.frameSource(f.m, f.time);
@@ -186,7 +186,7 @@ export class Renderer {
   // ---- looks: black and white, black and white with grain, VHS ----
   look(kind, idx) {
     const g = this.g;
-    if (!this.copy) { this.copy = document.createElement('canvas'); this.copy.width = W; this.copy.height = H; this.cg = this.copy.getContext('2d'); }
+    if (!this.copy) { this.copy = document.createElement('canvas'); this.copy.width = W; this.copy.height = H; this.cg = this.copy.getContext('2d'); this.cg.imageSmoothingQuality = 'high'; }
     const cg = this.cg, r = rng(idx * 104729 + 7);
     cg.drawImage(this.scratch, 0, 0);
     if (kind === 'bw' || kind === 'bwgrain') {

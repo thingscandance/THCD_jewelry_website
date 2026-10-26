@@ -36,7 +36,7 @@ async function rendererOpt() {
 // ---------------- loading media ----------------
 const clean = n => n.replace(/\.[^.]+$/, '').replace(/[_\-.]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 28);
 function thumbOf(src, w, h) {
-  const c = document.createElement('canvas'); c.width = 216; c.height = 384; const g = c.getContext('2d');
+  const c = document.createElement('canvas'); c.width = 216; c.height = 384; const g = c.getContext('2d'); g.imageSmoothingQuality = 'high';
   const s = Math.max(216 / w, 384 / h); g.drawImage(src, (216 - w * s) / 2, (384 - h * s) / 2, w * s, h * s); return c;
 }
 async function addFiles(files) {
@@ -185,7 +185,7 @@ async function drawFrame() {
   drawing = true;
   const i = +$('#scrub').value, f = plan.frames[i];
   const src = await renderer.paint(f, i, f.k, plan.cuts.length);
-  $('#cv').getContext('2d').drawImage(src, 0, 0, W, H, 0, 0, 540, 960);
+  { const cg = $('#cv').getContext('2d'); cg.imageSmoothingQuality = 'high'; cg.drawImage(src, 0, 0, W, H, 0, 0, 540, 960); }
   drawing = false;
   if (again) { again = false; drawFrame(); }
 }

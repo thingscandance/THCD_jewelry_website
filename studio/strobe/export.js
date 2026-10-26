@@ -4,9 +4,9 @@ import { Muxer, ArrayBufferTarget } from './mp4-muxer.mjs';
 import { W, H, FPS } from './engine.js';
 
 async function pickVideoConfig(w, h) {
-  const bitrate = w >= 1000 ? 9_000_000 : 3_000_000;
+  const bitrate = w >= 1000 ? 20_000_000 : 5_000_000;   // grain and strobe need room; Instagram re-encodes anyway
   for (const codec of ['avc1.640028', 'avc1.4d0028', 'avc1.42E028', 'avc1.42E01F']) {
-    const cfg = { codec, width: w, height: h, bitrate, framerate: FPS, avc: { format: 'avc' } };
+    const cfg = { codec, width: w, height: h, bitrate, bitrateMode: 'variable', latencyMode: 'quality', framerate: FPS, avc: { format: 'avc' } };
     try { if ((await VideoEncoder.isConfigSupported(cfg)).supported) return cfg; } catch (e) {}
   }
   return null;
@@ -34,7 +34,7 @@ export async function encodeMP4(n, paint, audio, w, h, onProgress) {
   const ve = new VideoEncoder({ output: (c, m) => muxer.addVideoChunk(c, m), error: e => { err = e; } });
   ve.configure(vcfg);
   const out = document.createElement('canvas'); out.width = w; out.height = h;
-  const g = out.getContext('2d');
+  const g = out.getContext('2d'); g.imageSmoothingQuality = 'high';
   for (let i = 0; i < n; i++) {
     if (err) throw err;
     const src = await paint(i);
