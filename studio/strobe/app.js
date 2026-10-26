@@ -215,7 +215,7 @@ async function loadExamples() {
   status('loading the example frames…');
   $('#logo').value = 'THCD'; $('#tl').value = 'THCD — 2026'; $('#bl').value = 'NIGHT — JUMPS'; $('#br').value = 'THCD.MONSTER'; $('#tag').value = '[ STROBE ]';
   const vid = document.createElement('video').canPlayType('video/webm; codecs="vp9"') ? 'world.webm' : 'world.mp4';
-  const urls = ['./examples/jump_01.jpg', './examples/jump_02.jpg', `./examples/${vid}`, './examples/jump_03.jpg', './examples/jump_04.jpg'];
+  const urls = ['./examples/jump_01.jpg', './examples/jump_02.jpg', './examples/jump_03.jpg', './examples/jump_04.jpg', `./examples/${vid}`];
   const files = [];
   for (const u of urls) { const b = await (await fetch(u)).blob(); files.push(new File([b], u.split('/').pop(), { type: b.type || (u.endsWith('.webm') ? 'video/webm' : u.endsWith('.mp4') ? 'video/mp4' : 'image/jpeg') })); }
   await addFiles(files);
