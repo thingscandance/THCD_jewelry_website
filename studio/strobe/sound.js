@@ -40,14 +40,14 @@ export async function renderSound(frames, cuts, opt = {}) {
   droneBus.gain.setValueAtTime(.22, at(endF)); droneBus.gain.linearRampToValueAtTime(0, at(endF) + 1.1);
 
   // --- breathing air, faint hiss and crackle across the whole piece
-  const air = noiseSrc(0, dur), airLp = new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 520 }), airG = new GainNode(ctx, { gain: .3 });
-  const airL = new OscillatorNode(ctx, { frequency: .11 }), airD = new GainNode(ctx, { gain: .12 }); airL.connect(airD).connect(airG.gain); airL.start(0); airL.stop(dur);
+  const air = noiseSrc(0, dur), airLp = new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 520 }), airG = new GainNode(ctx, { gain: .08 });
+  const airL = new OscillatorNode(ctx, { frequency: .11 }), airD = new GainNode(ctx, { gain: .03 }); airL.connect(airD).connect(airG.gain); airL.start(0); airL.stop(dur);
   air.connect(airLp).connect(airG).connect(master);
-  airG.gain.setValueAtTime(.3, Math.max(0, dur - .7)); airG.gain.linearRampToValueAtTime(0, dur);
-  const hs = noiseSrc(0, dur), hg = new GainNode(ctx, { gain: .012 }); hs.connect(band(1200, 6000)).connect(hg).connect(master);
+  airG.gain.setValueAtTime(.08, Math.max(0, dur - .7)); airG.gain.linearRampToValueAtTime(0, dur);
+  const hs = noiseSrc(0, dur), hg = new GainNode(ctx, { gain: .004 }); hs.connect(band(1200, 6000)).connect(hg).connect(master);
   const cr = ctx.createBuffer(2, Math.ceil(dur * SR), SR);
   for (let ch = 0; ch < 2; ch++) { const d = cr.getChannelData(ch); for (let i = 0; i < d.length; i++) if (rand() < 16 / SR) d[i] = (rand() * 2 - 1) * (.2 + rand() * .8); }
-  const crs = new AudioBufferSourceNode(ctx, { buffer: cr }); crs.connect(band(600, 4500)).connect(new GainNode(ctx, { gain: .22 })).connect(master); crs.start(0);
+  const crs = new AudioBufferSourceNode(ctx, { buffer: cr }); crs.connect(band(600, 4500)).connect(new GainNode(ctx, { gain: .06 })).connect(master); crs.start(0);
 
   // --- per-cut events
   const thump = (t, f0, f1, len, peak) => { const o = new OscillatorNode(ctx, { frequency: f0 }); o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + len); const g = env(t, peak, .004, len / 4, len); o.connect(g).connect(master); o.start(t); o.stop(t + len); };

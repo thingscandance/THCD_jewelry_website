@@ -190,7 +190,7 @@ export class Renderer {
     cg.drawImage(this.scratch, 0, 0);
     if (kind === 'bw' || kind === 'bwgrain') {
       g.filter = 'grayscale(1) contrast(1.18) brightness(1.02)'; g.drawImage(this.copy, 0, 0); g.filter = 'none';
-      if (kind === 'bwgrain') this.grain(.42, r);
+      if (kind === 'bwgrain') this.grain(.2, r);
       return;
     }
     if (kind === 'vhs') {
@@ -211,7 +211,7 @@ export class Renderer {
       g.putImageData(img, 0, 0);
       g.fillStyle = 'rgba(0,0,0,.16)'; for (let y = 0; y < H; y += 4) g.fillRect(0, y, W, 2);           // scanlines
       g.fillStyle = 'rgba(255,255,255,.5)'; for (let k = 0; k < 6; k++) { const y = H - 70 + r() * 60; g.fillRect(r() * W * .6, y, 60 + r() * 300, 1 + r() * 2); }
-      this.grain(.18, r);
+      this.grain(.1, r);
       return;
     }
   }

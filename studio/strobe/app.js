@@ -224,6 +224,8 @@ async function loadExamples() {
 
 // ---------------- wiring ----------------
 $('#examples').onclick = loadExamples;
+$('#logopick').onclick = () => $('#logofile').click();
+$('#logofile').addEventListener('change', () => { $('#logoname').textContent = $('#logofile').files[0] ? $('#logofile').files[0].name : 'none'; });
 const fileIn = $('#files');
 $('#pick').onclick = () => fileIn.click();
 fileIn.onchange = () => { addFiles(fileIn.files); fileIn.value = ''; };
