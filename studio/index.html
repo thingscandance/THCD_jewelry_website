@@ -134,7 +134,7 @@ a{color:inherit}
 const HALDE='/studio/halde.html', TRACE='/studio/trace.html';
 const W=[
  {id:'about',kind:'text',title:'studio/about',r:'txt',w:432,h:192,html:`<div class="txt"><p class="lede">Things Can Dance makes 3D and AI videos for objects that want to move.</p><p class="body-t">Product films, vertical loops for social, and the small worlds a brand lives in.</p><span class="k">commissions · licensing of existing loops</span></div>`},
- {id:'hero',title:'HALDE/film_00_main',r:'16:9',w:720,video:'/studio/video/halde_loop.mp4',poster:'/studio/img/halde_film_poster.jpg',tag:'31 s · film',href:HALDE,wide:1},
+ {id:'hero',title:'HALDE/film_00_main',r:'16:9',w:408,video:'/studio/video/halde_loop.mp4',poster:'/studio/img/halde_film_poster.jpg',tag:'31 s · film',href:HALDE,wide:1},
  {id:'t_film',title:'TRACE/film_01_first_trace',r:'9:16',w:200,video:'/studio/video/trace_film01.mp4',poster:'/studio/img/trace_k05.jpg',tag:'10.8 s · reels',href:TRACE},
  {id:'index',kind:'text',title:'studio/index',r:'txt',w:288,h:192,html:`<div class="txt"><span class="k">projects</span><ol class="idx"><li><span class="n">01</span><a href="${HALDE}">HALDE</a><span>2026</span></li><li><span class="n">02</span><a href="${TRACE}">TRACE</a><span>2026</span></li><li><span class="n">03</span><span class="open">open slot</span><span class="open">—</span></li></ol></div>`},
  {id:'f2',title:'HALDE/film_02_city',r:'9:16',w:200,img:'/studio/img/city_262.jpg',href:HALDE+'#films',tag:'10.4 s · reels'},
@@ -160,7 +160,7 @@ const W=[
  {id:'club',title:'HALDE/club',r:'16:9',w:200,img:'/studio/img/kf08.jpg',href:HALDE+'#world',wide:1},
  {id:'hday',title:'HALDE/heap_day',r:'16:9',w:200,img:'/studio/img/kf05.jpg',href:HALDE+'#world',wide:1}
 ];
-const STUDIO={about:[792,24,432],hero:[48,24,720],t_film:[1128,240,240],index:[792,240,288],f2:[840,456,192],t_section:[240,504,168],glut:[24,504,192],t_bottle:[480,504,216],f1:[1152,720,168],night:[24,768,168],t_eye:[600,840,216],contact:[48,1008,384],cage:[1056,1080,360],t_construct:[24,1200,408],p34:[840,864,192],perl:[840,1176,168],t_carton:[1104,1344,216],f3:[456,1296,192],vio:[912,1416,168],t_trace:[672,1416,192],heap:[72,1512,360],rim:[960,1680,312],front:[432,1776,216],wnight:[48,2112,408],club:[1080,1920,312],hday:[672,1920,384]};
+const STUDIO={about:[528,24,432],hero:[48,24,432],t_film:[1128,72,240],index:[504,264,288],f2:[840,264,192],t_section:[240,312,168],glut:[24,336,192],t_bottle:[480,528,216],f1:[1152,552,168],night:[24,600,168],t_eye:[744,672,216],contact:[48,840,384],cage:[1008,912,360],t_construct:[24,1080,408],p34:[504,864,192],perl:[720,1128,168],t_carton:[1104,1152,216],f3:[456,1176,192],vio:[912,1176,168],t_trace:[672,1368,192],heap:[96,1368,360],rim:[960,1512,312],front:[456,1608,216],wnight:[48,1680,408],club:[1080,1752,312],hday:[648,1824,384]};
 const U=24, BAR=28, DESKW=1440;
 const desk=document.getElementById('desk'), wrap=document.getElementById('wrap');
 const ratio=r=>{if(r==='txt')return null;const [a,b]=r.split(':').map(Number);return b/a};
@@ -188,7 +188,7 @@ function fit(){
   let maxY=0; for(const k in els){const o=els[k]; maxY=Math.max(maxY,o.y+o.el.offsetHeight)}
   desk.style.height=(maxY+48)+'px'; wrap.style.height=((maxY+48)*s)+'px';
 }
-function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v7',JSON.stringify(o))}catch(e){}}
+function save(){try{const o={};for(const k in els)o[k]=[els[k].x,els[k].y,els[k].w];localStorage.setItem('thcd-desk-v6',JSON.stringify(o))}catch(e){}}
 function arrange(kind){
   if(kind==='grid'){ // tidy columns: every window the same width, stacked with equal gaps
     const n=5, gap=24, cw=(DESKW-48-gap*(n-1))/n, cols=Array(n).fill(24);
@@ -198,7 +198,7 @@ function arrange(kind){
   const b=document.getElementById('arr-grid'); if(b){b.setAttribute('aria-pressed',kind==='grid'); b.textContent=kind==='grid'?'free':'grid'}
   fit(); save();
 }
-let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v7')||'null')}catch(e){}
+let saved=null; try{saved=JSON.parse(localStorage.getItem('thcd-desk-v6')||'null')}catch(e){}
 if(saved&&W.every(d=>saved[d.id])) W.forEach(d=>place(d.id,...saved[d.id])); else arrange('free');
 
 document.getElementById('arr-grid').addEventListener('click',e=>arrange(e.currentTarget.getAttribute('aria-pressed')==='true'?'free':'grid'));
