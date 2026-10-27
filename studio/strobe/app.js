@@ -1,7 +1,7 @@
-import { compile, Renderer, makeLogo, W, H, FPS } from './engine.js?v=20261027h';
-import { renderSound, wavBlob } from './sound.js?v=20261027h';
-import { encodeMP4, recordWebM, canMP4 } from './export.js?v=20261027h';
-import { loadClip, embedImage, embedText, cos } from './clip.js?v=20261027h';
+import { compile, Renderer, makeLogo, W, H, FPS } from './engine.js?v=20261027i';
+import { renderSound, wavBlob } from './sound.js?v=20261027i';
+import { encodeMP4, recordWebM, canMP4 } from './export.js?v=20261027i';
+import { loadClip, embedImage, embedText, cos } from './clip.js?v=20261027i';
 
 const $ = s => document.querySelector(s);
 const media = [];            // every uploaded item
@@ -15,12 +15,13 @@ const MONO = '"Geist Mono", ui-monospace, monospace';
 const S = () => ({
   tempo: +$('#tempo').value, shape: $('#shape').value, glitch: +$('#glitch').value / 100,
   splits: $('#splits').checked, sheet: $('#sheet').checked, punch: $('#punch').checked,
-  marks: $('#marks').checked, safe: $('#safe').checked, sound: $('#sound').checked, seed,
+  logoOn: $('#logoon').checked, marks: $('#marks').checked, safe: $('#safe').checked, sound: $('#sound').checked, seed,
 });
 let logoCache = { key: '', logo: null }, exampleLogo = null, customFont = null;
 // "weight|family" values from the font menus; an uploaded font file becomes its own family
 const fontOf = sel => { const v = $(sel).value; if (v === 'custom' && customFont) return ['400', `"${customFont}"`]; const [w, f] = v.split('|'); return [w, `"${f}", ui-sans-serif, sans-serif`]; };
 async function logo() {
+  if (!$('#logoon').checked) return null;                  // a reel with no logo and no centre word
   const file = $('#logofile').files[0] || exampleLogo, text = $('#logo').value.trim() || 'STROBE';
   const [w, fam] = fontOf('#logofont');
   const key = text + '|' + w + fam + '|' + (file ? file.name + file.size : '');
@@ -70,7 +71,7 @@ async function addFiles(files) {
 // ---------------- media grid ----------------
 function drawMedia() {
   const box = $('#media'); box.innerHTML = '';
-  $('#empty').hidden = media.length > 0;
+  $('#empty').hidden = media.length > 0; $('#clearall').hidden = !media.length;
   media.forEach(m => {
     const el = document.createElement('div'); el.className = 'tile' + (cut.includes(m.id) ? ' in' : '');
     const sc = lastScores ? lastScores.get(m.id) : null;
@@ -107,6 +108,10 @@ function removeMedia(id) {
   const i = media.findIndex(x => x.id === id); if (i < 0) return;
   const [m] = media.splice(i, 1); if (m.bmp && m.bmp.close) m.bmp.close(); if (m.el) URL.revokeObjectURL(m.el.src);
   cut = cut.filter(x => x !== id); renumber(); status(`${media.length} items`); drawMedia(); refresh();
+}
+function clearAll() {                        // empty the upload: every frame, the picked order and the tags
+  media.forEach(m => { if (m.bmp && m.bmp.close) m.bmp.close(); if (m.el) URL.revokeObjectURL(m.el.src); });
+  media.length = 0; cut = []; $('#files').value = ''; drawMedia(); refresh(); showExample();
 }
 function moveMedia(id, beforeId) {            // drag a tile onto another: it takes that place
   if (id === beforeId) return;
@@ -266,16 +271,19 @@ $('#clear').onclick = () => { cut = []; lastScores = null; drawMedia(); refresh(
 $('#scrub').oninput = () => { $('#pv').hidden = true; $('#pv').loop = false; $('#cv').hidden = false; $('#exlook').hidden = true; drawFrame(); };
 $('#prev').onclick = () => make(false);
 $('#exp').onclick = () => make(true);
+$('#clearall').onclick = () => { if (media.length) clearAll(); };
 document.querySelectorAll('#settings input, #settings select').forEach(i => i.addEventListener(i.type === 'text' || i.tagName === 'SELECT' ? 'change' : 'input', () => refresh()));
 $('#mp4note').textContent = canMP4() ? 'exports MP4 (H.264 + AAC)' : 'this browser records WebM in real time; Chrome or Safari export MP4';
 refresh();
 // until frames are added, the preview plays an example cut made with the tool from the THCD silver pieces
-(function example() {
-  const v = $('#pv'), pick = $('#exlook');
+function showExample() {
+  const v = $('#pv'), pick = $('#exlook'); pick.hidden = false;
+  pick.querySelectorAll('button').forEach((x, i) => x.classList.toggle('on', i === 0));
   const set = l => { v.src = `./examples/example_${l}.mp4`; v.poster = './examples/example_poster.jpg'; v.muted = true; v.loop = true; v.hidden = false; $('#cv').hidden = true; v.play().catch(() => {}); };
   set('mix');
   pick.querySelectorAll('button').forEach(b => b.onclick = () => { pick.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); set(b.dataset.l); });
   status('example: silver pieces from thcd.monster, made here · unmute for sound');
-})();
+}
+showExample();
 // for scripting the tool from the console
 window.strobe = { get plan() { return plan; }, renderSound, wavBlob, seed: () => seed };

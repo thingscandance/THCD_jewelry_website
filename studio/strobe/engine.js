@@ -49,7 +49,7 @@ export function compile(list, opt) {
   const tempo = () => hold(posI / bodyN);
   const glitchy = () => r() < opt.glitch * .45;
 
-  push(Array.from({ length: 10 }, () => ({ t: 'black', intro: true })), { intro: true });
+  if (opt.logoOn !== false) push(Array.from({ length: 10 }, () => ({ t: 'black', intro: true })), { intro: true });   // without a logo the reel starts on the first picture
   const nA = Math.max(1, Math.ceil(body.length * .38));
   const A = body.slice(0, nA), B = body.slice(nA);
   let last = null;
@@ -306,15 +306,15 @@ export class Renderer {
 
   overlay(f, idx, cut, total) {
     const g = this.g, o = this.opt, L = o.logo;
-    if (!L) return;
-    const LY = 960 - L.h / 2;
-    const px = g.getImageData(300, Math.max(0, LY), 480, Math.max(1, Math.min(L.h, 120))).data;
-    let sum = 0; for (let p = 0; p < px.length; p += 16) sum += px[p] + px[p + 1] + px[p + 2];
-    const dark = sum / (px.length / 16 * 3) < 135;
-    const col = dark ? '#FFFFFF' : '#111214', logo = dark ? L.white : L.ink;
-    if (f.t === 'black' && f.intro) { g.drawImage(L.white, 300, LY); return; }          // the logo is simply there from the first frame
-    if (!f.nologo && f.t !== 'flash') g.drawImage(logo, 300, LY);
-    if (f.t === 'black' && f.outro) { g.drawImage(L.white, 300, LY); return; }
+    if (L) {                                                   // no logo: the centre stays empty, captions still run
+      const LY = 960 - L.h / 2;
+      const px = g.getImageData(300, Math.max(0, LY), 480, Math.max(1, Math.min(L.h, 120))).data;
+      let sum = 0; for (let p = 0; p < px.length; p += 16) sum += px[p] + px[p + 1] + px[p + 2];
+      const dark = sum / (px.length / 16 * 3) < 135, logo = dark ? L.white : L.ink;
+      if (f.t === 'black' && f.intro) { g.drawImage(L.white, 300, LY); return; }          // the logo is simply there from the first frame
+      if (!f.nologo && f.t !== 'flash') g.drawImage(logo, 300, LY);
+      if (f.t === 'black' && f.outro) { g.drawImage(L.white, 300, LY); return; }
+    } else if (f.t === 'black' && (f.intro || f.outro)) return;
     if (f.t === 'flash') return;
     const top = o.safe ? 316 : 60, bot = H - top;
     // each caption reads the picture under it and turns white on dark, black on light

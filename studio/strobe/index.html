@@ -112,9 +112,9 @@ input[type=range]{width:100%; accent-color:var(--accent)}
   <div class="app">
     <div class="col">
       <section class="win">
-        <div class="bar"><i></i><span>strobe/media</span><span class="help" tabindex="0" role="button" aria-label="how to use media">?<span class="tip" role="tooltip">Drop photos and videos here, or press choose files. Drag a frame onto another to change the order; × removes it. Click a frame to put it into the cut; frames go in the order you click. Tags on each frame: <b>sheet</b> puts the frame on the contact sheet (with none tagged, the sheet takes a random handful). <b>logo on product</b> means this frame already shows your logo, so the overlay hides and a deep hit sounds; <b>end</b> makes it the final packshot; <b>hiss</b> adds a hiss on that cut. The label under a frame becomes its FIG. caption.</span></span><span class="r">photos · clips</span></div>
+        <div class="bar"><i></i><span>strobe/media</span><span class="help" tabindex="0" role="button" aria-label="how to use media">?<span class="tip" role="tooltip">Drop photos and videos here, or press choose files. Drag a frame onto another to change the order; × removes it; <b>clear all</b> empties the upload and starts over. Click a frame to put it into the cut; frames go in the order you click. Tags on each frame: <b>sheet</b> puts the frame on the contact sheet (with none tagged, the sheet takes a random handful). <b>logo on product</b> means this frame already shows your logo, so the overlay hides and a deep hit sounds; <b>end</b> makes it the final packshot; <b>hiss</b> adds a hiss on that cut. The label under a frame becomes its FIG. caption.</span></span><span class="r">photos · clips</span></div>
         <div class="body">
-          <div id="drop">drop photos and videos here, or <button class="btn" id="pick" type="button">choose files</button>
+          <div id="drop">drop photos and videos here, or <button class="btn" id="pick" type="button">choose files</button> <button class="btn" id="clearall" type="button" hidden>clear all</button>
             <input id="files" type="file" accept="image/*,video/*" multiple hidden></div>
           <p class="muted" id="empty">Click a frame to put it into the cut. Mark the frame where the product already carries the logo, the packshot for the end, and cuts that should hiss.</p>
           <div id="media"></div>
@@ -147,7 +147,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
       </section>
 
       <section class="win" id="settings">
-        <div class="bar"><i></i><span>strobe/settings</span><span class="help" tabindex="0" role="button" aria-label="how to use settings">?<span class="tip" role="tooltip">Your logo (typed or a file) and its font, the small captions in the corners, how many frames each still holds, how much glitch and of which kind, the look of the whole reel, and which devices are used.</span></span><span class="r"></span></div>
+        <div class="bar"><i></i><span>strobe/settings</span><span class="help" tabindex="0" role="button" aria-label="how to use settings">?<span class="tip" role="tooltip">Your logo (typed or a file) and its font (untick <b>logo in the centre</b> for a reel with no logo and no centre word), the small captions in the corners, how many frames each still holds, how much glitch and of which kind, the look of the whole reel, and which devices are used.</span></span><span class="r"></span></div>
         <div class="body">
           <div class="grid">
             <label>logo text<input type="text" id="logo" value="STROBE"></label>
@@ -178,6 +178,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
             <label><input type="checkbox" id="splits" checked> split screens</label>
             <label><input type="checkbox" id="sheet" checked> contact sheet</label>
             <label><input type="checkbox" id="punch" checked> punch-ins</label>
+            <label><input type="checkbox" id="logoon" checked> logo in the centre</label>
             <label><input type="checkbox" id="captions" checked> corner captions</label>
             <label><input type="checkbox" id="marks" checked> hud: marks, timecode, FIG</label>
             <label><input type="checkbox" id="ruler" checked> hud: side ruler</label>
@@ -203,6 +204,6 @@ input[type=range]{width:100%; accent-color:var(--accent)}
     </div>
   </div>
 </div>
-<script type="module" src="./app.js?v=20261027h"></script>
+<script type="module" src="./app.js?v=20261027i"></script>
 </body>
 </html>
