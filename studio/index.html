@@ -144,7 +144,7 @@ a{color:inherit}
 
 
 <nav class="tabs" role="tablist" aria-label="Studio">
-  <a class="tab" role="tab" href="#desk" data-view="desk" aria-selected="true"><span class="n">00</span>desk</a>
+  <a class="tab" role="tab" href="#all" data-view="desk" aria-selected="true"><span class="n">00</span>desk</a>
   <a class="tab" role="tab" href="#cases" data-view="cases" aria-selected="false"><span class="n">01</span>cases</a>
   <a class="tab" role="tab" href="#tools" data-view="tools" aria-selected="false"><span class="n">02</span>tools</a>
 </nav>
@@ -333,14 +333,13 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
 (function(){
   // tabs: #desk / #cases / #tools; videos in a view play only while it is open
   const tabs=[...document.querySelectorAll('.tab')];
-  const show=v=>{ if(!['desk','cases','tools'].includes(v)) v='desk';
+  const show=v=>{ if(v==='all') v='desk'; if(!['desk','cases','tools'].includes(v)) v='desk';
     tabs.forEach(t=>t.setAttribute('aria-selected', String(t.dataset.view===v)));
     ['desk','cases','tools'].forEach(n=>{ const el=document.getElementById('view-'+n); el.hidden = n!==v;
       el.querySelectorAll('.list video').forEach(x=>{ if(n===v){ x.preload='metadata'; x.play().catch(()=>{}); } else x.pause(); }); });
     if(v==='desk') window.dispatchEvent(new Event('resize')); };
-  tabs.forEach(t=>t.addEventListener('click',e=>{ e.preventDefault(); history.replaceState(null,'','#'+t.dataset.view); show(t.dataset.view); window.scrollTo({top:0}); }));
+  tabs.forEach(t=>t.addEventListener('click',e=>{ e.preventDefault(); history.replaceState(null,'', t.getAttribute('href')); show(t.dataset.view); window.scrollTo({top:0}); }));
   show(location.hash.slice(1));
-  if(location.hash==='#desk') requestAnimationFrame(()=>window.scrollTo(0,0));   // #desk is also the desk element's id: don't jump to it
   addEventListener('hashchange',()=>show(location.hash.slice(1)));
 })();
 </script>
