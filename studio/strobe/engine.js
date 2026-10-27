@@ -40,11 +40,11 @@ export function compile(list, opt) {
   // tempo 1..10 sets how long a still holds (1: one or two frames, 10: about a third of a second and more);
   // shape bends it over the reel: 'middle' holds longer in the middle and strobes at both ends, 'build' starts slow
   // and speeds up, 'release' starts as a strobe and slows down, 'even' keeps one pace
-  const T = Math.max(1, Math.min(10, opt.tempo || 4)), base = 1.2 + (T - 1) * .85;
+  const T = Math.max(1, Math.min(10, opt.tempo || 4)), base = T <= 1 ? .55 : T <= 2 ? .85 : 1.05 + (T - 3) * .95;   // 1: one frame a picture
   const shapeAt = p => ({ middle: .35 + 1.65 * Math.sin(Math.PI * p), build: 1.7 - 1.4 * p, release: .3 + 1.4 * p }[opt.shape] ?? 1);
   const bodyN = Math.max(1, list.length - 1); let posI = 0;
   const hold = (p, mul = 1) => Math.max(1, Math.round(base * shapeAt(p) * mul * (.85 + r() * .3)));
-  const vk = 1.25 - (T - 1) * .06;                 // clips play faster at a fast tempo
+  const vk = T <= 1 ? 1.9 : T <= 2 ? 1.55 : 1.3 - (T - 3) * .07;   // clips play faster at a fast tempo
   const clip = (m, extra = {}) => rampTimes(m.dur, r, [2.4, 1.3, 2.4], vk).map(time => ({ t: 'vid', m, time, ...extra }));
   const tempo = () => hold(posI / bodyN);
   const glitchy = () => r() < opt.glitch * .45;
@@ -58,7 +58,7 @@ export function compile(list, opt) {
     posI++;
     if (m.type === 'video') { push(clip(m), { clip: true, hiss: m.flags.hiss }); last = m; return; }
     const lock = m.flags.ownLogo;
-    const n = j === 0 ? Math.max(8, hold(0, 3)) : lock ? Math.max(6, tempo() + 4) : tempo();
+    const n = j === 0 ? Math.max(T <= 2 ? 3 : 8, hold(0, 3)) : lock ? Math.max(T <= 2 ? 4 : 6, tempo() + 4) : tempo();
     push(still(m, n, { nologo: lock, zoom: j === 0 ? .03 : 0 }), { lock, hiss: m.flags.hiss });
     last = m;
   });
@@ -69,13 +69,16 @@ export function compile(list, opt) {
   }
   if (B.length) push([{ t: 'flash' }], { flash: true });
   // section B: richer devices
-  const sheetAt = (opt.sheet && imgs.length >= 6) ? Math.floor(B.length * .65) : -1;
+  // contact sheet: the frames tagged 'sheet', otherwise a random handful of all images; it always appears when switched on
+  let sheetPool = (opt.sheetPool && opt.sheetPool.length ? opt.sheetPool : imgs).slice();
+  if (!(opt.sheetPool && opt.sheetPool.tagged)) { for (let i = sheetPool.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [sheetPool[i], sheetPool[j]] = [sheetPool[j], sheetPool[i]]; } }
+  sheetPool = sheetPool.slice(0, 12);
+  const sheetOn = opt.sheet && sheetPool.length >= 2;
+  const sheetFrames = () => Array.from({ length: 10 }, (_, i) => ({ t: 'sheet', items: sheetPool, hl: Math.floor(i * sheetPool.length / 10), nologo: true }));
+  const sheetAt = sheetOn && B.length ? Math.floor(B.length * .65) : -1;
   for (let j = 0; j < B.length; j++) {
     const m = B[j]; posI++;
-    if (j === sheetAt) {
-      const pool = imgs.slice(0, 12);
-      push(Array.from({ length: 10 }, (_, i) => ({ t: 'sheet', items: pool, hl: Math.floor(i * pool.length / 10), nologo: true })), { shutter: 5, every: 2 });
-    }
+    if (j === sheetAt) push(sheetFrames(), { shutter: 5, every: 2 });
     if (m.type === 'video') { push(clip(m, { glitch: glitchy() ? 1 : 0 }), { clip: true, hiss: m.flags.hiss }); last = m; continue; }
     const nxt = B[j + 1];
     if (opt.splits && nxt && nxt.type === 'image' && r() < .3) {
@@ -87,6 +90,7 @@ export function compile(list, opt) {
     if (opt.punch && r() < .45) push(still(m, 2, { nologo: true, punch: [1.8 + r() * .5, .3 + r() * .4, .3 + r() * .4], glitch: glitchy() ? 2 : 0 }));
     last = m;
   }
+  if (sheetOn && sheetAt < 0) push(sheetFrames(), { shutter: 5, every: 2 });   // short reels: the sheet comes before the ending
   // ending: fast mix, flash, packshot, black
   const mixPool = body.filter(m => m.type === 'image');
   if (mixPool.length) {
@@ -179,8 +183,10 @@ export class Renderer {
       g.fillStyle = '#F6F5F2'; g.fillRect(0, 959, W, 2);
     } else if (f.t === 'sheet') {
       g.fillStyle = '#FAFAF9'; g.fillRect(0, 0, W, H);
-      const cols = 3, rows = 4, tw = 300, th = 400, gx = (W - cols * tw) / (cols + 1), gy = (H - rows * th) / (rows + 1);
-      for (let j = 0; j < Math.min(12, f.items.length); j++) {
+      const nI = Math.min(12, f.items.length), cols = nI <= 4 ? 2 : 3, rows = Math.ceil(nI / cols);
+      let tw = cols === 2 ? 440 : 300, th = tw * 4 / 3; const maxTh = (H - 120 - (rows + 1) * 44) / rows; if (th > maxTh) { th = maxTh; tw = th * 3 / 4; }
+      const gx = (W - cols * tw) / (cols + 1), gy = (H - rows * th) / (rows + 1);
+      for (let j = 0; j < nI; j++) {
         const m = f.items[j], x = gx + (j % cols) * (tw + gx), y = gy + Math.floor(j / cols) * (th + gy);
         g.save(); g.beginPath(); g.rect(x, y, tw, th); g.clip();
         if (j !== f.hl) g.filter = 'grayscale(1)';
@@ -191,8 +197,8 @@ export class Renderer {
     }
     if (o.look === 'xstrobe' && f.t !== 'black' && f.t !== 'flash' && !f.end) this.xstrobe(idx);          // the packshot stays calm
     else if (o.look === 'invertmix') { if (f.t !== 'black' && f.t !== 'flash' && rng((f.k || 1) * 7919 + 5)() < .5) this.look(rng((f.k || 1) * 31 + 1)() < .5 ? 'invert' : 'xray', idx); }
-    else if (o.look === 'mix') { if (f.t !== 'black' && f.t !== 'flash' && (f.t === 'vid' || rng((f.k || 1) * 7919 + 3)() < .5)) this.look('bwgrain', idx); }   // cut by cut: black and white or colour; clips always black and white
-    else if (o.look && o.look !== 'clean' && f.t !== 'black' && f.t !== 'flash') this.look(o.look, idx);
+    else if (o.look === 'mix') { if (f.t !== 'black' && f.t !== 'flash' && f.t !== 'sheet' && (f.t === 'vid' || rng((f.k || 1) * 7919 + 3)() < .5)) this.look('bwgrain', idx); }   // cut by cut: black and white or colour; clips always black and white
+    else if (o.look && o.look !== 'clean' && f.t !== 'black' && f.t !== 'flash' && f.t !== 'sheet') this.look(o.look, idx);   // the sheet keeps its own b/w + pink frame
     if (f.glitch) this.glitch(f.glitch, idx);
     this.overlay(f, idx, cut, total);
     g.restore();

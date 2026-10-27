@@ -42,7 +42,7 @@ function thumbOf(src, w, h) {
 async function addFiles(files) {
   const list = [...files].filter(f => /^(image|video)\//.test(f.type));
   for (const file of list) {
-    const m = { id: crypto.randomUUID(), idx: media.length, file, name: file.name, label: clean(file.name), flags: { ownLogo: false, end: false, hiss: false } };
+    const m = { id: crypto.randomUUID(), idx: media.length, file, name: file.name, label: clean(file.name), flags: { ownLogo: false, end: false, hiss: false, sheet: false } };
     status(`reading ${file.name}…`);
     try {
       if (file.type.startsWith('image/')) {
@@ -82,6 +82,7 @@ function drawMedia() {
         <button data-f="ownLogo" title="the product already carries the logo here: hide the overlay and hit on it">logo on product</button>
         <button data-f="end" title="use as the packshot at the end">end</button>
         <button data-f="hiss" title="a hiss on this cut">hiss</button>
+        <button data-f="sheet" title="put this frame on the contact sheet">sheet</button>
       </div>`;
     el.querySelector('.th').appendChild(m.thumb);
     el.querySelector('.th').onclick = () => { toggleCut(m.id); };
@@ -191,7 +192,9 @@ let plan = null, renderer = null;
 async function refresh() {
   drawCut();
   const list = listForReel();
-  plan = compile(list, S());
+  const opt = S(); const tagged = media.filter(m => m.type === 'image' && m.flags.sheet);
+  opt.sheetPool = tagged.length >= 2 ? Object.assign(tagged, { tagged: true }) : media.filter(m => m.type === 'image');
+  plan = compile(list, opt);
   renderer = new Renderer(await rendererOpt());
   const n = plan.frames.length;
   $('#scrub').max = Math.max(0, n - 1);
