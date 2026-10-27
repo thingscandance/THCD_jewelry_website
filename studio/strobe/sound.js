@@ -32,7 +32,8 @@ export async function renderSound(frames, cuts, opt = {}) {
     const wg = new GainNode(ctx, { gain: root * m * .004 }); wow.connect(wg).connect(o.frequency);
     const g = new GainNode(ctx, { gain: a }); o.connect(g).connect(droneBus); o.start(0); o.stop(dur); return [o, m];
   });
-  const quiet = style === 'clicks';                  // clicks: no drone, no air, no hiss — only the beat and the cuts
+  const hum = style === 'hum';
+  const quiet = style === 'clicks' || hum;            // clicks and hum: no drone, no air, no hiss from the dark set
   const dl = quiet ? 0 : style === 'pulse' ? .07 : .22;          // under the pulse the drone is only a floor
   droneBus.gain.setValueAtTime(0, 0); droneBus.gain.linearRampToValueAtTime(dl, 1.0);
   for (const ff of [...flashes, endF]) {                    // tape-stop: pitch dives over 0.3 s before the flash
@@ -75,6 +76,56 @@ export async function renderSound(frames, cuts, opt = {}) {
     kick(tEnd, 1.0);                                          // one last hit on the packshot, then air
   }
 
+  if (hum) {
+    // hum: a low electric buzz — a pulse train cut off above ~270 Hz, its rate switching between a few values at the
+    // big moments, with small dropouts on cuts, data blips in the low mids, a faint high beep and quiet digital chatter
+    const n = Math.ceil(dur * SR), pb = ctx.createBuffer(1, n, SR), d = pb.getChannelData(0);
+    const rates = [32, 47, 38, 55, 42], tEnd = at(endF);
+    const marks = cuts.filter(c => c.lock || c.flash || c.sheet || c.shutter).map(c => at(c.frame)).filter(t => t > .5 && t < tEnd);
+    for (let t = 3 + rand() * 1.5; t < tEnd; t += 2.5 + rand() * 2) marks.push(t);   // the rate also moves on its own every few seconds
+    marks.sort((a, b) => a - b);
+    const gaps = cuts.filter((c, i) => i && c.frame < endF).map(c => at(c.frame));
+    const flashT = flashes.map(at);
+    let ph = 0, ri = 0, mi = 0, gi = 0, rate = rates[0];
+    for (let i = 0; i < n; i++) {
+      const t = i / SR;
+      while (mi < marks.length && t >= marks[mi]) { ri = (ri + 1 + Math.floor(rand() * (rates.length - 1))) % rates.length; rate = rates[ri]; mi++; }
+      let r = rate;
+      for (const ft of flashT) if (t > ft - .3 && t < ft) r = rate * (.35 + .65 * (ft - t) / .3);   // the buzz sags into a flash
+      if (t > vid - 1.4) r = rate * Math.max(.45, 1 - (t - vid + 1.4) * .4);                    // and winds down as the logo fades
+      ph += r / SR;
+      if (ph >= 1) { ph -= 1; while (gi < gaps.length && gaps[gi] < t - .012) gi++;
+        const inGap = gi < gaps.length && t >= gaps[gi] && t < gaps[gi] + .012;              // a 12 ms dropout on every cut
+        if (!inGap) { const a = .8 + rand() * .4; for (let k = 0; k < 24 && i + k < n; k++) d[i + k] = a; } }   // a 0.5 ms pulse
+    }
+    const src = new AudioBufferSourceNode(ctx, { buffer: pb });
+    const humG = new GainNode(ctx, { gain: 0 }); humG.gain.setValueAtTime(0, 0); humG.gain.linearRampToValueAtTime(1, .08);
+    src.connect(new BiquadFilterNode(ctx, { type: 'highpass', frequency: 48, Q: .7 }))
+       .connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 170, Q: 1.0 }))
+       .connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 230, Q: .7 }))
+       .connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 260, Q: .6 }))
+       .connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 280, Q: .6 }))
+       .connect(new BiquadFilterNode(ctx, { type: 'peaking', frequency: 85, Q: 1.0, gain: 9 }))
+       .connect(humG).connect(master);
+    src.start(0);
+    // data blips: short tones in the 300-420 Hz band
+    for (let t = .3 + rand() * .4; t < tEnd; t += .25 + rand() * .7) {
+      const len = .06 + rand() * .12, o = new OscillatorNode(ctx, { type: 'square', frequency: 300 + rand() * 120 });
+      const g = new GainNode(ctx, { gain: 0 }); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.008, t + .005); g.gain.setValueAtTime(.008, t + len); g.gain.linearRampToValueAtTime(0, t + len + .01);
+      o.connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 450, Q: .5 })).connect(g).connect(master); o.start(t); o.stop(t + len + .02);
+    }
+    // a faint high beep, on and off in phrases
+    for (let t = .6 + rand(); t < tEnd - .5; t += 1.4 + rand() * 1.8) {
+      const len = .4 + rand() * 1.1, o = new OscillatorNode(ctx, { frequency: rand() < .7 ? 1150 : 700 });
+      const g = new GainNode(ctx, { gain: 0 }); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.015, t + .02); g.gain.setValueAtTime(.015, t + len); g.gain.linearRampToValueAtTime(0, t + len + .03);
+      o.connect(g).connect(master); o.start(t); o.stop(t + len + .05);
+    }
+    // quiet digital chatter up high on the cuts
+    gaps.forEach((t, i) => { const pan = i % 2 ? .4 : -.4; const s2 = noiseSrc(t, t + .05); const p2 = new StereoPannerNode(ctx, { pan });
+      s2.connect(band(7000, 12000)).connect(env(t, .06, .001, .008, .05)).connect(p2).connect(master); });
+    humG.gain.setValueAtTime(1, tEnd); humG.gain.linearRampToValueAtTime(.7, tEnd + .4);   // softer under the packshot; the run-out below fades it to zero
+  }
+
   // --- per-cut events
   const thump = (t, f0, f1, len, peak) => { const o = new OscillatorNode(ctx, { frequency: f0 }); o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + len); const g = env(t, peak, .004, len / 4, len); o.connect(g).connect(master); o.start(t); o.stop(t + len); };
   const burst = (t, lo, hi, peak, att, decay, len, pan = 0) => { const s = noiseSrc(t, t + len); const p = new StereoPannerNode(ctx, { pan }); s.connect(band(lo, hi)).connect(env(t, peak, att, decay, len)).connect(p).connect(master); };
@@ -82,6 +133,7 @@ export async function renderSound(frames, cuts, opt = {}) {
     const t = at(c.frame);
     if (c.frame >= endF || i === 0) return;
     const pan = i % 2 ? .35 : -.35;
+    if (hum) { if (c.lock || c.end) thump(t, 46, 32, .5, .35); if (c.hiss) burst(t, 3200, 10500, .3, .03, .35, 1.2); return; }
     if (quiet) { burst(t, 1600, 5200, .12, .001, .004, .035, pan); thump(t, 180, 90, .04, .08); }   // a clean click on every change of picture
     else { burst(t, 500, 2000, .06, .006, .008, .07, pan); thump(t, 90, 50, .1, .12); }             // soft felt tap: no high click, a rounded attack
     if (c.lock || c.end) {                                            // deep hit + dark glass
