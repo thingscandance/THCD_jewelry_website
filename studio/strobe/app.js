@@ -30,7 +30,7 @@ async function logo() {
 async function rendererOpt() {
   const [tw, tfam] = fontOf('#textfont');
   try { await document.fonts.load(`${tw} 22px ${tfam}`); } catch (e) {}
-  return { gstyle: $('#gstyle').value, look: $('#look').value, font: tfam, fontWeight: tw, mono: MONO, logo: await logo(), tl: $('#tl').value, bl: $('#bl').value, br: $('#br').value, tag: $('#tag').value, marks: $('#marks').checked, ruler: $('#ruler').checked, captions: $('#captions').checked, safe: $('#safe').checked };
+  return { pool: media.filter(m => m.type === 'image'), gstyle: $('#gstyle').value, look: $('#look').value, font: tfam, fontWeight: tw, mono: MONO, logo: await logo(), tl: $('#tl').value, bl: $('#bl').value, br: $('#br').value, tag: $('#tag').value, marks: $('#marks').checked, ruler: $('#ruler').checked, captions: $('#captions').checked, safe: $('#safe').checked };
 }
 
 // ---------------- loading media ----------------

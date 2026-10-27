@@ -166,6 +166,9 @@ export class Renderer {
       if (f.zoom) z = 1 + f.zoom * (f.i / Math.max(1, f.n - 1));
       if (f.punch) cover(g, src, sw, sh, 0, 0, W, H, f.punch[0], f.punch[1], f.punch[2]);
       else cover(g, src, sw, sh, 0, 0, W, H, z);
+      if (o.look === 'xstrobe' && f.t === 'vid' && o.pool && o.pool.length && rng(idx * 977 + 11)() < .42) {   // clips get chopped by flashes of other frames
+        const m2 = o.pool[Math.floor(rng(idx * 131 + 7)() * o.pool.length)]; cover(g, m2.bmp, m2.w, m2.h, 0, 0, W, H);
+      }
       this.keepShot(f);
     } else if (f.t === 'split') {
       const [top, bot] = f.swap ? [f.b, f.a] : [f.a, f.b];
@@ -186,13 +189,30 @@ export class Renderer {
         if (j === f.hl) { g.strokeStyle = '#E61E9C'; g.lineWidth = 9; g.strokeRect(x - 8, y - 8, tw + 16, th + 16); g.strokeStyle = '#FFFFFF'; g.lineWidth = 2; g.strokeRect(x - 2, y - 2, tw + 4, th + 4); }
       }
     }
-    if (o.look === 'invertmix') { if (f.t !== 'black' && f.t !== 'flash' && rng((f.k || 1) * 7919 + 5)() < .5) this.look(rng((f.k || 1) * 31 + 1)() < .5 ? 'invert' : 'xray', idx); }
+    if (o.look === 'xstrobe' && f.t !== 'black' && f.t !== 'flash') this.xstrobe(idx);
+    else if (o.look === 'invertmix') { if (f.t !== 'black' && f.t !== 'flash' && rng((f.k || 1) * 7919 + 5)() < .5) this.look(rng((f.k || 1) * 31 + 1)() < .5 ? 'invert' : 'xray', idx); }
     else if (o.look === 'mix') { if (f.t !== 'black' && f.t !== 'flash' && (f.t === 'vid' || rng((f.k || 1) * 7919 + 3)() < .5)) this.look('bwgrain', idx); }   // cut by cut: black and white or colour; clips always black and white
     else if (o.look && o.look !== 'clean' && f.t !== 'black' && f.t !== 'flash') this.look(o.look, idx);
     if (f.glitch) this.glitch(f.glitch, idx);
     this.overlay(f, idx, cut, total);
     g.restore();
     return this.scratch;
+  }
+
+  xstrobe(idx) {
+    // every frame decides on its own: plain, negative, or laid over the previous shot (negative, difference / overlay)
+    const g = this.g, r = rng(idx * 7349 + 29);
+    if (!this.copy) { this.copy = document.createElement('canvas'); this.copy.width = W; this.copy.height = H; this.cg = this.copy.getContext('2d'); }
+    this.cg.drawImage(this.scratch, 0, 0);
+    const v = r();
+    if (v < .32) { g.filter = 'invert(1) contrast(1.1)'; g.drawImage(this.copy, 0, 0); g.filter = 'none'; }
+    else if (v < .74 && this.hasPrev) {
+      g.globalCompositeOperation = r() < .5 ? 'difference' : 'overlay'; g.globalAlpha = .85;
+      g.filter = r() < .6 ? 'invert(1) contrast(1.2)' : 'contrast(1.2)'; g.drawImage(this.shotPrev, 0, 0, W, H);
+      g.filter = 'none'; g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+      if (r() < .4) { this.cg.drawImage(this.scratch, 0, 0); g.filter = 'invert(1)'; g.drawImage(this.copy, 0, 0); g.filter = 'none'; }
+    }
+    if (r() < .45) { const gs = this.opt.gstyle; this.opt.gstyle = 'invert'; this.glitch(1 + Math.floor(r() * 3), idx + 17); this.opt.gstyle = gs; }
   }
 
   keepShot(f) {

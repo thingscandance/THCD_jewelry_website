@@ -32,7 +32,8 @@ export async function renderSound(frames, cuts, opt = {}) {
     const wg = new GainNode(ctx, { gain: root * m * .004 }); wow.connect(wg).connect(o.frequency);
     const g = new GainNode(ctx, { gain: a }); o.connect(g).connect(droneBus); o.start(0); o.stop(dur); return [o, m];
   });
-  const dl = style === 'pulse' ? .07 : .22;          // under the pulse the drone is only a floor
+  const quiet = style === 'clicks';                  // clicks: no drone, no air, no hiss — only the beat and the cuts
+  const dl = quiet ? 0 : style === 'pulse' ? .07 : .22;          // under the pulse the drone is only a floor
   droneBus.gain.setValueAtTime(0, 0); droneBus.gain.linearRampToValueAtTime(dl, 1.0);
   for (const ff of [...flashes, endF]) {                    // tape-stop: pitch dives over 0.3 s before the flash
     const t = at(ff);
@@ -41,6 +42,7 @@ export async function renderSound(frames, cuts, opt = {}) {
   }
   droneBus.gain.setValueAtTime(dl, at(endF)); droneBus.gain.linearRampToValueAtTime(0, Math.min(at(endF) + 1.1, vid - .1));
 
+  if (!quiet) {
   // --- breathing air, faint hiss and crackle across the whole piece
   const air = noiseSrc(0, dur), airLp = new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 520 }), airG = new GainNode(ctx, { gain: .08 });
   const airL = new OscillatorNode(ctx, { frequency: .11 }), airD = new GainNode(ctx, { gain: .03 }); airL.connect(airD).connect(airG.gain); airL.start(0); airL.stop(dur);
@@ -50,8 +52,9 @@ export async function renderSound(frames, cuts, opt = {}) {
   const cr = ctx.createBuffer(2, Math.ceil(dur * SR), SR);
   for (let ch = 0; ch < 2; ch++) { const d = cr.getChannelData(ch); for (let i = 0; i < d.length; i++) if (rand() < 16 / SR) d[i] = (rand() * 2 - 1) * (.2 + rand() * .8); }
   const crs = new AudioBufferSourceNode(ctx, { buffer: cr }); crs.connect(band(500, 3000)).connect(new GainNode(ctx, { gain: .03 })).connect(master); crs.start(0);
+  }
 
-  if (style === 'pulse') {
+  if (style === 'pulse' || style === 'clicks') {
     const beat = 60 / (opt.bpm || 120), t0 = 0.1, tEnd = at(endF);
     const kick = (t, peak = .9) => { const o = new OscillatorNode(ctx, { frequency: 150 }); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + .12); const g = env(t, peak, .002, .09, .45); o.connect(g).connect(master); o.start(t); o.stop(t + .45); };
     const hat = (t, pan, peak = .035) => { const sN = noiseSrc(t, t + .06); const pp = new StereoPannerNode(ctx, { pan }); sN.connect(band(5000, 8000)).connect(env(t, peak, .003, .014, .06)).connect(pp).connect(master); };
@@ -63,8 +66,8 @@ export async function renderSound(frames, cuts, opt = {}) {
     for (let t = t0; t < tEnd - .05; t += beat, n++) {
       const bar = Math.floor(n / 4);
       if (!nearFlash(t)) kick(t, n % 4 === 0 ? .95 : .8);
-      hat(t + beat / 2, n % 2 ? .3 : -.3);
-      if (n % 4 === 3) hat(t + beat * .75, 0, .04);
+      if (!quiet) { hat(t + beat / 2, n % 2 ? .3 : -.3); if (n % 4 === 3) hat(t + beat * .75, 0, .04); }
+      if (quiet) continue;
       bo.frequency.setValueAtTime(notes[bar % 4], t);
       bassBus.gain.setValueAtTime(.0, t); bassBus.gain.linearRampToValueAtTime(.22, t + .08); bassBus.gain.setTargetAtTime(.04, t + .1, beat * .35);   // ducks under every kick
     }
@@ -79,7 +82,8 @@ export async function renderSound(frames, cuts, opt = {}) {
     const t = at(c.frame);
     if (c.frame >= endF || i === 0) return;
     const pan = i % 2 ? .35 : -.35;
-    burst(t, 500, 2000, .06, .006, .008, .07, pan); thump(t, 90, 50, .1, .12);             // soft felt tap: no high click, a rounded attack
+    if (quiet) { burst(t, 1600, 5200, .12, .001, .004, .035, pan); thump(t, 180, 90, .04, .08); }   // a clean click on every change of picture
+    else { burst(t, 500, 2000, .06, .006, .008, .07, pan); thump(t, 90, 50, .1, .12); }             // soft felt tap: no high click, a rounded attack
     if (c.lock || c.end) {                                            // deep hit + dark glass
       thump(t, 46, 32, .6, .5);
       [[986, .1, .11], [1613, .07, .08], [2871, .04, .06], [4290, .02, .045]].forEach(([fq, a, d]) => {
