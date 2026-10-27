@@ -54,7 +54,7 @@ export async function renderSound(frames, cuts, opt = {}) {
   const crs = new AudioBufferSourceNode(ctx, { buffer: cr }); crs.connect(band(500, 3000)).connect(new GainNode(ctx, { gain: .03 })).connect(master); crs.start(0);
   }
 
-  if (style === 'pulse' || style === 'clicks') {
+  if (style === 'pulse') {
     const beat = 60 / (opt.bpm || 120), t0 = 0.1, tEnd = at(endF);
     const kick = (t, peak = .9) => { const o = new OscillatorNode(ctx, { frequency: 150 }); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + .12); const g = env(t, peak, .002, .09, .45); o.connect(g).connect(master); o.start(t); o.stop(t + .45); };
     const hat = (t, pan, peak = .035) => { const sN = noiseSrc(t, t + .06); const pp = new StereoPannerNode(ctx, { pan }); sN.connect(band(5000, 8000)).connect(env(t, peak, .003, .014, .06)).connect(pp).connect(master); };
