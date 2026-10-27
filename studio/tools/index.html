@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Tools from THCD video_studio: small machines for making strobe reels, free and running in your browser.">
+<title>Tools · THCD video_studio</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&family=Doto:wght@700;900&display=swap">
+<style>
+:root{
+  --canvas:#000; --paper:#0B0C0D; --ink:#E9ECEA; --muted:#8D9493; --edge:rgba(233,236,234,.28); --grid:rgba(233,236,234,.11); --accent:#E61E9C;
+  --f-display:"Doto","Geist Mono",ui-monospace,monospace; --f-ui:"Geist Mono",ui-monospace,Menlo,monospace; --f-body:"Geist",ui-sans-serif,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--canvas); color:var(--ink); font-family:var(--f-ui); font-size:12px; line-height:1.55;
+  background-image:radial-gradient(circle,var(--grid) 1px,transparent 1.4px); background-size:24px 24px;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:0 64px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.page{max-width:1280px; margin:0 auto; display:flex; flex-direction:column; gap:56px}
+.nav{display:flex; justify-content:space-between; align-items:center; gap:16px; padding-block:22px 14px; border-bottom:1px solid var(--edge); flex-wrap:wrap}
+.nav a{text-decoration:none} .nav a:hover{color:var(--accent)}
+.nav .thcd-logo{width:clamp(90px,8vw,120px); height:auto; display:block}
+.nav .r{display:flex; gap:16px; flex-wrap:wrap; align-items:center; font-size:11px; letter-spacing:.06em}
+.nav span{color:var(--muted)}
+.head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:32px; align-items:end}
+.title{font-family:var(--f-display); font-weight:900; font-size:clamp(64px,13vw,200px); line-height:.8; margin:0; letter-spacing:-.03em}
+.lede{font-family:var(--f-body); font-weight:300; letter-spacing:-.02em; font-size:clamp(22px,2.6vw,34px); line-height:1.12; margin:0; text-wrap:balance}
+.win{background:var(--paper); border:1px solid var(--edge); display:flex; flex-direction:column; min-width:0; text-decoration:none; transition:border-color .2s}
+a.win:hover{border-color:var(--accent)}
+.bar{height:28px; display:flex; align-items:center; gap:10px; padding:0 8px; border-bottom:1px solid var(--edge); font-size:10.5px; white-space:nowrap; overflow:hidden}
+.bar i{width:9px; height:9px; border:1px solid var(--edge); flex:none}
+.bar .r{margin-left:auto; color:var(--muted)}
+.tool{display:grid; grid-template-columns:minmax(0,320px) minmax(0,1fr); gap:0}
+.tool video{display:block; width:100%; aspect-ratio:9/16; object-fit:cover; background:#000; border-right:1px solid var(--edge)}
+.tool .txt{padding:22px; display:flex; flex-direction:column; gap:14px}
+.tool h2{font-family:var(--f-display); font-weight:900; font-size:48px; line-height:1; margin:0}
+.tool p{margin:0; font-family:var(--f-body); font-weight:300; font-size:clamp(16px,1.4vw,19px); line-height:1.4; max-width:56ch}
+.tool ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px; color:var(--muted)}
+.tool .go{margin-top:auto; color:var(--accent); font-size:12px; letter-spacing:.06em}
+.slot{padding:22px; color:var(--muted); border-style:dashed}
+@media (max-width:760px){ .head,.tool{grid-template-columns:1fr} .tool video{border-right:0; border-bottom:1px solid var(--edge)} }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="nav">
+    <a href="https://thcd.monster/" aria-label="Things Can Dance, home"><img class="thcd-logo" src="/studio/img/thcd_logo.png" alt="Things Can Dance"></a>
+    <div class="r"><a href="/studio/">← video_studio</a><span>tools</span></div>
+  </nav>
+  <header class="head">
+    <h1 class="title">TOOLS</h1>
+    <p class="lede">Small machines from the studio. Free, and they run in your browser: nothing you put in leaves your computer.</p>
+  </header>
+  <a class="win" href="/studio/strobe/" aria-label="Open STROBE, the reel machine">
+    <div class="bar"><i></i><span>tools/strobe</span><span class="r">reel machine · 9:16</span></div>
+    <div class="tool">
+      <video src="/studio/strobe/examples/example_mix.mp4" poster="/studio/strobe/examples/example_poster.jpg" muted autoplay loop playsinline preload="metadata" aria-label="A reel made with STROBE"></video>
+      <div class="txt">
+        <h2>STROBE</h2>
+        <p>Drop photos and clips, describe what you want to see, and get a vertical strobe reel with sound: the logo stays still while the images flicker underneath it.</p>
+        <ul>
+          <li>search your frames by description, or write the reel as a list</li>
+          <li>speed ramps, split screens, contact sheet, glitch, x-ray</li>
+          <li>looks: colour and b/w, vhs, negative · three kinds of sound</li>
+          <li>exports a 1080×1920 MP4 for Instagram</li>
+        </ul>
+        <span class="go">open STROBE →</span>
+      </div>
+    </div>
+  </a>
+  <div class="win slot"><div>next tool — in the works</div></div>
+</div>
+</body>
+</html>

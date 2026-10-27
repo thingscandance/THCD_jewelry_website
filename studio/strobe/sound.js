@@ -5,7 +5,8 @@
 const SR = 48000, FPS = 24;
 
 export async function renderSound(frames, cuts, opt = {}) {
-  const dur = frames.length / FPS + 0.4;
+  const vid = frames.length / FPS, dur = vid + 0.4;   // vid: the length of the picture; the sound must be silent by then
+  const style = opt.style || 'dark';
   const ctx = new OfflineAudioContext(2, Math.ceil(dur * SR), SR);
   const at = f => f / FPS;
   const endF = (cuts.find(c => c.end) || { frame: frames.length }).frame;
@@ -31,23 +32,78 @@ export async function renderSound(frames, cuts, opt = {}) {
     const wg = new GainNode(ctx, { gain: root * m * .004 }); wow.connect(wg).connect(o.frequency);
     const g = new GainNode(ctx, { gain: a }); o.connect(g).connect(droneBus); o.start(0); o.stop(dur); return [o, m];
   });
-  droneBus.gain.setValueAtTime(0, 0); droneBus.gain.linearRampToValueAtTime(.22, 1.0);
+  const dl = style === 'pulse' ? .07 : style === 'silk' ? 0 : .22;          // under the pulse the drone is only a floor
+  droneBus.gain.setValueAtTime(0, 0); droneBus.gain.linearRampToValueAtTime(dl, 1.0);
   for (const ff of [...flashes, endF]) {                    // tape-stop: pitch dives over 0.3 s before the flash
     const t = at(ff);
     for (const [o, m] of oscs) { o.frequency.setValueAtTime(root * m, Math.max(0, t - .3)); o.frequency.exponentialRampToValueAtTime(root * m * .2, t); o.frequency.setValueAtTime(root * m, t + .1); }
-    if (ff !== endF) { droneBus.gain.setValueAtTime(.22, t - .02); droneBus.gain.linearRampToValueAtTime(.03, t); droneBus.gain.linearRampToValueAtTime(.22, t + .12); }
+    if (ff !== endF) { droneBus.gain.setValueAtTime(dl, t - .02); droneBus.gain.linearRampToValueAtTime(.01, t); droneBus.gain.linearRampToValueAtTime(dl, t + .12); }
   }
-  droneBus.gain.setValueAtTime(.22, at(endF)); droneBus.gain.linearRampToValueAtTime(0, at(endF) + 1.1);
+  droneBus.gain.setValueAtTime(dl, at(endF)); droneBus.gain.linearRampToValueAtTime(0, Math.min(at(endF) + 1.1, vid - .1));
 
   // --- breathing air, faint hiss and crackle across the whole piece
   const air = noiseSrc(0, dur), airLp = new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 520 }), airG = new GainNode(ctx, { gain: .08 });
   const airL = new OscillatorNode(ctx, { frequency: .11 }), airD = new GainNode(ctx, { gain: .03 }); airL.connect(airD).connect(airG.gain); airL.start(0); airL.stop(dur);
   air.connect(airLp).connect(airG).connect(master);
-  airG.gain.setValueAtTime(.08, Math.max(0, dur - .7)); airG.gain.linearRampToValueAtTime(0, dur);
+  airG.gain.setValueAtTime(.08, Math.max(0, vid - .9)); airG.gain.linearRampToValueAtTime(0, vid - .05);
   const hs = noiseSrc(0, dur), hg = new GainNode(ctx, { gain: .004 }); hs.connect(band(1200, 6000)).connect(hg).connect(master);
   const cr = ctx.createBuffer(2, Math.ceil(dur * SR), SR);
   for (let ch = 0; ch < 2; ch++) { const d = cr.getChannelData(ch); for (let i = 0; i < d.length; i++) if (rand() < 16 / SR) d[i] = (rand() * 2 - 1) * (.2 + rand() * .8); }
   const crs = new AudioBufferSourceNode(ctx, { buffer: cr }); crs.connect(band(600, 4500)).connect(new GainNode(ctx, { gain: .06 })).connect(master); crs.start(0);
+
+  if (style === 'silk') {
+    // elegant: a soft chord pad that changes at each flash, felt-mallet notes picked from the chord on the cuts,
+    // a low warm chord where the logo meets the product, everything through a long soft room
+    const ir = ctx.createBuffer(2, Math.floor(SR * 2.8), SR);
+    for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < d.length; i++) d[i] = (rand() * 2 - 1) * Math.pow(1 - i / d.length, 3.2) * (i < 200 ? i / 200 : 1); }
+    const room = new ConvolverNode(ctx, { buffer: ir }); const wet = new GainNode(ctx, { gain: .55 }); room.connect(wet).connect(master);
+    const send = node => { node.connect(master); node.connect(room); };
+    const chords = [[110, 164.81, 196, 246.94, 261.63], [87.31, 130.81, 164.81, 220, 261.63], [98, 146.83, 174.61, 220, 293.66], [82.41, 123.47, 164.81, 196, 246.94]];
+    const marks = [0, ...flashes.map(at), at(endF)];
+    const padBus = new GainNode(ctx, { gain: 0 }); const padLp = new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 900, Q: .3 }); padBus.connect(padLp); send(padLp);
+    padBus.gain.setValueAtTime(0, 0); padBus.gain.linearRampToValueAtTime(.05, 1.6);
+    marks.forEach((t0, ci) => {
+      const t1 = ci + 1 < marks.length ? marks[ci + 1] + .4 : vid, ch = chords[ci % chords.length];
+      ch.forEach((fq, j) => [-.06, .06].forEach(det => {
+        const o = new OscillatorNode(ctx, { type: 'sawtooth', frequency: fq, detune: det * 100 }); const g = new GainNode(ctx, { gain: 0 });
+        g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(.16 / (1 + j * .4), t0 + .9); g.gain.setValueAtTime(.16 / (1 + j * .4), Math.max(t0 + .9, t1 - .5)); g.gain.linearRampToValueAtTime(0, t1);
+        o.connect(g).connect(padBus); o.start(t0); o.stop(t1 + .05);
+      }));
+    });
+    const mallet = (t, fq, peak) => {
+      [[1, 1], [2, .25], [4.02, .06]].forEach(([m, a]) => { const o = new OscillatorNode(ctx, { type: 'triangle', frequency: fq * m }); const g = env(t, peak * a, .006, .22 / m, 1.4);
+        const lpM = new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 2200 }); o.connect(g).connect(lpM); send(lpM); o.start(t); o.stop(t + 1.4); });
+    };
+    const chordAt = t => { let ci = 0; marks.forEach((m, i) => { if (t >= m) ci = i; }); return chords[ci % chords.length]; };
+    cuts.forEach((c, i) => {
+      const t = at(c.frame); if (c.frame >= endF || i === 0) return;
+      if (i % 2 === 0) { const ch = chordAt(t); mallet(t, ch[2 + (i / 2) % 3] * 2, .09); }            // a soft arpeggio follows the edit
+      if (c.lock) { chordAt(t).slice(0, 3).forEach(fq => mallet(t, fq, .12)); }
+      if (c.flash) { const sN = noiseSrc(t - .5, t + .05); const gS = new GainNode(ctx, { gain: 0 }); gS.gain.setValueAtTime(0, t - .5); gS.gain.linearRampToValueAtTime(.12, t - .02); gS.gain.linearRampToValueAtTime(0, t + .05); const lpS = new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 3000 }); sN.connect(lpS).connect(gS); send(gS); }
+    });
+    { const t = at(endF); chordAt(t).forEach((fq, j) => mallet(t + j * .045, fq * (j < 2 ? 1 : 2), .1)); }     // the packshot chord, gently rolled
+  }
+
+  if (style === 'pulse') {
+    const beat = 60 / (opt.bpm || 120), t0 = 0.1, tEnd = at(endF);
+    const kick = (t, peak = .9) => { const o = new OscillatorNode(ctx, { frequency: 150 }); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + .12); const g = env(t, peak, .002, .09, .45); o.connect(g).connect(master); o.start(t); o.stop(t + .45); };
+    const hat = (t, pan, peak = .07) => { const sN = noiseSrc(t, t + .06); const pp = new StereoPannerNode(ctx, { pan }); sN.connect(new BiquadFilterNode(ctx, { type: 'highpass', frequency: 7000 })).connect(env(t, peak, .001, .012, .06)).connect(pp).connect(master); };
+    const bassBus = new GainNode(ctx, { gain: .0 }); bassBus.connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 260, Q: 3 })).connect(master);
+    const bo = new OscillatorNode(ctx, { type: 'sawtooth', frequency: 55 }); bo.connect(bassBus); bo.start(0); bo.stop(dur);
+    const notes = [55, 55, 65.41, 49];                      // one note per bar: A, A, C, G
+    const nearFlash = t => flashes.some(f => Math.abs(at(f) - t) < beat * .5);
+    let n = 0;
+    for (let t = t0; t < tEnd - .05; t += beat, n++) {
+      const bar = Math.floor(n / 4);
+      if (!nearFlash(t)) kick(t, n % 4 === 0 ? .95 : .8);
+      hat(t + beat / 2, n % 2 ? .3 : -.3);
+      if (n % 4 === 3) hat(t + beat * .75, 0, .04);
+      bo.frequency.setValueAtTime(notes[bar % 4], t);
+      bassBus.gain.setValueAtTime(.0, t); bassBus.gain.linearRampToValueAtTime(.22, t + .08); bassBus.gain.setTargetAtTime(.04, t + .1, beat * .35);   // ducks under every kick
+    }
+    bassBus.gain.setValueAtTime(.04, tEnd); bassBus.gain.linearRampToValueAtTime(0, tEnd + .15);
+    kick(tEnd, 1.0);                                          // one last hit on the packshot, then air
+  }
 
   // --- per-cut events
   const thump = (t, f0, f1, len, peak) => { const o = new OscillatorNode(ctx, { frequency: f0 }); o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + len); const g = env(t, peak, .004, len / 4, len); o.connect(g).connect(master); o.start(t); o.stop(t + len); };
@@ -56,8 +112,8 @@ export async function renderSound(frames, cuts, opt = {}) {
     const t = at(c.frame);
     if (c.frame >= endF || i === 0) return;
     const pan = i % 2 ? .35 : -.35;
-    burst(t, 900, 3800, .13, .002, .004, .06, pan); thump(t, 120, 60, .08, .18);             // felt tap
-    if (c.lock || c.end) {                                                                  // deep hit + dark glass
+    if (style === 'silk') burst(t, 600, 2400, .05, .003, .01, .06, pan); else { burst(t, 900, 3800, .13, .002, .004, .06, pan); thump(t, 120, 60, .08, .18); }   // felt tap (a brush under silk)
+    if ((c.lock || c.end) && style !== 'silk') {                                            // deep hit + dark glass
       thump(t, 46, 32, .6, .5);
       [[986, .1, .11], [1613, .07, .08], [2871, .04, .06], [4290, .02, .045]].forEach(([fq, a, d]) => {
         const o = new OscillatorNode(ctx, { frequency: fq }); const g = env(t, a, .003, d, 1.2); o.connect(g).connect(master); o.start(t); o.stop(t + 1.2);
@@ -71,7 +127,11 @@ export async function renderSound(frames, cuts, opt = {}) {
   // normalise and soften the peaks
   let pk = 1e-6; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); }
   const k = .9 / pk, th = Math.tanh(1.15);
-  for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) d[i] = Math.tanh(d[i] * k * 1.15) / th * .9; }
+  const fe = Math.floor(vid * SR), fs = Math.max(0, fe - Math.floor(1.0 * SR));   // a one-second run-out
+  for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) {
+    let v = Math.tanh(d[i] * k * 1.15) / th * .9;
+    if (i >= fe) v = 0; else if (i > fs) { const q = (1 + Math.cos(Math.PI * (i - fs) / (fe - fs))) / 2; v *= q; }   // smooth run-out, no hard cut
+    d[i] = v; } }
   return buf;
 }
 

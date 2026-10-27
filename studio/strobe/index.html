@@ -69,6 +69,9 @@ textarea{min-height:120px; resize:vertical; font-family:var(--f-ui); line-height
 .tile .lab{border:0; border-top:1px solid var(--grid); margin-top:5px; padding:5px 6px; font-size:10.5px; background:transparent}
 .tile .flags{display:flex; flex-wrap:wrap; gap:4px; padding:0 6px 6px}
 .tile .flags button{border:1px solid var(--grid); background:transparent; font-size:9.5px; padding:1px 5px; cursor:pointer; color:var(--muted)}
+.tile{position:relative} .tile.dragging{opacity:.4} .tile.drop{outline:2px solid var(--accent); outline-offset:2px}
+.tile .del{position:absolute; right:4px; top:4px; z-index:2; width:22px; height:22px; border:1px solid var(--edge); background:rgba(0,0,0,.7); color:var(--ink); cursor:pointer; line-height:1; padding:0}
+.tile .del:hover{border-color:var(--accent); color:var(--accent)}
 .tile .flags button.on{border-color:var(--accent); color:var(--accent)}
 #cut{display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; min-height:118px}
 .chip{flex:none; display:flex; flex-direction:column; gap:3px; font-size:10px; color:var(--muted); cursor:grab}
@@ -91,7 +94,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 <div class="page">
   <nav class="nav">
     <a href="https://thcd.monster/" aria-label="Things Can Dance, home"><img class="thcd-logo" src="/studio/img/thcd_logo.png" alt="Things Can Dance"></a>
-    <div class="r"><a href="/studio/">← video_studio</a><a href="/studio/halde.html">01 / HALDE</a><a href="/studio/trace.html">02 / TRACE</a><span>03 / STROBE / tool</span></div>
+    <div class="r"><a href="/studio/">← video_studio</a><a href="/studio/tools/">tools</a><span>STROBE / reel machine</span></div>
   </nav>
 
   <header class="head">
@@ -109,7 +112,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
   <div class="app">
     <div class="col">
       <section class="win">
-        <div class="bar"><i></i><span>strobe/media</span><span class="help" tabindex="0" role="button" aria-label="how to use media">?<span class="tip" role="tooltip">Drop photos and videos here, or press choose files. Click a frame to put it into the cut; frames go in the order you click. Tags on each frame: <b>logo on product</b> means this frame already shows your logo, so the overlay hides and a deep hit sounds; <b>end</b> makes it the final packshot; <b>hiss</b> adds a hiss on that cut. The label under a frame becomes its FIG. caption.</span></span><span class="r">photos · clips</span></div>
+        <div class="bar"><i></i><span>strobe/media</span><span class="help" tabindex="0" role="button" aria-label="how to use media">?<span class="tip" role="tooltip">Drop photos and videos here, or press choose files. Drag a frame onto another to change the order; × removes it. Click a frame to put it into the cut; frames go in the order you click. Tags on each frame: <b>logo on product</b> means this frame already shows your logo, so the overlay hides and a deep hit sounds; <b>end</b> makes it the final packshot; <b>hiss</b> adds a hiss on that cut. The label under a frame becomes its FIG. caption.</span></span><span class="r">photos · clips</span></div>
         <div class="body">
           <div id="drop">drop photos and videos here, or <button class="btn" id="pick" type="button">choose files</button>
             <input id="files" type="file" accept="image/*,video/*" multiple hidden></div>
@@ -164,16 +167,20 @@ input[type=range]{width:100%; accent-color:var(--accent)}
             <label>bottom left<input type="text" id="bl" value="A REEL MACHINE"></label>
             <label>bottom right<input type="text" id="br" value="© 2026 THCD."></label>
             <label>end tag<input type="text" id="tag" value="[ 01 ]"></label>
-            <label>frames per still <input type="range" id="tempo" min="2" max="4" step="1" value="2"></label>
+            <label>tempo: strobe ← → slow <input type="range" id="tempo" min="1" max="10" step="1" value="4"></label>
+            <label>rhythm<select id="shape"><option value="middle" selected>strobe at the ends, slower middle</option><option value="build">slow start, faster and faster</option><option value="release">strobe first, then slower</option><option value="even">one even pace</option></select></label>
             <label>glitch <input type="range" id="glitch" min="0" max="100" value="25"></label>
+            <label>sound<select id="soundstyle"><option value="dark" selected>dark: drone, taps, glass</option><option value="pulse">pulse: 120 bpm kick, hats, bass</option><option value="silk">silk: soft chords, felt notes, room</option></select></label>
             <label>glitch style<select id="gstyle"><option value="mono" selected>b/w strips</option><option value="invert">inverted strips</option><option value="mix">both</option></select></label>
-            <label>look<select id="look"><option value="mix" selected>mix: colour and b/w</option><option value="clean">clean</option><option value="bw">black and white</option><option value="bwgrain">black and white, grain</option><option value="vhs">vhs</option><option value="bwvhs">b/w vhs</option></select></label>
+            <label>look<select id="look"><option value="mix" selected>mix: colour and b/w</option><option value="clean">clean</option><option value="bw">black and white</option><option value="bwgrain">black and white, grain</option><option value="vhs">vhs</option><option value="bwvhs">b/w vhs</option><option value="invertmix">negative + x-ray, cut by cut</option><option value="xray">x-ray: negative double exposure</option><option value="invert">negative</option></select></label>
           </div>
           <div class="checks">
             <label><input type="checkbox" id="splits" checked> split screens</label>
             <label><input type="checkbox" id="sheet" checked> contact sheet</label>
             <label><input type="checkbox" id="punch" checked> punch-ins</label>
-            <label><input type="checkbox" id="marks" checked> marks & timecode</label>
+            <label><input type="checkbox" id="captions" checked> corner captions</label>
+            <label><input type="checkbox" id="marks" checked> hud: marks, timecode, FIG</label>
+            <label><input type="checkbox" id="ruler" checked> hud: side ruler</label>
             <label><input type="checkbox" id="safe" checked> instagram 4:5 safe</label>
             <label><input type="checkbox" id="sound" checked> sound</label>
           </div>

@@ -12,7 +12,8 @@ export function rng(seed) {
 }
 
 // times (seconds) for a video segment, sped up with a fast-slow-fast ramp
-function rampTimes(dur, r, v = [2.4, 1.3, 2.4]) {
+function rampTimes(dur, r, v = [2.4, 1.3, 2.4], k = 1) {
+  v = v.map(x => x * k);
   const a = dur * (0.12 + r() * 0.08), b = Math.min(dur * 0.9, a + 3.6);
   const out = []; let pos = a;
   while (pos <= b && out.length < 60) {
@@ -36,8 +37,16 @@ export function compile(list, opt) {
   const body = list.filter(m => m !== end);
   const push = (arr, mark = {}) => { cuts.push({ frame: frames.length, ...mark }); arr.forEach((f, i) => frames.push({ ...f, k: cuts.length, i, n: arr.length })); };
   const still = (m, n, extra = {}) => Array.from({ length: n }, () => ({ t: 'img', m, ...extra }));
-  const clip = (m, extra = {}) => rampTimes(m.dur, r).map(time => ({ t: 'vid', m, time, ...extra }));
-  const tempo = () => Math.max(2, Math.min(4, Math.round(opt.tempo + (r() < .3 ? 1 : 0))));
+  // tempo 1..10 sets how long a still holds (1: one or two frames, 10: about a third of a second and more);
+  // shape bends it over the reel: 'middle' holds longer in the middle and strobes at both ends, 'build' starts slow
+  // and speeds up, 'release' starts as a strobe and slows down, 'even' keeps one pace
+  const T = Math.max(1, Math.min(10, opt.tempo || 4)), base = 1.2 + (T - 1) * .85;
+  const shapeAt = p => ({ middle: .35 + 1.65 * Math.sin(Math.PI * p), build: 1.7 - 1.4 * p, release: .3 + 1.4 * p }[opt.shape] ?? 1);
+  const bodyN = Math.max(1, list.length - 1); let posI = 0;
+  const hold = (p, mul = 1) => Math.max(1, Math.round(base * shapeAt(p) * mul * (.85 + r() * .3)));
+  const vk = 1.25 - (T - 1) * .06;                 // clips play faster at a fast tempo
+  const clip = (m, extra = {}) => rampTimes(m.dur, r, [2.4, 1.3, 2.4], vk).map(time => ({ t: 'vid', m, time, ...extra }));
+  const tempo = () => hold(posI / bodyN);
   const glitchy = () => r() < opt.glitch * .45;
 
   push(Array.from({ length: 10 }, () => ({ t: 'black', intro: true })), { intro: true });
@@ -46,22 +55,23 @@ export function compile(list, opt) {
   let last = null;
   // section A: establishing hold, then a quick strobe
   A.forEach((m, j) => {
+    posI++;
     if (m.type === 'video') { push(clip(m), { clip: true, hiss: m.flags.hiss }); last = m; return; }
     const lock = m.flags.ownLogo;
-    const n = j === 0 ? 12 : lock ? 9 : tempo();
+    const n = j === 0 ? Math.max(8, hold(0, 3)) : lock ? Math.max(6, tempo() + 4) : tempo();
     push(still(m, n, { nologo: lock, zoom: j === 0 ? .03 : 0 }), { lock, hiss: m.flags.hiss });
     last = m;
   });
   const aImgs = A.filter(m => m.type === 'image');
   for (let j = 0; j < Math.min(3, aImgs.length); j++) {
     const m = aImgs[(j * 2 + 1) % aImgs.length]; if (m === last && aImgs.length > 1) continue;
-    push(still(m, 2, { nologo: m.flags.ownLogo })); last = m;
+    push(still(m, Math.max(1, Math.min(3, hold(.15, .7))), { nologo: m.flags.ownLogo })); last = m;
   }
   if (B.length) push([{ t: 'flash' }], { flash: true });
   // section B: richer devices
   const sheetAt = (opt.sheet && imgs.length >= 6) ? Math.floor(B.length * .65) : -1;
   for (let j = 0; j < B.length; j++) {
-    const m = B[j];
+    const m = B[j]; posI++;
     if (j === sheetAt) {
       const pool = imgs.slice(0, 12);
       push(Array.from({ length: 10 }, (_, i) => ({ t: 'sheet', items: pool, hl: Math.floor(i * pool.length / 10), nologo: true })), { shutter: 5, every: 2 });
@@ -72,7 +82,7 @@ export function compile(list, opt) {
       push(Array.from({ length: 8 }, (_, i) => ({ t: 'split', a: m, b: nxt, swap: i >= 4 })), { shutter: 3, every: 3 });
       j++; last = nxt; continue;
     }
-    const n = m.flags.ownLogo ? 9 : tempo() + 1;
+    const n = m.flags.ownLogo ? Math.max(6, tempo() + 4) : tempo();
     push(still(m, n, { nologo: m.flags.ownLogo, glitch: glitchy() ? 1 : 0 }), { lock: m.flags.ownLogo, hiss: m.flags.hiss });
     if (opt.punch && r() < .45) push(still(m, 2, { nologo: true, punch: [1.8 + r() * .5, .3 + r() * .4, .3 + r() * .4], glitch: glitchy() ? 2 : 0 }));
     last = m;
@@ -83,7 +93,7 @@ export function compile(list, opt) {
     let prev = null;
     for (let j = 0; j < 6; j++) {
       let m = r.pick(mixPool); if (m === prev && mixPool.length > 1) m = mixPool[(mixPool.indexOf(m) + 1) % mixPool.length];
-      push(still(m, 2, { nologo: m.flags.ownLogo, glitch: j === 2 && opt.glitch > .3 ? 2 : 0 })); prev = m;
+      push(still(m, Math.max(1, Math.min(3, hold(1, .7))), { nologo: m.flags.ownLogo, glitch: j === 2 && opt.glitch > .3 ? 2 : 0 })); prev = m;
     }
   }
   push([{ t: 'flash' }], { flash: true });
@@ -156,6 +166,7 @@ export class Renderer {
       if (f.zoom) z = 1 + f.zoom * (f.i / Math.max(1, f.n - 1));
       if (f.punch) cover(g, src, sw, sh, 0, 0, W, H, f.punch[0], f.punch[1], f.punch[2]);
       else cover(g, src, sw, sh, 0, 0, W, H, z);
+      this.keepShot(f);
     } else if (f.t === 'split') {
       const [top, bot] = f.swap ? [f.b, f.a] : [f.a, f.b];
       for (const [m, y] of [[top, 0], [bot, 960]]) {
@@ -175,7 +186,8 @@ export class Renderer {
         if (j === f.hl) { g.strokeStyle = '#E61E9C'; g.lineWidth = 9; g.strokeRect(x - 8, y - 8, tw + 16, th + 16); g.strokeStyle = '#FFFFFF'; g.lineWidth = 2; g.strokeRect(x - 2, y - 2, tw + 4, th + 4); }
       }
     }
-    if (o.look === 'mix') { if (f.t !== 'black' && f.t !== 'flash' && (f.t === 'vid' || rng((f.k || 1) * 7919 + 3)() < .5)) this.look('bwgrain', idx); }   // cut by cut: black and white or colour; clips always black and white
+    if (o.look === 'invertmix') { if (f.t !== 'black' && f.t !== 'flash' && rng((f.k || 1) * 7919 + 5)() < .5) this.look(rng((f.k || 1) * 31 + 1)() < .5 ? 'invert' : 'xray', idx); }
+    else if (o.look === 'mix') { if (f.t !== 'black' && f.t !== 'flash' && (f.t === 'vid' || rng((f.k || 1) * 7919 + 3)() < .5)) this.look('bwgrain', idx); }   // cut by cut: black and white or colour; clips always black and white
     else if (o.look && o.look !== 'clean' && f.t !== 'black' && f.t !== 'flash') this.look(o.look, idx);
     if (f.glitch) this.glitch(f.glitch, idx);
     this.overlay(f, idx, cut, total);
@@ -183,7 +195,14 @@ export class Renderer {
     return this.scratch;
   }
 
-  // ---- looks: black and white, black and white with grain, VHS ----
+  keepShot(f) {
+    // a small copy of every shot; when the cut changes, the last one becomes the 'previous shot'
+    if (!this.shotNow) { const mk = () => { const c = document.createElement('canvas'); c.width = 540; c.height = 960; return c; }; this.shotNow = mk(); this.shotPrev = mk(); this.hasPrev = false; }
+    if (this.shotK !== f.k) { if (this.shotK != null) { this.shotPrev.getContext('2d').drawImage(this.shotNow, 0, 0); this.hasPrev = true; } this.shotK = f.k; }
+    this.shotNow.getContext('2d').drawImage(this.scratch, 0, 0, 540, 960);
+  }
+
+  // ---- looks: black and white, black and white with grain, VHS, negative, x-ray ----
   look(kind, idx) {
     const g = this.g;
     if (!this.copy) { this.copy = document.createElement('canvas'); this.copy.width = W; this.copy.height = H; this.cg = this.copy.getContext('2d'); this.cg.imageSmoothingQuality = 'high'; }
@@ -193,6 +212,16 @@ export class Renderer {
       g.filter = 'grayscale(1) contrast(1.18) brightness(1.02)'; g.drawImage(this.copy, 0, 0); g.filter = 'none';
       if (kind === 'bwgrain') this.grain(.2, r);
       return;
+    }
+    if (kind === 'invert') {                                     // colour negative
+      g.filter = 'invert(1) contrast(1.08)'; g.drawImage(this.copy, 0, 0); g.filter = 'none'; return;
+    }
+    if (kind === 'xray') {                                       // grey negative, the previous shot shining through
+      g.filter = 'invert(1) grayscale(1) contrast(1.45) brightness(1.05)'; g.drawImage(this.copy, 0, 0);
+      if (this.hasPrev) { g.globalCompositeOperation = 'screen'; g.globalAlpha = .55; g.drawImage(this.shotPrev, 0, 0, W, H); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; }
+      g.filter = 'none';
+      g.globalCompositeOperation = 'multiply'; g.fillStyle = 'rgb(205,226,255)'; g.fillRect(0, 0, W, H); g.globalCompositeOperation = 'source-over';
+      this.grain(.12, r); return;
     }
     if (kind === 'bwvhs') { this.look('vhs', idx); cg.drawImage(this.scratch, 0, 0); g.filter = 'grayscale(1) contrast(1.15)'; g.drawImage(this.copy, 0, 0); g.filter = 'none'; return; }
     if (kind === 'vhs') {
@@ -262,22 +291,36 @@ export class Renderer {
     if (f.t === 'black' && f.outro) { g.drawImage(L.white, 300, LY); return; }
     if (f.t === 'flash') return;
     const top = o.safe ? 316 : 60, bot = H - top;
-    g.fillStyle = col; g.font = `${o.fontWeight || 500} 22px ${o.font}`; g.textBaseline = 'alphabetic';
-    g.textAlign = 'left'; g.fillText(o.tl, 44, top + 18);
-    g.textAlign = 'right'; g.fillText(`${String(cut).padStart(3, '0')} / ${String(total).padStart(3, '0')}`, W - 44, top + 18);
-    if (f.end) { g.textAlign = 'left'; g.fillText(o.bl, 44, bot); g.textAlign = 'right'; g.fillText(o.tag, W - 44, bot); }
-    else { g.textAlign = 'left'; g.fillText(o.bl, 44, bot); g.textAlign = 'right'; g.fillText(o.br, W - 44, bot); }
+    // each caption reads the picture under it and turns white on dark, black on light
+    const lum = (x, y, w, h) => { x = Math.max(0, Math.min(W - 1, x)); y = Math.max(0, Math.min(H - 1, y)); w = Math.max(1, Math.min(W - x, w)); h = Math.max(1, Math.min(H - y, h));
+      const d = g.getImageData(x, y, w, h).data; let s2 = 0, n = 0; for (let p = 0; p < d.length; p += 16) { s2 += .2126 * d[p] + .7152 * d[p + 1] + .0722 * d[p + 2]; n++; } return s2 / n; };
+    const put = (txt, x, y, align, font) => {
+      g.font = font; g.textAlign = align; const w = g.measureText(txt).width;
+      const x0 = align === 'right' ? x - w : x;
+      g.fillStyle = lum(x0 - 4, y - 24, w + 8, 30) < 140 ? '#FFFFFF' : '#111214'; g.fillText(txt, x, y);
+    };
+    const cap = `${o.fontWeight || 500} 22px ${o.font}`, mono = `400 17px ${o.mono}`;
+    g.textBaseline = 'alphabetic';
+    if (o.captions !== false) {
+      put(o.tl, 44, top + 18, 'left', cap);
+      put(`${String(cut).padStart(3, '0')} / ${String(total).padStart(3, '0')}`, W - 44, top + 18, 'right', cap);
+      put(o.bl, 44, bot, 'left', cap);
+      put(f.end ? o.tag : o.br, W - 44, bot, 'right', cap);
+    }
     if (o.marks) {
-      g.strokeStyle = col; g.lineWidth = 1;
+      g.lineWidth = 1;
       for (const [x, y] of [[70, top - 126], [W - 70, top - 126], [70, bot + 126], [W - 70, bot + 126]]) {
+        g.strokeStyle = lum(x - 22, y - 22, 44, 44) < 140 ? '#FFFFFF' : '#111214';
         g.beginPath(); g.arc(x, y, 11, 0, Math.PI * 2); g.moveTo(x - 20, y); g.lineTo(x + 20, y); g.moveTo(x, y - 20); g.lineTo(x, y + 20); g.stroke();
       }
-      g.font = `400 17px ${o.mono}`; g.textAlign = 'left';
       const s = Math.floor(idx / FPS), fr = idx % FPS;
-      g.fillText(`TC 00:00:${String(s).padStart(2, '0')}:${String(fr).padStart(2, '0')}`, 44, top + 50);
-      g.beginPath(); for (let j = 0, y = 430; y < 1500; y += 24, j++) { g.moveTo(22, y); g.lineTo(22 + (j % 5 ? 8 : 16), y); } g.stroke();
+      put(`TC 00:00:${String(s).padStart(2, '0')}:${String(fr).padStart(2, '0')}`, 44, top + 50, 'left', mono);
+      if (o.ruler !== false) {
+        g.strokeStyle = lum(18, 430, 24, 1070) < 140 ? '#FFFFFF' : '#111214';
+        g.beginPath(); for (let j = 0, y = 430; y < 1500; y += 24, j++) { g.moveTo(22, y); g.lineTo(22 + (j % 5 ? 8 : 16), y); } g.stroke();
+      }
       const lab = f.t === 'sheet' ? 'CONTACT SHEET' : f.t === 'split' ? 'FIG. — / —' : (f.m && f.m.label) ? `FIG. ${String(f.m.idx + 1).padStart(2, '0')} — ${f.m.label.toUpperCase()}` : '';
-      if (lab) { g.textAlign = 'right'; g.fillText(lab, W - 44, bot - 34); }
+      if (lab) put(lab, W - 44, bot - 34, 'right', mono);
     }
   }
 }

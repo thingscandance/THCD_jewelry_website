@@ -13,7 +13,7 @@ const MONO = '"Geist Mono", ui-monospace, monospace';
 
 // ---------------- settings ----------------
 const S = () => ({
-  tempo: +$('#tempo').value, glitch: +$('#glitch').value / 100,
+  tempo: +$('#tempo').value, shape: $('#shape').value, glitch: +$('#glitch').value / 100,
   splits: $('#splits').checked, sheet: $('#sheet').checked, punch: $('#punch').checked,
   marks: $('#marks').checked, safe: $('#safe').checked, sound: $('#sound').checked, seed,
 });
@@ -30,7 +30,7 @@ async function logo() {
 async function rendererOpt() {
   const [tw, tfam] = fontOf('#textfont');
   try { await document.fonts.load(`${tw} 22px ${tfam}`); } catch (e) {}
-  return { gstyle: $('#gstyle').value, look: $('#look').value, font: tfam, fontWeight: tw, mono: MONO, logo: await logo(), tl: $('#tl').value, bl: $('#bl').value, br: $('#br').value, tag: $('#tag').value, marks: $('#marks').checked, safe: $('#safe').checked };
+  return { gstyle: $('#gstyle').value, look: $('#look').value, font: tfam, fontWeight: tw, mono: MONO, logo: await logo(), tl: $('#tl').value, bl: $('#bl').value, br: $('#br').value, tag: $('#tag').value, marks: $('#marks').checked, ruler: $('#ruler').checked, captions: $('#captions').checked, safe: $('#safe').checked };
 }
 
 // ---------------- loading media ----------------
@@ -74,7 +74,8 @@ function drawMedia() {
   media.forEach(m => {
     const el = document.createElement('div'); el.className = 'tile' + (cut.includes(m.id) ? ' in' : '');
     const sc = lastScores ? lastScores.get(m.id) : null;
-    el.innerHTML = `<div class="th"></div>
+    el.draggable = true; el.dataset.id = m.id;
+    el.innerHTML = `<button class="del" type="button" title="remove this frame" aria-label="remove frame ${m.idx + 1}">×</button><div class="th"></div>
       <div class="meta"><span>${String(m.idx + 1).padStart(2, '0')}</span><span>${m.type === 'video' ? m.dur.toFixed(1) + ' s' : 'still'}</span>${sc != null ? `<span class="score">${sc.rank}</span>` : ''}</div>
       <input class="lab" value="${m.label.replace(/"/g, '&quot;')}" aria-label="label for frame ${m.idx + 1}">
       <div class="flags">
@@ -89,9 +90,29 @@ function drawMedia() {
       b.classList.toggle('on', m.flags[b.dataset.f]);
       b.onclick = () => { const f = b.dataset.f; if (f === 'end') media.forEach(x => { if (x !== m) x.flags.end = false; }); m.flags[f] = !m.flags[f]; drawMedia(); refresh(); };
     });
+    el.querySelector('.del').onclick = e => { e.stopPropagation(); removeMedia(m.id); };
+    el.ondragstart = e => { e.dataTransfer.setData('text/x-strobe', m.id); e.dataTransfer.effectAllowed = 'move'; el.classList.add('dragging'); };
+    el.ondragend = () => el.classList.remove('dragging');
+    el.ondragover = e => { if ([...e.dataTransfer.types].includes('text/x-strobe')) { e.preventDefault(); el.classList.add('drop'); } };
+    el.ondragleave = () => el.classList.remove('drop');
+    el.ondrop = e => { e.preventDefault(); e.stopPropagation(); el.classList.remove('drop'); const id = e.dataTransfer.getData('text/x-strobe'); if (id) moveMedia(id, m.id); };
     if (sc != null && sc.rank <= 4) el.classList.add('hit');
     box.appendChild(el);
   });
+}
+
+function renumber() { media.forEach((x, i) => x.idx = i); }
+function removeMedia(id) {
+  const i = media.findIndex(x => x.id === id); if (i < 0) return;
+  const [m] = media.splice(i, 1); if (m.bmp && m.bmp.close) m.bmp.close(); if (m.el) URL.revokeObjectURL(m.el.src);
+  cut = cut.filter(x => x !== id); renumber(); status(`${media.length} items`); drawMedia(); refresh();
+}
+function moveMedia(id, beforeId) {            // drag a tile onto another: it takes that place
+  if (id === beforeId) return;
+  const from = media.findIndex(x => x.id === id); const [m] = media.splice(from, 1);
+  const to = media.findIndex(x => x.id === beforeId); media.splice(to, 0, m);
+  if (cut.length && cut.includes(id) && cut.includes(beforeId)) { cut.splice(cut.indexOf(id), 1); cut.splice(cut.indexOf(beforeId), 0, id); }
+  renumber(); drawMedia(); refresh();
 }
 
 // ---------------- the cut list ----------------
@@ -195,7 +216,7 @@ async function make(full) {
   const btns = [$('#prev'), $('#exp')]; btns.forEach(b => b.disabled = true);
   try {
     status('composing the sound…'); progress(0);
-    const audio = S().sound ? await renderSound(plan.frames, plan.cuts, { seed }) : null;
+    const audio = S().sound ? await renderSound(plan.frames, plan.cuts, { seed, style: $('#soundstyle').value }) : null;
     status(full ? 'rendering 1080×1920…' : 'rendering preview…');
     const paint = i => renderer.paint(plan.frames[i], i, plan.frames[i].k, plan.cuts.length);
     const [w, h] = full ? [1080, 1920] : [540, 960];
