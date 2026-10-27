@@ -78,27 +78,21 @@ export async function renderSound(frames, cuts, opt = {}) {
   // --- per-cut events
   const thump = (t, f0, f1, len, peak) => { const o = new OscillatorNode(ctx, { frequency: f0 }); o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + len); const g = env(t, peak, .004, len / 4, len); o.connect(g).connect(master); o.start(t); o.stop(t + len); };
   const burst = (t, lo, hi, peak, att, decay, len, pan = 0) => { const s = noiseSrc(t, t + len); const p = new StereoPannerNode(ctx, { pan }); s.connect(band(lo, hi)).connect(env(t, peak, att, decay, len)).connect(p).connect(master); };
-  const imp = ctx.createBuffer(1, 64, SR); { const d = imp.getChannelData(0); d[0] = 1; d[1] = -.6; d[2] = .25; }
-  const tick = (t, f, peak, pan = 0, q = 7) => {
-    const src = new AudioBufferSourceNode(ctx, { buffer: imp }); const bp = new BiquadFilterNode(ctx, { type: 'bandpass', frequency: f, Q: q });
-    const lp = new BiquadFilterNode(ctx, { type: 'lowpass', frequency: f * 1.8 }); const g = new GainNode(ctx, { gain: peak * 40 }); const pp = new StereoPannerNode(ctx, { pan });
-    src.connect(bp).connect(lp).connect(g).connect(pp).connect(master); src.start(t);
-  };
   cuts.forEach((c, i) => {
     const t = at(c.frame);
     if (c.frame >= endF || i === 0) return;
     const pan = i % 2 ? .35 : -.35;
-    if (quiet) { tick(t, 2100 + (i % 3) * 180, .5, pan); tick(t, 900, .25, -pan, 4); }   // a clean wooden click on every change of picture, no noise
-    else { tick(t, 1300, .35, pan, 5); thump(t, 90, 50, .1, .12); }                                // soft tap: a low tick and a little weight
+    if (quiet) { burst(t, 1600, 5200, .12, .001, .004, .035, pan); thump(t, 180, 90, .04, .08); }   // a clean click on every change of picture
+    else { burst(t, 500, 2000, .06, .006, .008, .07, pan); thump(t, 90, 50, .1, .12); }             // soft felt tap: no high click, a rounded attack
     if (c.lock || c.end) {                                            // deep hit + dark glass
       thump(t, 46, 32, .6, .5);
       [[986, .1, .11], [1613, .07, .08], [2871, .04, .06], [4290, .02, .045]].forEach(([fq, a, d]) => {
         const o = new OscillatorNode(ctx, { frequency: fq }); const g = env(t, a, .003, d, 1.2); o.connect(g).connect(master); o.start(t); o.stop(t + 1.2);
       });
     }
-    if (c.shutter) for (let j = 0; j < c.shutter; j++) { const q = t + j * (c.every || 3) / FPS; tick(q, 1700, .3, pan * -1); tick(q + .035, 1250, .22, pan); }
+    if (c.shutter) for (let j = 0; j < c.shutter; j++) { const q = t + j * (c.every || 3) / FPS; burst(q, 500, 2200, .07, .003, .01, .05, pan * -1); burst(q + .03, 500, 2200, .045, .003, .008, .04, pan); }
     if (c.hiss) burst(t, 3200, 10500, .5, .03, .35, 1.2);
-    if (c.flash) { thump(t, 130, 55, .25, .22); }                                                // a soft low breath instead of a noise burst
+    if (c.flash) { burst(t, 200, 1500, .15, .01, .08, .3); }
   });
   const buf = await ctx.startRendering();
   // normalise and soften the peaks
