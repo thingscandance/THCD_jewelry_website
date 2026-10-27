@@ -98,8 +98,8 @@ export function compile(list, opt) {
   }
   push([{ t: 'flash' }], { flash: true });
   if (end.type === 'video') push(clip(end), { end: true, clip: true });
-  else push(still(end, 40, { zoom: .03, nologo: end.flags.ownLogo, end: true }), { end: true, lock: end.flags.ownLogo });
-  push(Array.from({ length: 14 }, () => ({ t: 'black', outro: true })), { outro: true });
+  else push(still(end, 58, { zoom: .03, nologo: end.flags.ownLogo, end: true }), { end: true, lock: end.flags.ownLogo });   // a calm packshot, ~2.4 s
+  push(Array.from({ length: 30 }, () => ({ t: 'black', outro: true })), { outro: true });                                   // the logo stays on black ~1.25 s while the sound runs out
   return { frames, cuts };
 }
 
@@ -189,7 +189,7 @@ export class Renderer {
         if (j === f.hl) { g.strokeStyle = '#E61E9C'; g.lineWidth = 9; g.strokeRect(x - 8, y - 8, tw + 16, th + 16); g.strokeStyle = '#FFFFFF'; g.lineWidth = 2; g.strokeRect(x - 2, y - 2, tw + 4, th + 4); }
       }
     }
-    if (o.look === 'xstrobe' && f.t !== 'black' && f.t !== 'flash') this.xstrobe(idx);
+    if (o.look === 'xstrobe' && f.t !== 'black' && f.t !== 'flash' && !f.end) this.xstrobe(idx);          // the packshot stays calm
     else if (o.look === 'invertmix') { if (f.t !== 'black' && f.t !== 'flash' && rng((f.k || 1) * 7919 + 5)() < .5) this.look(rng((f.k || 1) * 31 + 1)() < .5 ? 'invert' : 'xray', idx); }
     else if (o.look === 'mix') { if (f.t !== 'black' && f.t !== 'flash' && (f.t === 'vid' || rng((f.k || 1) * 7919 + 3)() < .5)) this.look('bwgrain', idx); }   // cut by cut: black and white or colour; clips always black and white
     else if (o.look && o.look !== 'clean' && f.t !== 'black' && f.t !== 'flash') this.look(o.look, idx);

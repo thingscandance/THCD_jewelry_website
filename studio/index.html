@@ -101,6 +101,31 @@ a{color:inherit}
 .foot a{color:var(--ink); text-decoration:none}
 .foot a:hover{color:var(--accent)}
 @media (prefers-reduced-motion:reduce){.win{transition:none}}
+/* tabs: desk (the composable desk), cases (scroll through the projects), tools */
+.tabs{display:flex; gap:0; padding-top:14px; border-bottom:1px solid var(--edge)}
+.tab{font:inherit; font-size:12px; letter-spacing:.08em; text-transform:lowercase; color:var(--muted); background:none; border:1px solid transparent; border-bottom:0; padding:8px 16px 7px; cursor:pointer; margin-bottom:-1px; text-decoration:none}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink); border-color:var(--edge); background:var(--canvas); border-bottom:1px solid var(--canvas)}
+.tab .n{color:var(--accent); margin-right:6px}
+.view[hidden]{display:none!important}
+.list{display:flex; flex-direction:column; gap:28px; padding-block:24px; max-width:1280px; margin:0 auto}
+.card{background:var(--paper); border:1px solid var(--edge); display:flex; flex-direction:column; text-decoration:none; transition:border-color .2s}
+.card:hover{border-color:var(--accent)}
+.card .bar{cursor:pointer}
+.card .in{display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:0}
+.card .media{display:grid; gap:8px; padding:8px; border-right:1px solid var(--edge); align-content:start}
+.card .media.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card .media video,.card .media img{display:block; width:100%; object-fit:cover; background:#000}
+.card .media .r169{aspect-ratio:16/9} .card .media .r916{aspect-ratio:9/16}
+.card .info{padding:22px; display:flex; flex-direction:column; gap:14px}
+.card h2{font-family:var(--f-display); font-weight:900; font-size:clamp(48px,7vw,96px); line-height:.85; margin:0; letter-spacing:-.02em}
+.card .lede{font-family:var(--f-body); font-weight:300; font-size:clamp(18px,1.8vw,24px); line-height:1.2; margin:0; letter-spacing:-.01em; text-wrap:balance}
+.card dl{display:grid; grid-template-columns:auto 1fr; gap:5px 16px; margin:0}
+.card dt{color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-size:10px; padding-top:2px}
+.card dd{margin:0; font-family:var(--f-body); font-weight:300; font-size:13px}
+.card .go{margin-top:auto; color:var(--accent); letter-spacing:.06em}
+@media (max-width:760px){ .card .in{grid-template-columns:1fr} .card .media{border-right:0; border-bottom:1px solid var(--edge)} .tab{padding:8px 10px 7px} }
+
 </style>
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 </head>
@@ -117,6 +142,13 @@ a{color:inherit}
   </div>
 </header>
 
+
+<nav class="tabs" role="tablist" aria-label="Studio">
+  <a class="tab" role="tab" href="#desk" data-view="desk" aria-selected="true"><span class="n">00</span>desk</a>
+  <a class="tab" role="tab" href="#cases" data-view="cases" aria-selected="false"><span class="n">01</span>cases</a>
+  <a class="tab" role="tab" href="#tools" data-view="tools" aria-selected="false"><span class="n">02</span>tools</a>
+</nav>
+<div class="view" id="view-desk">
 <div class="tools" role="toolbar" aria-label="Layout">
   <span class="label">layout</span>
   <button class="btn" type="button" data-arr="grid" id="arr-grid" aria-pressed="false">grid</button>
@@ -126,6 +158,64 @@ a{color:inherit}
 <div class="deskwrap" id="wrap">
   <div class="desk" id="desk"></div>
 </div>
+</div>
+
+<section class="view" id="view-cases" hidden aria-label="Cases">
+  <div class="list">
+    <a class="card" href="/studio/halde.html">
+      <div class="bar"><i></i><span class="t">cases/01_halde</span><span class="r">headphones · 2026</span></div>
+      <div class="in">
+        <div class="media">
+          <video class="r169" src="/studio/video/halde_loop.mp4" poster="/studio/img/halde_film_poster.jpg" muted loop playsinline preload="none" aria-label="HALDE film loop"></video>
+          <div class="media three" style="padding:0; border:0"><img class="r916" src="/studio/img/city_262.jpg" alt="" loading="lazy"><img class="r916" src="/studio/img/platok_150.jpg" alt="" loading="lazy"><img class="r916" src="/studio/img/kf06.jpg" alt="" loading="lazy"></div>
+        </div>
+        <div class="info">
+          <h2>HALDE</h2>
+          <p class="lede">Over-ear headphones with a silver thorn cage. Everything else can blur.</p>
+          <dl><dt>scope</dt><dd>naming, identity, 3D product, films, sound</dd><dt>films</dt><dd>one main film, three verticals on 120 BPM</dd><dt>tools</dt><dd>Blender, Seedance</dd></dl>
+          <span class="go">open the case →</span>
+        </div>
+      </div>
+    </a>
+    <a class="card" href="/studio/trace.html">
+      <div class="bar"><i></i><span class="t">cases/02_trace</span><span class="r">eau de parfum · 2026</span></div>
+      <div class="in">
+        <div class="media three">
+          <video class="r916" src="/studio/video/trace_film01.mp4" poster="/studio/img/trace_k05.jpg" muted loop playsinline preload="none" aria-label="TRACE film 01"></video>
+          <video class="r916" src="/studio/video/trace_reel02.mp4" poster="/studio/img/trace_reel02_poster.jpg" muted loop playsinline preload="none" aria-label="TRACE film 02"></video>
+          <video class="r916" src="/studio/video/trace_reel03.mp4" poster="/studio/img/trace_reel03_poster.jpg" muted loop playsinline preload="none" aria-label="TRACE film 03"></video>
+        </div>
+        <div class="info">
+          <h2>TRACE</h2>
+          <p class="lede">An eau de parfum that studies what remains on skin after contact.</p>
+          <dl><dt>scope</dt><dd>logotype, packaging, keyframes, strobe films, sound</dd><dt>films</dt><dd>three verticals</dd><dt>tools</dt><dd>Nano Banana, Kling; edit and sound in code</dd></dl>
+          <span class="go">open the case →</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="view" id="view-tools" hidden aria-label="Tools">
+  <div class="list">
+    <a class="card" href="/studio/strobe/">
+      <div class="bar"><i></i><span class="t">tools/strobe</span><span class="r">reel machine · free · in your browser</span></div>
+      <div class="in">
+        <div class="media three">
+          <video class="r916" src="/studio/strobe/examples/example_mix.mp4" poster="/studio/strobe/examples/example_poster.jpg" muted loop playsinline preload="none" aria-label="A reel made with STROBE"></video>
+          <video class="r916" src="/studio/strobe/examples/example_vhs.mp4" muted loop playsinline preload="none" aria-label="A VHS reel made with STROBE"></video>
+          <video class="r916" src="/studio/strobe/examples/example_bwvhs.mp4" muted loop playsinline preload="none" aria-label="A black and white VHS reel made with STROBE"></video>
+        </div>
+        <div class="info">
+          <h2>STROBE</h2>
+          <p class="lede">Drop photos and clips, describe what you want to see, get a vertical strobe reel with sound.</p>
+          <dl><dt>does</dt><dd>search by description, script to cut, tempo shapes, splits, contact sheet, glitch</dd><dt>looks</dt><dd>colour and b/w, vhs, negative strobe, x-ray</dd><dt>out</dt><dd>1080×1920 MP4 for Instagram</dd></dl>
+          <span class="go">open STROBE →</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
 
 <footer class="foot"><span>things can dance · 2026</span><span><a href="https://www.instagram.com/thcd_monster_studio/" target="_blank" rel="noopener">@thcd_monster_studio</a> · <a href="mailto:marina.marbl@gmail.com">marina.marbl@gmail.com</a></span></footer>
 
@@ -238,5 +328,21 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
 })();
 </script>
 
+
+<script>
+(function(){
+  // tabs: #desk / #cases / #tools; videos in a view play only while it is open
+  const tabs=[...document.querySelectorAll('.tab')];
+  const show=v=>{ if(!['desk','cases','tools'].includes(v)) v='desk';
+    tabs.forEach(t=>t.setAttribute('aria-selected', String(t.dataset.view===v)));
+    ['desk','cases','tools'].forEach(n=>{ const el=document.getElementById('view-'+n); el.hidden = n!==v;
+      el.querySelectorAll('.list video').forEach(x=>{ if(n===v){ x.preload='metadata'; x.play().catch(()=>{}); } else x.pause(); }); });
+    if(v==='desk') window.dispatchEvent(new Event('resize')); };
+  tabs.forEach(t=>t.addEventListener('click',e=>{ e.preventDefault(); history.replaceState(null,'','#'+t.dataset.view); show(t.dataset.view); window.scrollTo({top:0}); }));
+  show(location.hash.slice(1));
+  if(location.hash==='#desk') requestAnimationFrame(()=>window.scrollTo(0,0));   // #desk is also the desk element's id: don't jump to it
+  addEventListener('hashchange',()=>show(location.hash.slice(1)));
+})();
+</script>
 </body>
 </html>
