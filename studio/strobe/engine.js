@@ -75,10 +75,10 @@ export function compile(list, opt) {
   sheetPool = sheetPool.slice(0, 12);
   const sheetOn = opt.sheet && sheetPool.length >= 2;
   const sheetFrames = () => Array.from({ length: 10 }, (_, i) => ({ t: 'sheet', items: sheetPool, hl: Math.floor(i * sheetPool.length / 10), nologo: true }));
-  const sheetAt = sheetOn && B.length ? Math.floor(B.length * .65) : -1;
+  const sheetAt = sheetOn && B.length ? Math.floor(B.length * .65) : -1; let sheetDone = false;
   for (let j = 0; j < B.length; j++) {
     const m = B[j]; posI++;
-    if (j === sheetAt) push(sheetFrames(), { shutter: 5, every: 2 });
+    if (!sheetDone && sheetAt >= 0 && j >= sheetAt) { push(sheetFrames(), { shutter: 5, every: 2 }); sheetDone = true; }   // >=: a split may jump over the exact index
     if (m.type === 'video') { push(clip(m, { glitch: glitchy() ? 1 : 0 }), { clip: true, hiss: m.flags.hiss }); last = m; continue; }
     const nxt = B[j + 1];
     if (opt.splits && nxt && nxt.type === 'image' && r() < .3) {
@@ -90,7 +90,7 @@ export function compile(list, opt) {
     if (opt.punch && r() < .45) push(still(m, 2, { nologo: true, punch: [1.8 + r() * .5, .3 + r() * .4, .3 + r() * .4], glitch: glitchy() ? 2 : 0 }));
     last = m;
   }
-  if (sheetOn && sheetAt < 0) push(sheetFrames(), { shutter: 5, every: 2 });   // short reels: the sheet comes before the ending
+  if (sheetOn && !sheetDone) push(sheetFrames(), { shutter: 5, every: 2 });   // short reels (or a sheet the loop missed): before the ending
   // ending: fast mix, flash, packshot, black
   const mixPool = body.filter(m => m.type === 'image');
   if (mixPool.length) {
