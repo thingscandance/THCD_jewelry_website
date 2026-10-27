@@ -77,55 +77,44 @@ export async function renderSound(frames, cuts, opt = {}) {
   }
 
   if (hum) {
-    // hum: a low electric buzz — a pulse train cut off above ~270 Hz, its rate switching between a few values at the
-    // big moments, with small dropouts on cuts, data blips in the low mids, a faint high beep and quiet digital chatter
-    const n = Math.ceil(dur * SR), pb = ctx.createBuffer(1, n, SR), d = pb.getChannelData(0);
-    const rates = [32, 47, 38, 55, 42], tEnd = at(endF);
-    const marks = cuts.filter(c => c.lock || c.flash || c.sheet || c.shutter).map(c => at(c.frame)).filter(t => t > .5 && t < tEnd);
-    for (let t = 3 + rand() * 1.5; t < tEnd; t += 2.5 + rand() * 2) marks.push(t);   // the rate also moves on its own every few seconds
-    marks.sort((a, b) => a - b);
-    const gaps = cuts.filter((c, i) => i && c.frame < endF).map(c => at(c.frame));
-    const flashT = flashes.map(at);
-    let ph = 0, ri = 0, mi = 0, gi = 0, rate = rates[0];
-    for (let i = 0; i < n; i++) {
-      const t = i / SR;
-      while (mi < marks.length && t >= marks[mi]) { ri = (ri + 1 + Math.floor(rand() * (rates.length - 1))) % rates.length; rate = rates[ri]; mi++; }
-      let r = rate;
-      for (const ft of flashT) if (t > ft - .3 && t < ft) r = rate * (.35 + .65 * (ft - t) / .3);   // the buzz sags into a flash
-      if (t > vid - 1.4) r = rate * Math.max(.45, 1 - (t - vid + 1.4) * .4);                    // and winds down as the logo fades
-      ph += r / SR;
-      if (ph >= 1) { ph -= 1; while (gi < gaps.length && gaps[gi] < t - .012) gi++;
-        const inGap = gi < gaps.length && t >= gaps[gi] && t < gaps[gi] + .012;              // a 12 ms dropout on every cut
-        if (!inGap) { const a = .8 + rand() * .4; for (let k = 0; k < 24 && i + k < n; k++) d[i + k] = a; } }   // a 0.5 ms pulse
+    // hum: a deep, warm chord of pure sines stacked in fifths (68 · 100 · 147 Hz) that never stops; every four seconds
+    // it sinks for half a second into a sub note an octave down, a brighter fifth (157 · 231 Hz) opens each phrase,
+    // high overtones shimmer in faintly, and each cut is only a tiny tick on top
+    const tEnd = at(endF), bus = new GainNode(ctx, { gain: 0 });
+    bus.gain.setValueAtTime(0, 0); bus.gain.linearRampToValueAtTime(1, .06);
+    bus.connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 900, Q: .5 })).connect(master);
+    const tone = (f, a, t0 = 0, t1 = dur) => { const o = new OscillatorNode(ctx, { frequency: f }); const g = new GainNode(ctx, { gain: a }); o.connect(g).connect(bus); o.start(t0); o.stop(t1); return g; };
+    const g100 = tone(100, .5), g68 = tone(68, .16);
+    const g147 = tone(147, .1);                                   // the upper fifth breathes in and out
+    const lfo = new OscillatorNode(ctx, { frequency: .13 }), lg = new GainNode(ctx, { gain: .07 }); lfo.connect(lg).connect(g147.gain); lfo.start(0); lfo.stop(dur);
+    const cyc = 4;
+    for (let c0 = 0; c0 < vid; c0 += cyc) {
+      // a brighter fifth opens the phrase and fades over a second and a half
+      const gb = tone(231, 0, c0, c0 + 2), gc = tone(157, 0, c0, c0 + 2);
+      for (const [g, a] of [[gb, .38], [gc, .22]]) { g.gain.setValueAtTime(0, c0); g.gain.linearRampToValueAtTime(a, c0 + .03); g.gain.setTargetAtTime(0, c0 + .3, .45); }
+      // the sink: half a second where the chord drops onto 51 + 34 Hz
+      const d0 = c0 + cyc - .5; if (d0 > vid - .2) continue;
+      const s51 = tone(51, 0, d0, d0 + .6), s34 = tone(34, 0, d0, d0 + .6);
+      for (const [g, a] of [[s51, .55], [s34, .07]]) { g.gain.setValueAtTime(0, d0); g.gain.linearRampToValueAtTime(a, d0 + .02); g.gain.setValueAtTime(a, d0 + .46); g.gain.linearRampToValueAtTime(0, d0 + .5); }
+      g68.gain.setValueAtTime(.16, d0); g68.gain.linearRampToValueAtTime(0, d0 + .02); g68.gain.setValueAtTime(0, d0 + .48); g68.gain.linearRampToValueAtTime(.16, d0 + .5);
+      g100.gain.setValueAtTime(.5, d0); g100.gain.linearRampToValueAtTime(.35, d0 + .02); g100.gain.setValueAtTime(.35, d0 + .48); g100.gain.linearRampToValueAtTime(.5, d0 + .5);
+      // faint overtones shimmer in the second half of the phrase
+      const t2 = c0 + 1.8, g305 = tone(305, 0, t2, t2 + 1.8), g255 = tone(255, 0, t2, t2 + 1.8);
+      for (const [g, a] of [[g305, .05], [g255, .03]]) { g.gain.setValueAtTime(0, t2); g.gain.linearRampToValueAtTime(a, t2 + .6); g.gain.linearRampToValueAtTime(0, t2 + 1.7); }
     }
-    const src = new AudioBufferSourceNode(ctx, { buffer: pb });
-    const humG = new GainNode(ctx, { gain: 0 }); humG.gain.setValueAtTime(0, 0); humG.gain.linearRampToValueAtTime(1, .08);
-    src.connect(new BiquadFilterNode(ctx, { type: 'highpass', frequency: 48, Q: .7 }))
-       .connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 170, Q: 1.0 }))
-       .connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 230, Q: .7 }))
-       .connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 260, Q: .6 }))
-       .connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 280, Q: .6 }))
-       .connect(new BiquadFilterNode(ctx, { type: 'peaking', frequency: 85, Q: 1.0, gain: 9 }))
-       .connect(humG).connect(master);
-    src.start(0);
-    // data blips: short tones in the 300-420 Hz band
-    for (let t = .3 + rand() * .4; t < tEnd; t += .25 + rand() * .7) {
-      const len = .06 + rand() * .12, o = new OscillatorNode(ctx, { type: 'square', frequency: 300 + rand() * 120 });
-      const g = new GainNode(ctx, { gain: 0 }); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.008, t + .005); g.gain.setValueAtTime(.008, t + len); g.gain.linearRampToValueAtTime(0, t + len + .01);
-      o.connect(new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 450, Q: .5 })).connect(g).connect(master); o.start(t); o.stop(t + len + .02);
+    // a very faint high line, on and off
+    for (let t = .6 + rand(); t < tEnd - .5; t += 1.6 + rand() * 1.8) {
+      const len = .5 + rand(), o = new OscillatorNode(ctx, { frequency: 1150 }), g = new GainNode(ctx, { gain: 0 });
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.004, t + .05); g.gain.setValueAtTime(.004, t + len); g.gain.linearRampToValueAtTime(0, t + len + .05);
+      o.connect(g).connect(master); o.start(t); o.stop(t + len + .1);
     }
-    // a faint high beep, on and off in phrases
-    for (let t = .6 + rand(); t < tEnd - .5; t += 1.4 + rand() * 1.8) {
-      const len = .4 + rand() * 1.1, o = new OscillatorNode(ctx, { frequency: rand() < .7 ? 1150 : 700 });
-      const g = new GainNode(ctx, { gain: 0 }); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.015, t + .02); g.gain.setValueAtTime(.015, t + len); g.gain.linearRampToValueAtTime(0, t + len + .03);
-      o.connect(g).connect(master); o.start(t); o.stop(t + len + .05);
-    }
-    // quiet digital chatter up high on the cuts
-    gaps.forEach((t, i) => { const pan = i % 2 ? .4 : -.4; const s2 = noiseSrc(t, t + .05); const p2 = new StereoPannerNode(ctx, { pan });
-      s2.connect(band(7000, 12000)).connect(env(t, .06, .001, .008, .05)).connect(p2).connect(master); });
-    humG.gain.setValueAtTime(1, tEnd); humG.gain.linearRampToValueAtTime(.7, tEnd + .4);   // softer under the packshot; the run-out below fades it to zero
+    // a fine digital fuzz riding on top, barely there
+    const fz = noiseSrc(0, dur), fg = new GainNode(ctx, { gain: .0025 }); fz.connect(band(6000, 12000)).connect(fg).connect(master);
+    fg.gain.setValueAtTime(.0025, vid - 1.2); fg.gain.linearRampToValueAtTime(0, vid - .1);
+    // cuts: a tiny tick, like a needle on the edge of the picture
+    cuts.forEach((c, i) => { if (!i || c.frame >= endF) return; const t = at(c.frame), pan = i % 2 ? .3 : -.3;
+      const sN = noiseSrc(t, t + .02), pp = new StereoPannerNode(ctx, { pan }); sN.connect(band(2500, 9000)).connect(env(t, .035, .0005, .0025, .02)).connect(pp).connect(master); });
   }
-
   // --- per-cut events
   const thump = (t, f0, f1, len, peak) => { const o = new OscillatorNode(ctx, { frequency: f0 }); o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + len); const g = env(t, peak, .004, len / 4, len); o.connect(g).connect(master); o.start(t); o.stop(t + len); };
   const burst = (t, lo, hi, peak, att, decay, len, pan = 0) => { const s = noiseSrc(t, t + len); const p = new StereoPannerNode(ctx, { pan }); s.connect(band(lo, hi)).connect(env(t, peak, att, decay, len)).connect(p).connect(master); };
@@ -133,7 +122,7 @@ export async function renderSound(frames, cuts, opt = {}) {
     const t = at(c.frame);
     if (c.frame >= endF || i === 0) return;
     const pan = i % 2 ? .35 : -.35;
-    if (hum) { if (c.lock || c.end) thump(t, 46, 32, .5, .35); if (c.hiss) burst(t, 3200, 10500, .3, .03, .35, 1.2); return; }
+    if (hum) { if (c.hiss) burst(t, 3200, 10500, .3, .03, .35, 1.2); return; }
     if (quiet) { burst(t, 1600, 5200, .12, .001, .004, .035, pan); thump(t, 180, 90, .04, .08); }   // a clean click on every change of picture
     else { burst(t, 500, 2000, .06, .006, .008, .07, pan); thump(t, 90, 50, .1, .12); }             // soft felt tap: no high click, a rounded attack
     if (c.lock || c.end) {                                            // deep hit + dark glass
@@ -149,7 +138,7 @@ export async function renderSound(frames, cuts, opt = {}) {
   const buf = await ctx.startRendering();
   // normalise and soften the peaks
   let pk = 1e-6; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); }
-  const k = .9 / pk, th = Math.tanh(1.15);
+  const k = (hum ? .62 : .9) / pk, th = Math.tanh(1.15);
   const fe = Math.floor(vid * SR), fs = Math.max(0, fe - Math.floor(1.0 * SR));   // a one-second run-out
   for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) {
     let v = Math.tanh(d[i] * k * 1.15) / th * .9;

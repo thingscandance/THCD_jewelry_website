@@ -1,7 +1,7 @@
 // STROBE export: frames are painted one by one (no real-time limit) and encoded to H.264 + AAC in an MP4 with
 // WebCodecs; browsers without WebCodecs fall back to a real-time WebM recording.
 import { Muxer, ArrayBufferTarget } from './mp4-muxer.mjs';
-import { W, H, FPS } from './engine.js?v=20261027g';
+import { W, H, FPS } from './engine.js?v=20261027h';
 
 async function pickVideoConfig(w, h) {
   const bitrate = w >= 1000 ? 20_000_000 : 5_000_000;   // grain and strobe need room; Instagram re-encodes anyway

@@ -1,7 +1,7 @@
-import { compile, Renderer, makeLogo, W, H, FPS } from './engine.js?v=20261027g';
-import { renderSound, wavBlob } from './sound.js?v=20261027g';
-import { encodeMP4, recordWebM, canMP4 } from './export.js?v=20261027g';
-import { loadClip, embedImage, embedText, cos } from './clip.js?v=20261027g';
+import { compile, Renderer, makeLogo, W, H, FPS } from './engine.js?v=20261027h';
+import { renderSound, wavBlob } from './sound.js?v=20261027h';
+import { encodeMP4, recordWebM, canMP4 } from './export.js?v=20261027h';
+import { loadClip, embedImage, embedText, cos } from './clip.js?v=20261027h';
 
 const $ = s => document.querySelector(s);
 const media = [];            // every uploaded item
