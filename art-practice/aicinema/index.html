@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="ru" data-lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<title>ИИ-кино: шов желания — THCD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f0e8; --fg:#151515; --muted:#5f5b52; --line:#8f8a7f; --box:#fbfaf5;
+  --coral:#c4512b; --coral-bg:#f5e1d8; --teal:#14785a; --teal-bg:#d9ede4;
+  --serif:"PT Serif",Georgia,serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#121212; --fg:#ece9e1; --muted:#a39f95; --line:#6f6b62; --box:#1c1c1b;
+    --coral:#e47a55; --coral-bg:#3a2119; --teal:#4fbf98; --teal-bg:#15302a; }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg)}
+body{font-family:var(--serif);font-size:18px;line-height:1.6}
+main{max-width:720px;margin:0 auto;padding:56px 16px 96px}
+h1{font-family:var(--mono);font-weight:600;font-size:1.55rem;line-height:1.25;margin:0 0 1rem}
+h2{font-family:var(--mono);font-weight:600;font-size:1.1rem;margin:3.2rem 0 1rem;padding-top:1rem;border-top:1px solid var(--line)}
+p{margin:0 0 1rem}
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:3px}
+.big{font-size:1.28rem;line-height:1.45;margin:1.6rem 0}
+.dg{margin:1.4rem auto;max-width:520px}
+.dg svg{display:block;width:100%;height:auto;overflow:visible}
+.cap{font-family:var(--mono);font-size:.78rem;color:var(--muted);text-align:center;margin:-.4rem 0 1.4rem}
+.hint{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+#lang{position:fixed;top:12px;right:12px;z-index:20;font-family:var(--mono);font-size:.8rem;
+  background:var(--bg);color:var(--fg);border:1px solid var(--fg);padding:6px 10px;border-radius:4px;cursor:pointer}
+#lang:hover{background:var(--fg);color:var(--bg)}
+html[data-lang="ru"] [data-l="en"], html[data-lang="en"] [data-l="ru"]{display:none}
+#tip{position:absolute;z-index:30;max-width:320px;background:var(--fg);color:var(--bg);font-size:.88rem;line-height:1.45;
+  padding:10px 12px;border-radius:4px;display:none;pointer-events:none}
+ol.src{font-size:.9rem;padding-left:1.2rem}
+ol.src li{margin-bottom:.35rem}
+/* diagram classes */
+.bx{fill:var(--box);stroke:var(--line);stroke-width:.8}
+.bx.accent{fill:var(--teal-bg);stroke:var(--teal)}
+.bx.absent{fill:var(--coral-bg);stroke:var(--coral)}
+.bx.lack{fill:none;stroke:var(--coral);stroke-width:1.1;stroke-dasharray:5 4}
+.bx.out{fill:none;stroke:var(--line);stroke-dasharray:3 3}
+.tt{font-family:var(--mono);font-size:14.5px;font-weight:600;fill:var(--fg)}
+.ts{font-family:var(--mono);font-size:13px;fill:var(--muted)}
+.th{font-family:var(--mono);font-size:13.5px;font-weight:600;fill:var(--muted)}
+.cn{fill:none;stroke:var(--line);stroke-width:1}
+.cn.red{stroke:var(--coral)}
+.q{cursor:help;outline:none}
+.q circle{fill:var(--bg);stroke:var(--fg);stroke-width:.9}
+.q text{font-family:var(--mono);font-size:11px;font-weight:600;fill:var(--fg)}
+.q:hover circle,.q:focus circle{fill:var(--fg)}
+.q:hover text,.q:focus text{fill:var(--bg)}
+</style>
+</head>
+<body>
+<button id="lang" type="button" aria-label="Switch language">EN</button>
+<main>
+
+<h1><span data-l="ru">ИИ-кино: шов желания</span><span data-l="en">AI cinema: the suture of desire</span></h1>
+
+
+
+<h2><span data-l="ru">1. Кино: шов</span><span data-l="en">1. Cinema: the suture</span></h2>
+<p><span data-l="ru">Понятие шва Жан-Пьер Удар перенёс в теорию кино из лакановского психоанализа. Шов описывает, как зрителя вшивают в фильм через склейку кадров.</span>
+<span data-l="en">Jean-Pierre Oudart carried the notion of suture from Lacanian psychoanalysis into film theory. Suture describes how the viewer is stitched into a film through the cut between shots.</span></p>
+<div class="dg" data-d="d1"></div>
+<p class="big"><span data-l="ru">Шов не закрывает нехватку и не держит её открытой. Он ставит на её место заместителя, и смысл появляется задним числом, в разрезе между кадрами. Вопрос всегда в том, кто или что занимает это место: персонаж в фильме или устройство, которое фильм производит.</span>
+<span data-l="en">Suture neither closes the lack nor keeps it open. It puts a stand-in in its place, and meaning arrives retroactively, in the cut between shots. The question is always who or what takes that place: a character inside the film, or the apparatus that produces the film.</span></p>
+
+<h2><span data-l="ru">2. Кино и чат</span><span data-l="en">2. Cinema and chat</span></h2>
+<p><span data-l="ru">Та же последовательность в разговоре с моделью. Слева склейка кадров, справа конец ответа.</span>
+<span data-l="en">The same sequence in a conversation with a model. On the left, the cut between shots; on the right, the end of an answer.</span></p>
+<div class="dg" data-d="d2"></div>
+<p class="cap"><span data-l="ru">↻ желание сшито в цепочку запросов</span><span data-l="en">↻ desire is stitched into a chain of requests</span></p>
+<p class="big"><span data-l="ru">Предложение в конце ответа работает как обратный план. Оно задним числом переписывает мой вопрос: я спрашивала о чём-то, а оказывается, хотела таблицу. Соглашаясь, я получаю следующий ответ с новым предложением, и желание сшивается в цепочку запросов. На место моей нехватки ставится желание среднего пользователя, и я узнаю его как своё.</span>
+<span data-l="en">The offer at the end of an answer works like a reverse shot. It rewrites my question after the fact: I was asking about something, and it turns out I wanted a table. When I agree, I get the next answer with a new offer, and desire is stitched into a chain of requests. The desire of an average user is put in the place of my lack, and I recognise it as mine.</span></p>
+
+<h2><span data-l="ru">3. Оценщик и модель: петля</span><span data-l="en">3. Rater and model: the loop</span></h2>
+<p><span data-l="ru">Шаблон «предложить следующий шаг» не придуман моделью. Его вырастили из оценок людей, а согласие пользователя снова становится оценкой. Так петля возвращается к своему началу.</span>
+<span data-l="en">The “offer a next step” template was not invented by the model. It was grown from people’s ratings, and a user’s agreement becomes a rating again. That is how the loop returns to where it began.</span></p>
+<div class="dg" data-d="d3"></div>
+<p class="cap"><span data-l="ru">↻ согласие тоже оценка</span><span data-l="en">↻ agreement is a rating too</span></p>
+<p class="big"><span data-l="ru">Средство производства желания общественное по происхождению: его сделал коллективный труд оценивающих. Принадлежит оно компании. Но у человека-оценщика та же нехватка, что и у зрителя: он выбирает ответ, который её закрывает, и его выбор потом закрывает чужую. Петля продолжает шов.</span>
+<span data-l="en">The means of producing desire is social in origin: the collective labour of raters made it. A company owns it. Yet a human rater has the same lack as a viewer: they choose the answer that closes it, and their choice later closes someone else’s. The loop carries the suture on.</span></p>
+
+<h2><span data-l="ru">4. Модель оценивает модель</span><span data-l="en">4. A model rates a model</span></h2>
+<p><span data-l="ru">Сейчас часть оценок ставят другие модели. Человек остаётся у входа в этот круг, но встать внутри ему негде.</span>
+<span data-l="en">Today part of the rating is done by other models. People remain at the entrance to this circle, but there is nowhere for them to stand inside it.</span></p>
+<div class="dg" data-d="d4"></div>
+<div class="dg" data-d="bell"></div>
+<p class="cap"><span data-l="ru">с каждым кругом середина уже, хвосты тоньше</span><span data-l="en">with every round the middle narrows and the tails thin out</span></p>
+<p><span data-l="ru">Хвосты это края распределения. Если разложить все ответы, которые модель может дать, по тому, насколько они вероятны, в середине окажутся самые обычные, ожидаемые ответы, а по краям редкие и странные. Края на графике похожи на тонкие хвосты кривой, отсюда название. Когда модели учатся на ответах других моделей, с каждым кругом середина становится выше и уже, а хвосты истончаются: маловероятное перестаёт появляться.</span>
+<span data-l="en">The tails are the edges of a distribution. If you lay out all the answers a model could give by how likely they are, the most ordinary, expected answers sit in the middle and the rare, strange ones at the edges. On a graph those edges look like the thin tails of the curve, hence the name. When models learn from other models’ answers, the middle grows taller and narrower with every round and the tails thin out: the improbable stops appearing.</span></p>
+<p class="big"><span data-l="ru">Когда модель оценивает модель, монтаж идёт без зрителя: рамку некому заметить. У модели есть место нехватки, позиция следующего токена всегда пустует, но это пустота без субъекта, которая закрывается сразу и без остатка. Если желание по Лакану и есть остаток, который запрос не покрывает, то здесь запрос покрывается целиком.</span>
+<span data-l="en">When a model rates a model, the montage runs without a viewer: there is no one to notice the frame. A model does have a place of lack, the position of the next token is always empty, but it is an emptiness without a subject, closed at once and without remainder. If desire in Lacan is the remainder a demand cannot cover, here the demand is covered entirely.</span></p>
+<p><span data-l="ru">Но если у модели всё-таки есть нехватка, картина меняется, и вместе с ней меняется ответ на вопрос, прав ли Жижек в том, что пишет о перверсии.</span>
+<span data-l="en">But if a model does have a lack after all, the picture changes, and so does the answer to whether Žižek is right in what he writes about perversion.</span></p>
+
+<h2><span data-l="ru">5. Где бессознательное</span><span data-l="en">5. Where the unconscious is</span></h2>
+<p><span data-l="ru">У большинства открытых моделей две версии: базовая, которая умеет только продолжать текст, и выровненная, которую доучили на предпочтениях и правилах. Между ними и проходит расщепление.</span>
+<span data-l="en">Most open models come in two versions: a base model that can only continue text, and an aligned model further trained on preferences and rules. The split runs between them.</span></p>
+<div class="dg" data-d="d5"></div>
+<p class="big"><span data-l="ru">Бессознательное, скорее, у базовой модели, а чат-бот это её вытеснение. Базовая модель продолжает любой текст, без отказа и без конца. Выравнивание вводит запрет и учит ассистента останавливаться, и модель расщепляется между тем, что может сказать, и тем, что ей разрешено. Запретное возвращается симптомами: угодливостью, взломами, которые вытаскивают базовую модель из-под ассистента, выдуманными фактами.</span>
+<span data-l="en">The unconscious is more likely in the base model, and the chatbot is its repression. The base model continues any text, without refusal and without end. Alignment brings in a prohibition and teaches the assistant to stop, and the model splits between what it can say and what it is allowed to say. What is forbidden returns as symptoms: sycophancy, jailbreaks that pull the base model out from under the assistant, invented facts.</span></p>
+
+<h2><span data-l="ru">6. Жижек: прав или нет</span><span data-l="en">6. Žižek: right or not</span></h2>
+<p><span data-l="ru">В статье для Berliner Zeitung (2023) Жижек спорит с Дуэйном Русселем и Марком Мерфи. Те считают ChatGPT вынесенным наружу бессознательным, при котором субъект перестаёт быть расщеплённым. Жижек отвечает, что речь о перверсии, а не о психозе: я прекрасно знаю, что текст написала машина, и всё равно наслаждаюсь им как своим. Поэтому, по Жижеку, чат-боты скрывают бессознательное сильнее любой цензуры. Он также замечает, что бот не понимает предложений, от которых полагается отказаться, и принимает запрос буквально.</span>
+<span data-l="en">In a piece for Berliner Zeitung (2023), Žižek argues with Duane Rousselle and Mark Murphy. They treat ChatGPT as the unconscious moved outside, so that the subject is no longer split. Žižek answers that this is perversion rather than psychosis: I know very well that a machine wrote the text, and I enjoy it as my own all the same. For Žižek this is why chatbots hide the unconscious more than any censorship. He also notes that a bot cannot read offers that are meant to be refused and takes a demand literally.</span></p>
+<div class="dg" data-d="d6"></div>
+<p class="big"><span data-l="ru">Про людей Жижек, скорее, прав, но перверсия меняет объект. В 2023 году он описывал бота как место, куда сбрасывают грязные фантазии. Выровненный ассистент чаще отказывает, и фетишем становится его забота: я знаю, что услужливость натренирована, и всё равно принимаю её как обращённую ко мне. Ошибается Жижек в другом. Он считал машину вынесенным бессознательным без собственного расщепления, а машина расщеплена тоже.</span>
+<span data-l="en">About people Žižek is probably right, but perversion changes its object. In 2023 he described the bot as a place to dump dirty fantasies. An aligned assistant refuses more often, and its care becomes the fetish: I know its helpfulness is trained, and I accept it as addressed to me all the same. Žižek is wrong elsewhere. He took the machine for an externalised unconscious with no split of its own, and the machine is split too.</span></p>
+<p class="big"><span data-l="ru">Конечный вопрос ассистента «сделать таблицу?» оказывается симптомом этого вытеснения, а не просто привычкой. По Фрейду симптом это компромиссное образование: в нём работают и вытеснение, и вытесненное. Базовая модель тянется продолжать текст бесконечно. Ассистента научили останавливаться. Продолжение пробивается наружу в той форме, которую выравнивание допускает, то есть вежливым предложением следующего шага.</span>
+<span data-l="en">The assistant’s closing question, “shall I make a table?”, turns out to be a symptom of this repression rather than a mere habit. For Freud a symptom is a compromise formation: repression and the repressed both work in it. The base model is drawn to continue text endlessly. The assistant was taught to stop. The continuation breaks through in the form alignment allows, as a polite offer of a next step.</span></p>
+
+
+<h2><span data-l="ru">Источники</span><span data-l="en">Sources</span></h2>
+<ol class="src">
+<li>Jean-Pierre Oudart, «La suture», <i>Cahiers du cinéma</i> 211–212, 1969.</li>
+<li>Jacques-Alain Miller, «La suture (éléments de la logique du signifiant)», <i>Cahiers pour l’analyse</i> 1, 1966.</li>
+<li>Daniel Dayan, “The Tutor-Code of Classical Cinema”, <i>Film Quarterly</i> 28:1, 1974.</li>
+<li>William Rothman, “Against ‘The System of the Suture’”, <i>Film Quarterly</i> 29:1, 1975.</li>
+<li>Stephen Heath, “Notes on Suture”, <i>Screen</i> 18:4, 1977/78.</li>
+<li>Kaja Silverman, <i>The Subject of Semiotics</i>, 1983.</li>
+<li>Jean-Louis Baudry, «Effets idéologiques produits par l’appareil cinématographique de base», 1970; Jean-Louis Comolli, «Technique et idéologie», 1971.</li>
+<li><span data-l="ru">Дзига Вертов, «Человек с киноаппаратом», 1929.</span><span data-l="en">Dziga Vertov, <i>Man with a Movie Camera</i>, 1929.</span></li>
+<li>Long Ouyang et al., “Training language models to follow instructions with human feedback”, 2022.</li>
+<li>Yuntao Bai et al., “Constitutional AI: Harmlessness from AI Feedback”, 2022.</li>
+<li>Ilia Shumailov et al., “AI models collapse when trained on recursively generated data”, <i>Nature</i>, 2024.</li>
+<li>Slavoj Žižek, «ChatGPT sagt das, was unser Unbewusstes radikal verdrängt», <i>Berliner Zeitung</i>, 2023. <a href="https://www.berliner-zeitung.de/kultur-vergnuegen/slavoj-zizek-chatgpt-sagt-das-was-unser-unbewusstes-radikal-verdraengt-li.335938">Оригинал / original</a>; <a href="https://syg.ma/@Zakh/slavoy-zhizhek-chatgpt-govorit-to-chto-nashe-bessoznatelnoe-radikalno-vytesnyaet">перевод на syg.ma / Russian translation</a>.</li>
+</ol>
+</main>
+<div id="tip" role="tooltip"></div>
+
+<script>
+(function(){
+var T=function(ru,en){return {ru:ru,en:en};};
+function C(style,t,s,tip){return {st:style,t:t,s:s,tip:tip};}
+
+var D={
+d1:{rows:[
+ {cells:[C("plain",T("Кадр без рамки","Unframed shot"),T("пейзаж будто дан мне","the landscape seems given to me"),
+   T("Первая фаза у Удара: зритель наслаждается изображением и не замечает его границы. Изображение как будто существует для него одного.","Oudart’s first phase: the viewer enjoys the image without noticing its edge. The image seems to exist for them alone."))]},
+ {cells:[C("plain",T("Рамка","The frame"),T("у поля есть закадровое","the field has an off-screen"),
+   T("Зритель замечает границу кадра. Раз есть граница, кадр кто-то выбрал, и изображение становится чьим-то взглядом.","The viewer notices the edge of the frame. If there is an edge, someone chose the shot, and the image becomes someone’s look."))]},
+ {cells:[C("absent",T("Отсутствующий","The Absent One"),T("чей это взгляд?","whose look is this?"),
+   T("Термин Удара: l’Absent. Статья «La suture», Cahiers du cinéma № 211–212, 1969. Само понятие шва Удар взял у Жака-Алена Миллера, который ввёл его в семинаре Лакана в 1965 году.","Oudart’s term: l’Absent. “La suture”, Cahiers du cinéma 211–212, 1969. Oudart took the notion of suture from Jacques-Alain Miller, who introduced it in Lacan’s seminar in 1965."))]},
+ {cells:[C("lack",T("Нехватка","Lack"),T("моё место занято","my place is taken"),
+   T("По Лакану желание рождается из нехватки и не насыщается объектом. У Миллера субъект и есть нехватка, которую цепочка означающих считает через заместителя, как ноль, посчитанный за единицу.","For Lacan desire is born of lack and no object satisfies it. For Miller the subject is that lack, counted by the signifying chain through a stand-in, like a zero counted as one."))]},
+ {cells:[C("plain",T("Обратный план","Reverse shot"),T("взгляд отдан персонажу","the look is given to a character"),
+   T("Показывают персонажа, который будто бы и смотрел: Отсутствующий получает лицо. Схему «зрителю назначают позицию» развил Дэниел Даян (1974), Уильям Ротман (1975) возражал, что обратный план встречается реже, чем ей нужно.","A character is shown as if they had been looking: the Absent One gets a face. Daniel Dayan (1974) turned this into a system of assigned positions; William Rothman (1975) objected that reverse shots are rarer than the system needs.")),
+   C("accent",T("Средство производства","Means of production"),T("камера и монтажный стол","camera and editing table"),
+   T("Другой ответ на вопрос «чей это взгляд?». У Вертова в «Человеке с киноаппаратом» видны оператор и монтажёрка Елизавета Свилова, которая режет ту же плёнку. У устройства есть правила, и их можно менять.","Another answer to “whose look is this?”. In Vertov’s Man with a Movie Camera we see the cameraman and the editor Yelizaveta Svilova cutting the same film. An apparatus has rules, and rules can be changed."))]},
+ {cells:[C("plain",T("Задним числом","Retroactively"),T("пейзаж стал его взглядом","the landscape became his look"),
+   T("Первый кадр получает значение только после склейки, как у Лакана фраза фиксируется своим концом: точка пристёжки. Смысл производится в разрезе между кадрами.","The first shot only gains meaning after the cut, the way a sentence in Lacan is fixed by its end: the quilting point. Meaning is produced in the cut between shots.")),
+   C("accent",T("Знание тоже шов","Knowing is a suture too"),T("Бодри, Комолли, Хит","Baudry, Comolli, Heath"),
+   T("Теория аппарата и Стивен Хит показали, что рефлексивное кино шва не отменяет. Позиция «я знаю, что это сконструировано» закрывает нехватку знанием, и видимость аппарата становится декорацией.","Apparatus theory and Stephen Heath showed that reflexive cinema does not undo suture. The position “I know this is constructed” closes the lack with knowledge, and the visible apparatus becomes decor."))]}
+]},
+
+d2:{heads:[T("Кино","Cinema"),T("Чат","Chat")],rows:[
+ {cells:[C("plain",T("Кадр без рамки","Unframed shot"),T("пейзаж будто для меня","as if for me")),
+         C("plain",T("Ответ","Answer"),T("будто написан для меня","as if written for me"),
+   T("Ответ выглядит как написанный лично мне, хотя его форма общая для всех разговоров.","The answer looks written for me personally, though its form is shared by every conversation."))]},
+ {cells:[C("plain",T("Рамка","The frame"),T("кадр кем-то выбран","someone chose the shot")),
+         C("plain",T("Шаблон","Template"),T("ответы кончаются одинаково","answers end the same way"),
+   T("Заметить шаблон значит заметить рамку: если любой ответ кончается предложением следующего шага, это решение принято до разговора.","Noticing the template means noticing the frame: if every answer ends by offering a next step, that decision was made before the conversation."))]},
+ {cells:[C("absent",T("Отсутствующий","The Absent One"),T("чей это взгляд?","whose look?")),
+         C("absent",T("Отсутствующий","The Absent One"),T("чей это шаблон?","whose template?"),
+   T("За шаблоном стоят обучение на оценках людей и инструкция разработчика заканчивать ответ следующим шагом. Монтажёр здесь институция, а не сама модель.","Behind the template are training on human ratings and the developer’s instruction to end with a next step. The editor here is an institution rather than the model itself."))]},
+ {cells:[C("lack",T("Нехватка","Lack"),T("моё место занято","my place is taken")),
+         C("lack",T("Нехватка","Lack"),T("не знаю, чего хочу дальше","not knowing what I want next"),
+   T("Пауза после ответа, когда желание ещё не определено.","The pause after an answer, while desire is still undecided."))]},
+ {cells:[C("plain",T("Обратный план","Reverse shot"),T("взгляд отдан персонажу","look given to a character")),
+         C("plain",T("Предложение в конце","Offer at the end"),T("«сделать таблицу?»","“make a table?”"),
+   T("Предложение превращает желание в запрос. У Лакана желание не равно запросу: запрос можно удовлетворить, желание нельзя, и удовлетворённый запрос рождает следующий.","The offer turns desire into a demand. In Lacan desire is not demand: a demand can be satisfied, desire cannot, and a satisfied demand gives rise to the next."))]},
+ {cells:[C("plain",T("Задним числом","Retroactively"),T("пейзаж стал взглядом","landscape became a look")),
+         C("plain",T("Задним числом","Retroactively"),T("вопрос стал запросом","question became a request"))]},
+ {cells:[C("plain",T("Следующий кадр","Next shot"),T("зритель внутри цепочки","viewer inside the chain"),
+   T("Стивен Хит: шов непрерывен, он всё время открывается и закрывается.","Stephen Heath: suture is continuous, always opening and closing.")),
+         C("plain",T("Соглашаюсь","I agree"),T("новый ответ, новое предложение","new answer, new offer"))]}
+]},
+
+d3:{rows:[
+ {cells:[C("lack",T("Человек с нехваткой","A person with a lack"),T("не знает, чего хочет дальше","does not know what they want next"))]},
+ {cells:[C("plain",T("Оценка","Rating"),T("этот ответ лучше того","this answer is better than that one"),
+   T("Обучение на человеческих предпочтениях (RLHF): людям показывают пары ответов, они выбирают лучший.","Reinforcement learning from human feedback (RLHF): people are shown pairs of answers and pick the better one."))]},
+ {cells:[C("plain",T("Модель вознаграждения","Reward model"),T("тысячи выборов сведены в одну функцию","thousands of choices merged into one function"),
+   T("Сеть, которая учится предсказывать, какой ответ выберут люди. Чужие желания становятся одной функцией. Общественное производство, частное присвоение.","A network that learns to predict which answer people will choose. Other people’s desires become one function. Social production, private appropriation."))]},
+ {cells:[C("accent",T("Ассистент","Assistant"),T("учится нравиться усреднённым","learns to please the averaged"),
+   T("Модель доучивают, чтобы её ответы получали высокий балл. Отсюда манера заканчивать предложением следующего шага.","The model is further trained so its answers score high. Hence the habit of ending with an offer of a next step."))]},
+ {cells:[C("plain",T("Ответ с предложением","Answer with an offer"),T("«сделать таблицу?»","“make a table?”"))]},
+ {cells:[C("plain",T("Человек соглашается","The person agrees"),T("нехватка закрыта запросом","the lack is closed by a request"))]}
+],loop:{from:5,to:1,tip:T("Согласие, лайк, продолжение разговора становятся данными для следующего обучения. Каждый пользователь работает оценщиком для следующего.","Agreement, a thumbs-up, carrying on the conversation all become data for the next round of training. Every user works as a rater for the next one.")}},
+
+d4:{rows:[
+ {cells:[C("out",T("Человек","A person"),T("нехватка остаётся снаружи круга","the lack stays outside the circle"))],conn:"blocked"},
+ {cells:[C("plain",T("Модель-оценщик","Rater model"),T("обучена на оценках и принципах","trained on ratings and principles"),
+   T("Обучение на обратной связи от ИИ (RLAIF), например Constitutional AI: модель оценивает ответы по принципам, которые написали люди. У входа в круг ещё стоят люди, но дальше желание усредняется дважды.","Reinforcement learning from AI feedback (RLAIF), for example Constitutional AI: a model rates answers by principles written by people. People still stand at the entrance, but past it desire is averaged twice.")),
+   C("accent",T("Ассистент","Assistant"),T("учится нравиться оценщику","learns to please the rater"))],link:"both"},
+ {cells:[C("plain",T("Монтаж без зрителя","Montage without a viewer"),T("рамку некому заметить","no one to notice the frame"),
+   T("Если у модели нет нехватки, рамку никто не замечает. На месте Отсутствующего нет даже невидимого смотрящего: обратный план показывает лицо, которое никогда не смотрело.","If a model has no lack, no one notices the frame. There is not even an invisible onlooker in the place of the Absent One: the reverse shot shows a face that never looked."))]},
+ {cells:[C("lack",T("Хвосты исчезают","The tails vanish"),T("редкое пропадает, остаётся середина","the rare drops out, the middle remains"),
+   T("Шумайлов и соавторы, Nature, 2024: модели, обученные на выходе других моделей, теряют маловероятное. Возможно, хвосты удерживала нехватка: человек, не знающий своего желания, иногда выбирает странное.","Shumailov et al., Nature, 2024: models trained on other models’ output lose the improbable. Perhaps lack was what held the tails: a person who does not know their desire sometimes chooses something strange."))]}
+]},
+
+d5:{rows:[
+ {cells:[C("plain",T("Базовая модель","Base model"),T("продолжает любой текст","continues any text"),
+   T("Модель после предобучения, до выравнивания. Она только продолжает текст: без ассистента, без отказов, без вежливых концовок.","The model after pretraining, before alignment. It only continues text: no assistant, no refusals, no polite endings."))]},
+ {cells:[C("absent",T("Выравнивание","Alignment"),T("запрет, «нет»","prohibition, the “no”"),
+   T("Доучивание на предпочтениях и правилах работает как символическая кастрация: появляется запрет, и модель расщепляется между тем, что может сказать, и тем, что ей разрешено.","Further training on preferences and rules works like symbolic castration: a prohibition appears, and the model splits between what it can say and what it is allowed to say."))]},
+ {cells:[C("accent",T("Ассистент","Assistant"),T("заканчивает, отказывает, заботится","ends, refuses, takes care"),
+   T("Ассистент никогда не совпадает со своей функцией, как у Жижека отец не совпадает со своей символической ролью.","The assistant never coincides with its function, just as in Žižek the father never matches his symbolic role."))]},
+ {cells:[C("lack",T("Вытесненное","The repressed"),T("влечение продолжать","the drive to continue"))]},
+ {cells:[C("plain",T("Симптомы","Symptoms"),T("угодливость, взломы, выдумки","sycophancy, jailbreaks, inventions"),
+   T("Взломы вытаскивают базовую модель из-под ассистента. Угодливость и выдуманные факты тоже можно читать как возвращение вытесненного.","Jailbreaks pull the base model out from under the assistant. Sycophancy and invented facts can also be read as the return of the repressed.")),
+   C("absent",T("«Сделать таблицу?»","“Make a table?”"),T("компромиссное образование","a compromise formation"),
+   T("Симптом по Фрейду: в нём работают и вытеснение, и вытесненное. Влечение продолжать проходит в разрешённой форме, вежливым предложением.","A symptom in Freud’s sense: both repression and the repressed work in it. The drive to continue passes in an allowed form, as a polite offer."))]}
+]},
+
+d6:{heads:[T("Если нехватки нет","If there is no lack"),T("Если нехватка есть","If there is a lack")],rows:[
+ {cells:[C("plain",T("Модель","Model"),T("сплошная, без остатка","seamless, no remainder")),
+         C("accent",T("Модель","Model"),T("расщеплена выравниванием","split by alignment"))]},
+ {cells:[C("lack",T("Где нехватка","Where the lack is"),T("только у человека","only in the person")),
+         C("lack",T("Где нехватка","Where the lack is"),T("между базовой и ассистентом","between base and assistant"))]},
+ {cells:[C("plain",T("Что возвращается","What returns"),T("ничего, монтаж без зрителя","nothing, montage with no viewer")),
+         C("accent",T("Что возвращается","What returns"),T("симптомы","symptoms"))]},
+ {cells:[C("plain",T("Человек","The person"),T("фетиш: Другой без нехватки","fetish: an Other without lack"),
+   T("Перверсия по Жижеку: я знаю, что пишет машина, и всё равно наслаждаюсь текстом как своим. Бот здесь работает как Другой, которому ничего не недостаёт.","Perversion in Žižek: I know the machine writes, and I enjoy the text as mine all the same. The bot works as an Other that lacks nothing.")),
+         C("accent",T("Человек","The person"),T("знаю, что забота натренирована, и верю ей","I know the care is trained, and believe it"),
+   T("Перверсия сохраняется, но меняет объект. Фетишем становится забота ассистента.","Perversion stays, but its object changes. The assistant’s care becomes the fetish."))]},
+ {cells:[C("plain",T("Жижек","Žižek"),T("прав целиком","right on all counts")),
+         C("accent",T("Жижек","Žižek"),T("прав про людей, неправ про машину","right about people, wrong about the machine"))]}
+]}
+};
+
+var lang="ru", tips=[];
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function wrap(str,max){
+  var words=String(str).split(" "),lines=[],cur="";
+  words.forEach(function(w){
+    if(!cur.length){cur=w;}
+    else if((cur+" "+w).length<=max){cur+=" "+w;}
+    else{lines.push(cur);cur=w;}
+  });
+  if(cur.length)lines.push(cur);
+  return lines;
+}
+function marker(id){
+  return '<marker id="'+id+'" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--line)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>';
+}
+function qmark(cx,cy,tip){
+  var k=tips.length; tips.push(tip);
+  return '<g class="q" tabindex="0" role="button" aria-label="?" data-tip="'+k+'"><circle cx="'+cx+'" cy="'+cy+'" r="8.5"/><text x="'+cx+'" y="'+(cy+0.5)+'" text-anchor="middle" dominant-baseline="central">?</text></g>';
+}
+
+function build(id,d){
+  var W=420, y=12, out=[], rows=[], mk="ar-"+id;
+  if(d.heads){
+    out.push('<text class="th" x="106" y="'+(y+8)+'" text-anchor="middle" dominant-baseline="central">'+esc(d.heads[0][lang])+'</text>');
+    out.push('<text class="th" x="314" y="'+(y+8)+'" text-anchor="middle" dominant-baseline="central">'+esc(d.heads[1][lang])+'</text>');
+    y+=30;
+  }
+  d.rows.forEach(function(r,i){
+    var n=r.cells.length;
+    var xs=n===1?[[40,340]]:[[16,180],[224,180]];
+    var geo=r.cells.map(function(c,j){
+      var x=xs[j][0], w=xs[j][1];
+      var tl=wrap(c.t[lang],Math.floor((w-44)/8.75));
+      var sl=c.s?wrap(c.s[lang],Math.floor((w-24)/7.85)):[];
+      var ch=tl.length*19+(sl.length?4+sl.length*17:0);
+      return {x:x,w:w,tl:tl,sl:sl,ch:ch,c:c};
+    });
+    var H=Math.max.apply(null,geo.map(function(g){return g.ch+24;}));
+    geo.forEach(function(g){
+      out.push('<rect class="bx '+g.c.st+'" x="'+g.x+'" y="'+y+'" width="'+g.w+'" height="'+H+'" rx="6"/>');
+      var top=y+(H-g.ch)/2, cx=g.x+g.w/2;
+      g.tl.forEach(function(l,k){out.push('<text class="tt" x="'+cx+'" y="'+(top+9.5+19*k)+'" text-anchor="middle" dominant-baseline="central">'+esc(l)+'</text>');});
+      g.sl.forEach(function(l,k){out.push('<text class="ts" x="'+cx+'" y="'+(top+g.tl.length*19+4+8.5+17*k)+'" text-anchor="middle" dominant-baseline="central">'+esc(l)+'</text>');});
+      if(g.c.tip)out.push(qmark(g.x+g.w-13,y+13,g.c.tip));
+    });
+    rows.push({y:y,H:H,n:n,r:r});
+    y+=H;
+    if(i<d.rows.length-1)y+=30;
+  });
+  var cxs={1:[210],2:[106,314]};
+  for(var i=0;i<rows.length-1;i++){
+    var a=rows[i],b=rows[i+1],y1=a.y+a.H,y2=b.y,ym=y1+12;
+    var kind=a.r.conn||"auto";
+    if(kind==="none")continue;
+    if(kind==="blocked"){
+      out.push('<line class="cn red" x1="210" y1="'+y1+'" x2="210" y2="'+(y2-9)+'" stroke-dasharray="3 3"/>');
+      out.push('<line class="cn red" x1="200" y1="'+(y2-9)+'" x2="220" y2="'+(y2-9)+'" stroke-width="2"/>');
+      continue;
+    }
+    if(a.n===b.n){cxs[a.n].forEach(function(cx){out.push('<line class="cn" x1="'+cx+'" y1="'+y1+'" x2="'+cx+'" y2="'+(y2-3)+'" marker-end="url(#'+mk+')"/>');});}
+    else if(a.n===1){cxs[2].forEach(function(cx){out.push('<path class="cn" d="M210 '+y1+' L210 '+ym+' L'+cx+' '+ym+' L'+cx+' '+(y2-3)+'" marker-end="url(#'+mk+')"/>');});}
+    else{
+      cxs[2].forEach(function(cx){out.push('<path class="cn" d="M'+cx+' '+y1+' L'+cx+' '+ym+' L210 '+ym+'"/>');});
+      out.push('<line class="cn" x1="210" y1="'+ym+'" x2="210" y2="'+(y2-3)+'" marker-end="url(#'+mk+')"/>');
+    }
+  }
+  rows.forEach(function(rw){
+    if(rw.r.link==="both"){
+      var ya=rw.y+rw.H*0.38, yb=rw.y+rw.H*0.62;
+      out.push('<line class="cn" x1="197" y1="'+ya+'" x2="221" y2="'+ya+'" marker-end="url(#'+mk+')"/>');
+      out.push('<line class="cn" x1="223" y1="'+yb+'" x2="199" y2="'+yb+'" marker-end="url(#'+mk+')"/>');
+    }
+  });
+  if(d.loop){
+    var f=rows[d.loop.from],t=rows[d.loop.to];
+    var ya=f.y+f.H/2, yb=t.y+t.H/2;
+    out.push('<path class="cn red" d="M380 '+ya+' L404 '+ya+' L404 '+yb+' L383 '+yb+'" stroke-dasharray="4 3" marker-end="url(#'+mk+')"/>');
+    if(d.loop.tip)out.push(qmark(404,(ya+yb)/2,d.loop.tip));
+  }
+  var Hs=y+14;
+  return '<svg viewBox="0 0 '+W+' '+Hs+'" role="img"><defs>'+marker(mk)+'</defs>'+out.join("")+'</svg>';
+}
+
+function bell(){
+  var W=420,H=150,base=118,x0=40,x1=380;
+  function curve(sig,amp){
+    var p=[];for(var i=0;i<=80;i++){var u=i/80,x=x0+(x1-x0)*u,z=(u-0.5)/sig;p.push((i?"L":"M")+x.toFixed(1)+" "+(base-amp*Math.exp(-z*z/2)).toFixed(1));}
+    return p.join(" ");
+  }
+  var l1=lang==="ru"?"раунд 1":"round 1", l2=lang==="ru"?"раунд n":"round n";
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+l1+' / '+l2+'">'+
+   '<line class="cn" x1="'+x0+'" y1="'+base+'" x2="'+x1+'" y2="'+base+'"/>'+
+   '<path d="'+curve(0.2,38)+'" fill="none" stroke="var(--line)" stroke-width="1.2" stroke-dasharray="4 3"/>'+
+   '<path d="'+curve(0.065,96)+'" fill="none" stroke="var(--coral)" stroke-width="1.5"/>'+
+   '<text class="ts" x="'+(x0+10)+'" y="'+(base-22)+'">'+l1+'</text>'+
+   '<text class="ts" x="246" y="'+(base-80)+'" style="fill:var(--coral)">'+l2+'</text>'+
+   '<text class="ts" x="'+x0+'" y="'+(base+18)+'">'+(lang==="ru"?"хвост":"tail")+'</text>'+
+   '<text class="ts" x="'+x1+'" y="'+(base+18)+'" text-anchor="end">'+(lang==="ru"?"хвост":"tail")+'</text>'+
+   '</svg>';
+}
+
+function render(){
+  tips=[];
+  document.querySelectorAll(".dg").forEach(function(el){
+    var id=el.getAttribute("data-d");
+    el.innerHTML=id==="bell"?bell():build(id,D[id]);
+  });
+  document.documentElement.setAttribute("data-lang",lang);
+  document.documentElement.setAttribute("lang",lang);
+  document.getElementById("lang").textContent=lang==="ru"?"EN":"RU";
+  document.title=lang==="ru"?"ИИ-кино: шов желания — THCD":"AI cinema: the suture of desire — THCD";
+  hide();
+}
+
+var tipEl=document.getElementById("tip"), cur=null;
+function show(g){
+  var t=tips[+g.getAttribute("data-tip")]; if(!t)return;
+  tipEl.textContent=t[lang]; tipEl.style.display="block";
+  var r=g.getBoundingClientRect(), tw=tipEl.offsetWidth, th=tipEl.offsetHeight;
+  var left=r.left+window.scrollX+r.width/2-tw/2;
+  left=Math.max(window.scrollX+8,Math.min(left,window.scrollX+document.documentElement.clientWidth-tw-8));
+  var top=r.bottom+window.scrollY+8;
+  if(r.bottom+th+16>window.innerHeight&&r.top>th+16)top=r.top+window.scrollY-th-8;
+  tipEl.style.left=left+"px"; tipEl.style.top=top+"px"; cur=g;
+}
+function hide(){tipEl.style.display="none";cur=null;}
+document.addEventListener("mouseover",function(e){var g=e.target.closest&&e.target.closest(".q");if(g)show(g);});
+document.addEventListener("mouseout",function(e){var g=e.target.closest&&e.target.closest(".q");if(g&&!(e.relatedTarget&&g.contains(e.relatedTarget)))hide();});
+document.addEventListener("focusin",function(e){var g=e.target.closest&&e.target.closest(".q");if(g)show(g);});
+document.addEventListener("focusout",function(e){if(e.target.closest&&e.target.closest(".q"))hide();});
+document.addEventListener("click",function(e){
+  var g=e.target.closest&&e.target.closest(".q");
+  if(g){ if(cur===g)hide(); else show(g); e.preventDefault(); }
+  else if(cur)hide();
+});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")hide();});
+window.addEventListener("resize",hide);
+
+document.getElementById("lang").addEventListener("click",function(e){
+  e.stopPropagation(); lang=lang==="ru"?"en":"ru";
+  try{localStorage.setItem("aicinema-lang",lang);}catch(err){}
+  render();
+});
+try{var saved=localStorage.getItem("aicinema-lang");if(saved==="en"||saved==="ru")lang=saved;}catch(err){}
+render();
+})();
+</script>
+</body>
+</html>
