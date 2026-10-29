@@ -72,10 +72,11 @@ ol.src a:hover{color:var(--accent)}
 .th{font-family:var(--f-ui);font-size:12.5px;letter-spacing:.12em;fill:var(--muted);text-transform:uppercase}
 .cn{fill:none;stroke:var(--muted);stroke-width:1}
 .cn.red{stroke:var(--accent)}
-.q{cursor:help;outline:none}
-.q circle{fill:var(--canvas);stroke:var(--ink);stroke-width:.9}
+.q{cursor:help;outline:none;-webkit-tap-highlight-color:transparent}
+.q circle.hit{fill:transparent!important;stroke:none!important}
+.q circle:not(.hit){fill:var(--canvas);stroke:var(--ink);stroke-width:.9}
 .q text{font-family:var(--f-ui);font-size:11px;font-weight:500;fill:var(--ink)}
-.q:hover circle,.q:focus circle{fill:var(--accent);stroke:var(--accent)}
+.q:hover circle:not(.hit),.q:focus circle:not(.hit){fill:var(--accent);stroke:var(--accent)}
 .q:hover text,.q:focus text{fill:var(--canvas)}
 @media (max-width:760px){
   .top{grid-template-columns:auto 1fr}
@@ -447,7 +448,7 @@ function marker(id){
 }
 function qmark(cx,cy,tip){
   var k=tips.length; tips.push(tip);
-  return '<g class="q" tabindex="0" role="button" aria-label="?" data-tip="'+k+'"><circle cx="'+cx+'" cy="'+cy+'" r="8.5"/><text x="'+cx+'" y="'+(cy+0.5)+'" text-anchor="middle" dominant-baseline="central">?</text></g>';
+  return '<g class="q" tabindex="0" role="button" aria-label="?" data-tip="'+k+'"><circle class="hit" cx="'+cx+'" cy="'+cy+'" r="17"/><circle cx="'+cx+'" cy="'+cy+'" r="8.5"/><text x="'+cx+'" y="'+(cy+0.5)+'" text-anchor="middle" dominant-baseline="central">?</text></g>';
 }
 
 function build(id,d){
@@ -591,14 +592,31 @@ function show(g){
   tipEl.style.left=left+"px"; tipEl.style.top=top+"px"; cur=g;
 }
 function hide(){tipEl.style.display="none";cur=null;}
-document.addEventListener("mouseover",function(e){var g=e.target.closest&&e.target.closest(".q");if(g)show(g);});
-document.addEventListener("mouseout",function(e){var g=e.target.closest&&e.target.closest(".q");if(g&&!(e.relatedTarget&&g.contains(e.relatedTarget)))hide();});
-document.addEventListener("focusin",function(e){var g=e.target.closest&&e.target.closest(".q");if(g)show(g);});
-document.addEventListener("focusout",function(e){if(e.target.closest&&e.target.closest(".q"))hide();});
+var lastPtr="mouse", shownAt=0;
+function showAt(g){show(g);shownAt=Date.now();}
+document.addEventListener("pointerdown",function(e){lastPtr=e.pointerType||"mouse";},true);
+document.addEventListener("pointerover",function(e){
+  if(e.pointerType!=="mouse")return;
+  var g=e.target.closest&&e.target.closest(".q"); if(g&&cur!==g)showAt(g);
+});
+document.addEventListener("pointerout",function(e){
+  if(e.pointerType!=="mouse")return;
+  var g=e.target.closest&&e.target.closest(".q");
+  if(g&&!(e.relatedTarget&&g.contains(e.relatedTarget)))hide();
+});
+document.addEventListener("keyup",function(e){
+  if(e.key!=="Tab")return;
+  var g=document.activeElement&&document.activeElement.closest&&document.activeElement.closest(".q");
+  if(g)showAt(g);
+});
+document.addEventListener("focusout",function(e){if(e.target.closest&&e.target.closest(".q")&&lastPtr==="keyboard")hide();});
+document.addEventListener("keydown",function(e){if(e.key==="Tab")lastPtr="keyboard";});
 document.addEventListener("click",function(e){
   var g=e.target.closest&&e.target.closest(".q");
-  if(g){ if(cur===g)hide(); else show(g); e.preventDefault(); }
-  else if(cur)hide();
+  if(g){
+    e.preventDefault();
+    if(cur===g&&Date.now()-shownAt>400)hide(); else showAt(g);
+  } else if(cur&&!(e.target.closest&&e.target.closest("#tip")))hide();
 });
 document.addEventListener("keydown",function(e){if(e.key==="Escape")hide();});
 window.addEventListener("resize",hide);
