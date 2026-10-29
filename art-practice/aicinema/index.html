@@ -87,8 +87,27 @@ ol.src a:hover{color:var(--accent)}
 }
 </style>
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<style>
+/* animated background: painterly winged flyers, fixed behind the text */
+.flyers{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:var(--canvas)}
+.flyers video{display:block;width:100%;height:100%;object-fit:cover;opacity:.5}
+.top,main,.foot{position:relative;z-index:1}
+@media (max-width:760px){.flyers video{opacity:.38}}
+</style>
 </head>
 <body>
+<div class="flyers" aria-hidden="true">
+  <video id="flyers" autoplay muted loop playsinline preload="auto" poster="/media/aicinema-bg.webp">
+    <source src="/media/aicinema-bg.webm" type="video/webm">
+    <source src="/media/aicinema-bg.mp4" type="video/mp4">
+  </video>
+</div>
+<script>
+(function(){
+  var v=document.getElementById("flyers");
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches){v.removeAttribute("autoplay");v.pause();}
+})();
+</script>
 <header class="top">
   <a href="https://thcd.monster/" aria-label="Things Can Dance, home"><img class="logo" src="/studio/img/thcd_logo.png" alt="Things Can Dance"></a>
   <p class="sect"><b>03.</b>art_practice</p>
