@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="SCAN: one clip seen through many machines, flickering on the beat with sound. Runs in your browser. THCD video_studio.">
+<title>SCAN · THCD video_studio</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&family=Doto:wght@700;900&family=Instrument+Serif&family=Cormorant+Garamond:wght@300&family=Syne:wght@500&family=Unbounded:wght@300&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{
+  --canvas:#000; --paper:#0B0C0D; --ink:#E9ECEA; --muted:#8D9493; --edge:rgba(233,236,234,.28); --grid:rgba(233,236,234,.11); --accent:#E61E9C;
+  --f-display:"Doto","Geist Mono",ui-monospace,monospace; --f-ui:"Geist Mono",ui-monospace,Menlo,monospace; --f-body:"Geist",ui-sans-serif,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--canvas); color:var(--ink); font-family:var(--f-ui); font-size:12px; line-height:1.55;
+  background-image:radial-gradient(circle,var(--grid) 1px,transparent 1.4px); background-size:24px 24px;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:0 64px}
+a{color:inherit}
+button,input,textarea{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.page{max-width:1280px; margin:0 auto; display:flex; flex-direction:column; gap:48px}
+.nav{display:flex; justify-content:space-between; align-items:center; gap:16px; padding-block:22px 14px; border-bottom:1px solid var(--edge); flex-wrap:wrap}
+.nav a{text-decoration:none} .nav a:hover{color:var(--accent)}
+.nav .thcd-logo{width:clamp(90px,8vw,120px); height:auto; display:block}
+.nav .r{display:flex; gap:16px; flex-wrap:wrap; align-items:center; font-size:11px; letter-spacing:.06em}
+.nav span{color:var(--muted)}
+.head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:32px; align-items:end}
+.title{font-family:var(--f-display); font-weight:900; font-size:clamp(64px,13vw,200px); line-height:.8; margin:0; letter-spacing:-.03em}
+.lede{font-family:var(--f-body); font-weight:300; letter-spacing:-.02em; font-size:clamp(22px,2.6vw,34px); line-height:1.12; margin:0; text-wrap:balance}
+.facts{display:grid; grid-template-columns:auto 1fr; gap:6px 18px; margin:20px 0 0}
+.facts dt{color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-size:10px; padding-top:2px}
+.facts dd{margin:0; font-family:var(--f-body); font-weight:300; font-size:14px}
+
+.app{display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:16px; align-items:start}
+.col{display:flex; flex-direction:column; gap:16px; min-width:0}
+.win{background:var(--paper); border:1px solid var(--edge); display:flex; flex-direction:column; min-width:0}
+.bar{height:28px; display:flex; align-items:center; gap:10px; padding:0 8px; border-bottom:1px solid var(--edge); font-size:10.5px; white-space:nowrap; overflow:hidden}
+.bar i{width:9px; height:9px; border:1px solid var(--edge); flex:none}
+.bar .r{margin-left:auto; color:var(--muted)}
+.bar{overflow:visible} .win{position:relative}
+.help{position:relative; display:inline-grid; place-items:center; width:16px; height:16px; border:1px solid var(--edge); border-radius:50%; font-size:10px; color:var(--muted); cursor:help; flex:none}
+.help:hover,.help:focus{color:var(--ink); border-color:var(--accent); outline:none}
+.help .tip{position:absolute; left:-8px; top:24px; z-index:20; width:min(360px,80vw); white-space:normal; padding:10px 12px; background:#111214; border:1px solid var(--accent); color:var(--ink); font-family:var(--f-body); font-weight:300; font-size:13px; line-height:1.45; opacity:0; pointer-events:none; transition:opacity .15s}
+.help .tip b{font-weight:500} .help .tip i{color:var(--accent); font-style:normal}
+.help:hover .tip,.help:focus .tip{opacity:1}
+.body{padding:12px; display:flex; flex-direction:column; gap:10px}
+.btn{background:transparent; border:1px solid var(--edge); padding:7px 12px; cursor:pointer; text-transform:lowercase; letter-spacing:.04em}
+.btn:hover{border-color:var(--ink)} .btn.on{border-color:var(--ink); background:var(--ink); color:#000} .btn.main{border-color:var(--accent); color:var(--accent)} .btn:disabled{opacity:.4; cursor:wait}
+.row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.muted{color:var(--muted)}
+input[type=text],textarea,select{background:#000; border:1px solid var(--edge); padding:8px 10px; width:100%; min-width:0}
+textarea{min-height:120px; resize:vertical; font-family:var(--f-ui); line-height:1.6}
+
+#drop{border:1px dashed var(--edge); padding:22px; text-align:center; color:var(--muted); transition:border-color .2s}
+#drop.over{border-color:var(--accent); color:var(--ink)}
+#media{display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:10px}
+.tile{border:1px solid var(--edge); display:flex; flex-direction:column; min-width:0}
+.tile.in{border-color:var(--ink)} .tile.hit{border-color:var(--accent)}
+.tile .th{cursor:pointer; position:relative; aspect-ratio:9/16; overflow:hidden; background:#111}
+.tile .th canvas{width:100%; height:100%; display:block}
+.tile.in .th::after{content:"in cut"; position:absolute; left:6px; top:6px; font-size:9.5px; padding:1px 5px; background:var(--ink); color:#000}
+.tile .meta{display:flex; gap:8px; padding:5px 6px 0; font-size:10px; color:var(--muted)}
+.tile .score{margin-left:auto; color:var(--accent)}
+.tile .lab{border:0; border-top:1px solid var(--grid); margin-top:5px; padding:5px 6px; font-size:10.5px; background:transparent}
+.tile .flags{display:flex; flex-wrap:wrap; gap:4px; padding:0 6px 6px}
+.tile .flags button{border:1px solid var(--grid); background:transparent; font-size:9.5px; padding:1px 5px; cursor:pointer; color:var(--muted)}
+.tile{position:relative} .tile.dragging{opacity:.4} .tile.drop{outline:2px solid var(--accent); outline-offset:2px}
+.tile .del{position:absolute; right:4px; top:4px; z-index:2; width:22px; height:22px; border:1px solid var(--edge); background:rgba(0,0,0,.7); color:var(--ink); cursor:pointer; line-height:1; padding:0}
+.tile .del:hover{border-color:var(--accent); color:var(--accent)}
+.tile .flags button.on{border-color:var(--accent); color:var(--accent)}
+#cut{display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; min-height:118px}
+.chip{flex:none; display:flex; flex-direction:column; gap:3px; font-size:10px; color:var(--muted); cursor:grab}
+.chip canvas{width:54px; height:96px; display:block; border:1px solid var(--edge)}
+#settings .grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
+#settings label{display:flex; flex-direction:column; gap:4px; font-size:10.5px; color:var(--muted)}
+#settings .checks{display:flex; flex-wrap:wrap; gap:6px 14px}
+#settings .checks label{flex-direction:row; align-items:center; gap:6px; color:var(--ink)}
+input[type=range]{width:100%; accent-color:var(--accent)}
+.prevwin{position:sticky; top:16px}
+.screen{aspect-ratio:9/16; background:#000; position:relative}
+.screen canvas,.screen video{position:absolute; inset:0; width:100%; height:100%; display:block}
+[hidden]{display:none !important}
+.prog{height:2px; background:var(--grid)} .prog b{display:block; height:100%; width:0; background:var(--accent); transition:width .1s}
+#status{min-height:1.5em}
+@media (max-width:900px){ .app{grid-template-columns:1fr} .prevwin{position:static} .head{grid-template-columns:1fr} }
+
+#segs{display:flex;flex-wrap:wrap;gap:6px}.seg{display:flex;flex:1 1 300px;gap:4px;border:1px solid var(--edge);padding:4px;border-left-width:4px}.seg select{flex:1;padding:4px;min-width:0}.seg input{width:58px;background:#000;border:1px solid var(--edge);padding:4px}.seg .btn{padding:2px 8px}
+#segbar{display:flex;height:14px;gap:1px}#segbar i{display:block;flex-basis:0}
+.m-clean{border-left-color:#8D9493}#segbar .m-clean{background:#8D9493}.m-thermal{border-left-color:#E61E9C}#segbar .m-thermal{background:#E61E9C}.m-echo{border-left-color:#4b6cff}#segbar .m-echo{background:#4b6cff}.m-vhs{border-left-color:#f2c200}#segbar .m-vhs{background:#f2c200}.m-contour{border-left-color:#f07a18}#segbar .m-contour{background:#f07a18}.m-particles{border-left-color:#bfc4c8}#segbar .m-particles{background:#bfc4c8}.m-plexus{border-left-color:#6fd3e0}#segbar .m-plexus{background:#6fd3e0}.m-logo{border-left-color:#000}#segbar .m-logo{background:#333}.m-split{border-left-color:#fff}#segbar .m-contour{border-left-color:#f07a18}#segbar .m-contour{background:#f07a18}.m-particles{border-left-color:#bfc4c8}#segbar .m-particles{background:#bfc4c8}.m-plexus{border-left-color:#6fd3e0}#segbar .m-plexus{background:#6fd3e0}.m-logo{border-left-color:#000}#segbar .m-logo{background:#333}.m-split{background:repeating-linear-gradient(90deg,#fff 0 3px,#000 3px 6px)}
+
+.tlwrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px}.tllabels{display:flex;flex-direction:column;font-size:10px;color:var(--muted)}.tllabels span{height:96px;display:flex;align-items:center}.tlscroll{overflow-x:auto;padding-top:14px}
+#track{position:relative;height:246px;min-width:820px}.clip{position:absolute;top:0;height:100%;overflow:hidden;border:1px solid var(--edge);cursor:pointer;background:#000;border-top-width:3px}.clip.sel{outline:2px solid var(--accent);outline-offset:-2px;z-index:1}.clip.dragging{opacity:.4}.strip{display:flex;height:96px;overflow:hidden}.strip canvas{flex:1 1 0;min-width:0;width:0;height:96px;object-fit:cover;display:block}.strip.src{filter:saturate(.8);border-bottom:1px solid var(--edge)}.cap{display:flex;flex-direction:column;gap:1px;padding:5px;font-size:10px;line-height:1.3;overflow:hidden;white-space:nowrap}.cap b{font-weight:500}.cap span{color:var(--muted)}
+.trn{position:absolute;top:84px;z-index:3;width:28px;height:28px;margin-left:-14px;padding:0;background:#000;border:1px solid var(--ink);color:var(--ink);cursor:pointer;font-size:14px;line-height:1}.trn:hover{border-color:var(--accent);color:var(--accent)}.trn.sel{background:var(--accent);border-color:var(--accent);color:#000}.trn.t-glitch{border-style:dashed}
+#ph{position:absolute;top:-10px;bottom:0;width:2px;background:var(--accent);z-index:4;pointer-events:none}
+#insp{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;align-items:end;border:1px solid var(--edge);padding:10px}#insp label{display:flex;flex-direction:column;gap:4px;font-size:10.5px;color:var(--muted)}#insp input[type=number]{background:#000;border:1px solid var(--edge);padding:7px;color:var(--ink);width:100%}#insp input[type=checkbox]{width:18px;height:18px}.ihead{grid-column:1/-1;margin:0;font-size:13px}.ihead b{font-weight:500}.hint{margin:0}
+.clip.m-clean{border-top-color:#8D9493}.clip.m-thermal{border-top-color:#E61E9C}.clip.m-particles{border-top-color:#bfc4c8}.clip.m-plexus{border-top-color:#6fd3e0}.clip.m-echo{border-top-color:#4b6cff}.clip.m-vhs{border-top-color:#f2c200}.clip.m-split{border-top-color:#fff}.clip.m-logo{border-top-color:#333}.clip.m-paper{border-top-color:#d9d0b8}.clip.m-wave{border-top-color:#9fd0ff}.clip.m-original{border-top-color:#7bc47f}.clip.m-strobe{border-top-color:#fff}.clip.m-pause{border-top-color:#000}.clip.m-thermal2{border-top-color:#ff8a1f}.clip.m-smear{border-top-color:#e8d5c8}.clip.m-invert{border-top-color:#e2341a}
+.land .screen{aspect-ratio:16/9}.land .app{grid-template-columns:minmax(0,1fr) 520px}.land #track{height:166px}.land .strip,.land .strip canvas,.land .tllabels span{height:54px}.land .trn{top:40px}
+@media (max-width:1100px){.land .app{grid-template-columns:1fr}.land .prevwin{position:static}}
+.trstrip{grid-column:1/-1;display:flex;gap:4px;overflow-x:auto}.trstrip canvas{display:block;border:1px solid var(--edge);flex:none}#insp input[type=text]{background:#000;border:1px solid var(--edge);padding:7px;color:var(--ink)}
+input[type=number]{color:inherit;font:inherit}
+.addrow{align-items:end;flex-wrap:wrap;gap:10px}.addrow label{display:flex;flex-direction:column;gap:4px;min-width:130px;font-size:10.5px;color:var(--muted)}#addmsg{font-size:10.5px;align-self:center}.clip.fresh{outline:2px solid var(--accent);outline-offset:-2px}
+.clipb{align-items:center;flex-wrap:wrap;gap:10px}#clipbinfo{font-size:10.5px}
+#totalLen{background:#000;border:1px solid var(--edge);padding:8px 10px;width:100%;min-width:0}
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="nav">
+    <a href="https://thcd.monster/" aria-label="Things Can Dance, home"><img class="thcd-logo" src="/studio/img/thcd_logo.png" alt="Things Can Dance"></a>
+    <div class="r"><a href="/studio/">← video_studio</a><a href="/studio/tools/">tools</a><span>SCAN / reel machine</span></div>
+  </nav>
+  <header class="head">
+    <h1 class="title">SCAN</h1>
+    <div>
+      <p class="lede">One clip, seen through many machines. Paper, thermal, wave, echo, invert and more flicker on the beat over a sub drone and microsound, while the motion never skips.</p>
+      <dl class="facts"><dt>runs</dt><dd>entirely in your browser; nothing is uploaded</dd><dt>best with</dt><dd>any clip with one clear subject</dd><dt>out</dt><dd>vertical 1080×1920 or horizontal 1920×1080, 24 fps</dd></dl>
+    </div>
+  </header>
+  <div class="app">
+    <div class="col">
+      <section class="win"><div class="bar"><i></i><span>scan/clip</span><span class="r" id="clipinfo">no clip</span></div>
+        <div class="body"><div id="drop">drop a video here, or <button class="btn" id="pick" type="button">choose file</button><input id="file" type="file" accept="video/*" hidden></div>
+        <div class="row clipb"><button class="btn" id="pickB" type="button">add a second clip</button><input id="fileB" type="file" accept="video/*" hidden><button class="btn" id="clearB" type="button" hidden>remove</button><span class="help" tabindex="0" aria-label="How to make a second clip">?<span class="tip">The second clip is the same motion in another world, so the edit can jump between them without losing the movement. Make it with Genjutsu on Higgsfield: restyle one frame of your clip with new clothes and a new location, then use Genjutsu to carry the motion of your clip onto that look. Use the same length and format as the first clip.</span></span><span class="muted" id="clipbinfo">none</span></div>
+        <div id="upwrap" hidden><div class="prog"><b id="upbar"></b></div><span class="muted" id="uptxt"></span></div></div></section>
+      <section class="win"><div class="bar"><i></i><span>scan/timeline</span><span class="r" id="len">—</span></div>
+        <div class="body"><div class="tlwrap"><div class="tllabels"><span>clip</span><span>becomes</span></div><div class="tlscroll"><div id="track"></div></div></div>
+        <p class="muted hint">Click a block to edit it. To add one, choose its look under the timeline: it goes right after the selected block. Click a symbol between blocks to see that transition frame by frame and change it. Drag blocks to reorder. Top row: your clip. Bottom row: what it becomes.</p>
+        <div class="row addrow"><label>preset name<input type="text" id="presetName" placeholder="my cut"></label><button class="btn" id="presetSave" type="button">save preset</button><label>saved<select id="presetSel"></select></label><button class="btn" id="presetLoad" type="button">load</button><button class="btn" id="presetDel" type="button">delete</button><button class="btn" id="presetFile" type="button">save file</button><button class="btn" id="presetPick" type="button">open file</button><input id="presetImp" type="file" accept=".json,application/json" hidden></div>
+        <div class="row addrow"><label>total length, s<input type="number" id="totalLen" min="1" step="0.25"></label><button class="btn" id="fitLen" type="button">set length</button><button class="btn" id="fitClip" type="button">fit to the clip</button></div>
+        <div class="row addrow"><label>new block<select id="addLook"></select></label><button class="btn" id="add" type="button">+ add after selected</button><span class="muted" id="addmsg" role="status"></span></div>
+        <div id="insp"></div>
+        <p class="muted hint" id="maskmsg" role="status" hidden></p><button class="btn" id="maskretry" type="button" hidden>try the figure mask again</button>
+        <div class="row"><button class="btn" id="mix" type="button" hidden>mix clips A and B</button><button class="btn" id="allA" type="button" hidden>only clip A</button><button class="btn" id="shuffle" type="button">another edit</button><button class="btn" id="reset" type="button">default cut</button></div></div></section>
+      <section class="win" id="settings"><div class="bar"><i></i><span>scan/settings</span></div>
+        <div class="body"><div class="grid">
+          <label>format<select id="format"><option value="vert" selected>vertical 9:16, 1080×1920</option><option value="land">horizontal 16:9, 1920×1080</option></select></label>
+          <label>tempo, bpm<input type="text" inputmode="numeric" id="bpm" value="120"></label>
+          <label>clip speed<select id="speed"><option value=".5">0.5×</option><option value=".75">0.75×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>
+          <label>start frame in the clip <input type="range" id="start" min="0" max="240" value="0"></label>
+          <label>end text<input type="text" id="endText" value="THINGS CAN DANCE"></label>
+          <label>end text size <input type="range" id="endSize" min="24" max="160" value="64"></label>
+          <label>end text font<select id="endFontSel"><option value="500|Geist" selected>Geist</option><option value="500|Geist Mono">Geist Mono</option><option value="400|Instrument Serif">Instrument Serif</option><option value="300|Cormorant Garamond">Cormorant Garamond</option><option value="500|Syne">Syne</option><option value="300|Unbounded">Unbounded</option><option value="700|Doto">Doto (dots)</option><option value="400|IBM Plex Mono">IBM Plex Mono</option><option value="custom" disabled>your font</option></select></label>
+          <label>hud font<select id="hudFontSel"><option value="500|Geist">Geist</option><option value="500|Geist Mono" selected>Geist Mono</option><option value="400|Instrument Serif">Instrument Serif</option><option value="300|Cormorant Garamond">Cormorant Garamond</option><option value="500|Syne">Syne</option><option value="300|Unbounded">Unbounded</option><option value="700|Doto">Doto (dots)</option><option value="400|IBM Plex Mono">IBM Plex Mono</option><option value="custom" disabled>your font</option></select></label>
+          <label>your own font (ttf / otf / woff)<span class="row"><button class="btn" id="fontpick" type="button">choose font</button><span class="muted" id="fontname">none</span></span><input id="fontfile" type="file" accept=".ttf,.otf,.woff,.woff2,font/*" hidden></label>
+          <label>line under the logo<input type="text" id="endTag" value="[ 01 ]"></label>
+          <label>logo file (png / svg)<span class="row"><button class="btn" id="logopick" type="button">choose logo</button><button class="btn" id="logoclear" type="button">use text</button><span class="muted" id="logoname">none, using end text</span></span><input id="logofile" type="file" accept="image/png,image/svg+xml,image/webp" hidden></label>
+          <label>hud name<input type="text" id="hudName" value=""></label>
+                    <label>flicker with, first<select id="poolA"><option value="thermal">thermal</option><option value="clean">b/w</option><option value="paper">paper</option><option value="wave">wave</option><option value="invert" selected>invert</option><option value="smear">scale wipe</option><option value="thermal2">thermal 2</option><option value="original">original</option><option value="echo">echo</option><option value="particles">particles</option><option value="plexus">plexus</option><option value="vhs">vhs</option></select></label>
+          <label>flicker with, second<select id="poolB"><option value="thermal">thermal</option><option value="clean" selected>b/w</option><option value="paper">paper</option><option value="wave">wave</option><option value="invert">invert</option><option value="smear">scale wipe</option><option value="thermal2">thermal 2</option><option value="original">original</option><option value="echo">echo</option><option value="particles">particles</option><option value="plexus">plexus</option><option value="vhs">vhs</option></select></label>
+          <label>figure mask quality<select id="maskQ"><option value="6" selected>fast: every 6th frame</option><option value="3">good: every 3rd frame</option><option value="1">best: every frame, slowest</option></select></label>
+          <label>figure mask, loose to tight <input type="range" id="maskTh" min="4" max="40" value="14"></label>
+          <label>glitch rectangle size <input type="range" id="maskSize" min="30" max="250" value="100"></label>
+          <label>transition sound <input type="range" id="cutGain" min="0" max="200" value="100"></label>
+          <label>hud sound <input type="range" id="hudGain" min="0" max="200" value="100"></label>
+          <label>sub drone <input type="range" id="subGain" min="0" max="200" value="100"></label>
+          <label>track under the sound <input type="range" id="musicGain" min="0" max="100" value="60"></label>
+                              <label>thermal strength <input type="range" id="thermal" min="40" max="140" value="100"></label>
+          <label>thermal palette<select id="palette"><option value="iron" selected>iron</option><option value="rainbow">rainbow</option><option value="white">white hot</option></select></label>
+          <label>vhs damage <input type="range" id="vhs" min="0" max="200" value="100"></label>
+          <label>echo trails <input type="range" id="echoLen" min="1" max="16" value="4"></label>
+          <label>echo intensity <input type="range" id="echoGain" min="30" max="160" value="65"></label>
+          <label>accent<input type="text" id="accent" value="#E61E9C"></label>
+                    <label>your own track, optional<span class="row"><button class="btn" id="audiopick" type="button">choose audio</button><button class="btn" id="audioclear" type="button">remove</button><span class="muted" id="audioname">none</span></span><input id="audiofile" type="file" accept="audio/*" hidden></label>
+        </div>
+        <label class="muted">hud text, one line each<textarea id="hudLines" spellcheck="false">OBJECT LOCK
+AZIMUTH 042°
+ELEVATION +12°
+HEAD TRACKING</textarea></label>
+        <div class="checks"><label><input type="checkbox" id="hud" checked> hud</label><label><input type="checkbox" id="brackets" checked> brackets</label><label><input type="checkbox" id="cross" checked> crosshair</label><label><input type="checkbox" id="ruler" checked> ruler</label><label><input type="checkbox" id="bars" checked> data bars</label><label><input type="checkbox" id="temp"> temperature</label><label><input type="checkbox" id="rec"> rec dot</label><label><input type="checkbox" id="sound" checked> sound</label></div></div></section>
+    </div>
+    <div class="col prevwin"><section class="win"><div class="bar"><i></i><span>scan/preview</span><span class="muted" id="ratio">9:16</span><span class="r" id="fnow">—</span></div>
+      <div class="screen"><canvas id="cv" width="540" height="960"></canvas></div><div class="prog"><b id="bar"></b></div>
+      <div class="body"><input type="range" id="scrub" min="0" max="0" value="0" aria-label="scrub through the cut"><div class="row"><button class="btn" id="play" type="button">play</button><button class="btn main" id="exp" type="button">export 1080×1920</button><button class="btn" id="skipmask" type="button" hidden>export now, skip the rest of the mask</button></div><span class="muted" id="status">drop a clip to begin</span></div></section></div>
+  </div>
+</div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
