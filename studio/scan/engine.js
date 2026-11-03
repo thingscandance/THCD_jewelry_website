@@ -127,7 +127,7 @@ export class Renderer {
       const tc = `TC ${String(Math.floor(f / FPS)).padStart(2, '0')}:${String(Math.floor(f % FPS)).padStart(2, '0')}`, tl = []; if (o.hudName) tl.push(o.hudName); tl.push(tc); if (g.temp && fr.mode === 'thermal') tl.push(`T ${(36.2 + hash(Math.floor(f / 6)) * .9).toFixed(1)}°C`); block(tl, left, top + pad, false);
       const lines = (o.hudLines || '').split('\n').map(x => x.trim()).filter(Boolean), seen = Math.min(lines.length, 1 + Math.floor(fr.i / 4)), shown = lines.slice(0, seen); if (shown.length) { const tw = Math.max(...lines.map(t => c.measureText(t).width)), y = bot - pad - lines.length * lh; plate(right - tw, y, tw, lines.length * lh); shown.forEach((t, k) => c.fillText(t, right - tw, y + (k + .5) * lh)); }
       if (g.bars) { const bw = 170 * u, y = bot - pad - 4 * 20 * u; plate(left, y, bw, 4 * 20 * u); for (let k = 0; k < 4; k++) { const v = .25 + .7 * hash(k * 7 + Math.floor(f / 6)); c.fillStyle = 'rgba(255,255,255,.28)'; c.fillRect(left, y + k * 20 * u + 4 * u, bw, 8 * u); c.fillStyle = '#fff'; c.fillRect(left, y + k * 20 * u + 4 * u, bw * v, 8 * u); } }
-      if (g.rec && f % 24 < 14) { c.fillStyle = ac; c.beginPath(); c.arc(right - 8 * u, top + pad + lh / 2, 9 * u, 0, 7); c.fill(); c.fillStyle = '#fff'; }
+      if (g.rec && (f / FPS) % 1 < .6) { const tw = Math.max(...tl.map(t => c.measureText(t).width)); c.fillStyle = '#FF2A1F'; c.beginPath(); c.arc(left + tw + 32 * u, top + pad + lh / 2, 10 * u, 0, 7); c.fill(); c.fillStyle = '#fff'; }
     }
     if (fr.caption) { c.textAlign = 'center'; c.font = `500 ${64 * u}px ${o.endFont || '"Geist", ui-sans-serif, sans-serif'}`; c.fillStyle = '#fff'; c.fillText(fr.caption, w / 2, h * .5, w * .86); c.textAlign = 'left'; }
     c.restore();
