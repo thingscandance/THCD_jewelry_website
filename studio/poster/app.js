@@ -8,7 +8,7 @@ const P = new Poster();
 const S = {
   fmt: '4x5', layout: 'stack', mode: 'frame', font: 'anton', font2: 'barlow', info: 'space', labels: true, scatter: false, fx: .45, caps: true, customFont: null,
   pal: { ...PALETTES.find(p => p.id === 'acid') }, palId: 'acid', tr: 'original', tstyle: 'mix', track: -0.01, lead: .04, side: false, grain: true, trFig: '', contour: 'off', contourColor: 'acc',
-  outline: true, outlineColor: '#ffffff', outlineW: 12, shadow: false, echo: '', echoN: 3, echoDir: 'auto', stretch: true, motion: 'build', loop: 6, bpm: 120, feel: 0, cycle: true, shotBeats: 2, seed: 1,
+  outline: true, outlineColor: '#ffffff', outlineW: 12, contourW: 3, contourN: 5, contourGap: 1, ptOn: false, ptDark: '#0A0A08', ptMid: '#5F6F22', ptLight: '#E4F7A0', shadow: false, echo: '', echoN: 3, echoDir: 'auto', stretch: true, motion: 'build', loop: 6, bpm: 120, feel: 0, cycle: true, shotBeats: 2, seed: 1,
   images: [],
   text: { title: 'GRAVITY', name: '', sub: 'night session 01', lines: '21.11 | stairwell jumps\n22.11 | concrete gaps\n23.11 | no net, no lights', date: '21.11', time: '23:00', place: 'Tbilisi · Vake 14', footer: 'things can dance · thcd.monster' },
 };
@@ -34,8 +34,10 @@ function syncUI() {
   document.querySelectorAll('[data-pal]').forEach(b => b.classList.toggle('on', b.dataset.pal === S.palId));
   $('format').value = S.fmt; $('font').value = S.font; $('font2').value = S.font2; $('info').value = S.info; $('caps').checked = S.caps;
   $('c_bg').value = S.pal.bg; $('c_ink').value = S.pal.ink; $('c_acc').value = S.pal.acc;
-  for (const k of ['tr', 'trFig', 'contour', 'contourColor', 'loop', 'bpm', 'feel', 'shotBeats', 'tstyle', 'track', 'lead', 'fx', 'echo']) $(k).value = S[k];
+  for (const k of ['tr', 'trFig', 'contour', 'loop', 'bpm', 'feel', 'shotBeats', 'tstyle', 'track', 'lead', 'fx', 'echo']) $(k).value = S[k];
   $('echoN').value = S.echoN; $('echoDir').value = S.echoDir; $('outlineColor').value = S.outlineColor; $('outlineW').value = S.outlineW;
+  const cc = S.contourColor || 'acc'; $('contourSel').value = cc[0] === '#' ? 'custom' : cc; $('contourHex').value = cc[0] === '#' ? cc : (cc === 'ink' ? S.pal.ink : cc === 'white' ? '#ffffff' : S.pal.acc);
+  for (const k of ['contourW', 'contourN', 'contourGap']) $(k).value = S[k]; $('ptOn').checked = S.ptOn; for (const k of ['ptDark', 'ptMid', 'ptLight']) $(k).value = S[k];
   for (const k of ['outline', 'shadow', 'cycle', 'stretch', 'side', 'grain', 'labels', 'scatter']) $(k).checked = S[k];
   $('fmtinfo').textContent = `${FORMATS[S.fmt][0]}×${FORMATS[S.fmt][1]} · ${FORMATS[S.fmt][2]}`;
   $('safewrap').hidden = S.fmt !== '9x16';
@@ -65,10 +67,15 @@ $('echoN').onchange = e => set('echoN', +e.target.value);
 $('echoDir').onchange = e => set('echoDir', e.target.value);
 $('outlineColor').oninput = e => { S.outline = true; set('outlineColor', e.target.value); };
 $('outlineW').oninput = e => { S.outline = true; set('outlineW', +e.target.value); };
+$('contourSel').onchange = e => { const v = e.target.value; if (S.contour === 'off') S.contour = 'still'; set('contourColor', v === 'custom' ? $('contourHex').value : v); };
+$('contourHex').oninput = e => { if (S.contour === 'off') S.contour = 'still'; set('contourColor', e.target.value); };
+['contourW', 'contourN', 'contourGap'].forEach(k => $(k).oninput = e => { if (S.contour === 'off') S.contour = 'still'; set(k, +e.target.value); });
+$('ptOn').onchange = e => { P.cache.clear(); set('ptOn', e.target.checked); };
+['ptDark', 'ptMid', 'ptLight'].forEach(k => $(k).oninput = e => { S.ptOn = true; P.cache.clear(); set(k, e.target.value); });
 $('fx').oninput = e => { S.fx = +e.target.value; P.cache.clear(); rebuild(); };
 $('caps').onchange = e => set('caps', e.target.checked);
 ['c_bg', 'c_ink', 'c_acc'].forEach(id => $(id).oninput = e => { S.pal[id.slice(2)] = e.target.value; S.palId = ''; syncUI(); rebuild(); });
-['tr', 'trFig', 'contour', 'contourColor', 'shotBeats', 'tstyle'].forEach(k => $(k).onchange = e => set(k, e.target.value));
+['tr', 'trFig', 'contour', 'shotBeats', 'tstyle'].forEach(k => $(k).onchange = e => set(k, e.target.value));
 ['track', 'lead'].forEach(k => $(k).oninput = e => set(k, +e.target.value));
 ['outline', 'shadow', 'cycle', 'stretch', 'side', 'grain', 'labels', 'scatter'].forEach(k => $(k).onchange = e => set(k, e.target.checked));
 $('loop').onchange = e => set('loop', +e.target.value); $('feel').onchange = e => set('feel', +e.target.value);
@@ -150,7 +157,7 @@ $('scrub').oninput = e => { playing = false; $('play').textContent = 'play'; tNo
 // ---------- presets ----------
 const NOT_LOOK = new Set(['images', 'text', 'customFont']);
 const BUILTIN = {
-  'echo · b/w cut-outs': { layout: 'split', mode: 'cut', fmt: '4x5', palId: 'concrete', tr: 'original', trFig: 'mono', outline: true, outlineColor: '#ffffff', outlineW: 12, echo: 'copies', echoN: 3, echoDir: 'auto', contour: 'off', tstyle: 'fill', motion: 'build', feel: 12, grain: true },
+  'echo · b/w cut-outs': { layout: 'split', mode: 'cut', fmt: '4x5', palId: 'concrete', tr: 'original', trFig: 'mono', outline: true, outlineColor: '#ffffff', outlineW: 12, contourW: 3, contourN: 5, contourGap: 1, ptOn: false, ptDark: '#0A0A08', ptMid: '#5F6F22', ptLight: '#E4F7A0', echo: 'copies', echoN: 3, echoDir: 'auto', contour: 'off', tstyle: 'fill', motion: 'build', feel: 12, grain: true },
   'acid figure': { layout: 'figure', mode: 'cut', fmt: '4x5', palId: 'acid', tr: 'grade', trFig: 'flash', outline: false, echo: '', contour: 'move', contourColor: 'acc', tstyle: 'fill', motion: 'letters', feel: 0, grain: true },
   'riso collage': { layout: 'collage', mode: 'cut', fmt: '4x5', palId: 'bleach', tr: 'riso', trFig: '', fx: .45, outline: true, outlineColor: '#ffffff', echo: '', contour: 'off', tstyle: 'mix', motion: 'boil', feel: 12, grain: true },
   'mono stack': { layout: 'stack', mode: 'frame', fmt: '4x5', palId: 'acid', tr: 'mono', tstyle: 'mix', motion: 'cut', feel: 0, grain: true },
