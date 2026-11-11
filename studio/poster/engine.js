@@ -374,6 +374,18 @@ export class Poster {
     function smooth(p, closed) { // drop every other point, then two rounds of corner cutting
       let q = p.filter((_, i) => i % 2 === 0); for (let r = 0; r < 2; r++) { const o = []; const m = q.length; for (let i = 0; i < (closed ? m : m - 1); i++) { const A = q[i], B = q[(i + 1) % m]; o.push([A[0] * .75 + B[0] * .25, A[1] * .75 + B[1] * .25], [A[0] * .25 + B[0] * .75, A[1] * .25 + B[1] * .75]); } if (!closed) { o.unshift(q[0]); o.push(q[m - 1]); } q = o; } q.closed = closed; return q; }
     if (this.pcache.size > 600) this.pcache.clear(); this.pcache.set(key, paths); return paths; }
+  // where a whole photo sits in its slot. 'whole': nothing cropped. Otherwise it fills the slot and the crop is moved
+  // to keep the person in: all of them if they fit, else from the top of the head down. Without a person found yet,
+  // tall photos are cropped from near the top, since heads are rarely at the bottom.
+  frameRect(im, b, iw, ih) { const S = this.S, pan = im.pan;
+    if (S.fit === 'whole') { const s = Math.min(b.w / iw, b.h / ih) * pan.z; return { s, x: b.x + (b.w - iw * s) / 2 + pan.x * b.w, y: b.y + (b.h - ih * s) / 2 + pan.y * b.h }; }
+    const s = Math.max(b.w / iw, b.h / ih) * pan.z, vw = b.w / s, vh = b.h / s, sx = iw / im.src.width, sy = ih / im.src.height; let left = (iw - vw) / 2, top = (ih - vh) / 2;
+    const bb = im.cutBox && S.fit !== 'center' ? { x: im.cutBox.x * sx, y: im.cutBox.y * sy, w: im.cutBox.w * sx, h: im.cutBox.h * sy } : null;
+    if (bb) { const m = bb.h * .06, mx = bb.w * .06;
+      top = bb.h + 2 * m <= vh ? bb.y + bb.h / 2 - vh / 2 : bb.y - m; left = bb.w + 2 * mx <= vw ? bb.x + bb.w / 2 - vw / 2 : bb.x + bb.w / 2 - vw / 2; }
+    else if (S.fit !== 'center' && ih / iw > b.h / b.w) top = (ih - vh) * .22;
+    top = clamp(top, Math.min(0, ih - vh), Math.max(0, ih - vh)); left = clamp(left, Math.min(0, iw - vw), Math.max(0, iw - vw));
+    return { s, x: b.x - left * s + pan.x * b.w, y: b.y - top * s + pan.y * b.h }; }
   photoPal(P) { const S = this.S; return S.ptOn ? { bg: S.ptLight || '#E8F5B0', ink: S.ptDark || '#0A0A08', acc: S.ptMid || '#6B7A2A' } : P; }
   drawImg(el, A, dx, P, t) {
     const PP = this.photoPal(P); // photo tint colours: the poster palette, or the photo's own
@@ -381,7 +393,7 @@ export class Poster {
     const b = el.box, useCut = el.cut && im.cut, pan = im.pan; if (el.inplace && !im.cut) return;
     if (el.rot) { const cx = b.x + b.w / 2, cy = b.y + b.h / 2; g.translate(cx, cy); g.rotate(el.rot * Math.PI / 180); g.translate(-cx, -cy); }
     let s, w, h, x, y, src;
-    if (el.inplace) { const f = im.src, fs = Math.max(b.w / f.width, b.h / f.height) * pan.z, fx = b.x + (b.w - f.width * fs) / 2 + pan.x * b.w + dx, fy = b.y + (b.h - f.height * fs) / 2 + pan.y * b.h, cb = im.cutBox;
+    if (el.inplace) { const f = im.src, fr = this.frameRect(im, b, f.width, f.height), fs = fr.s, fx = fr.x + dx, fy = fr.y, cb = im.cutBox;
       src = this.treated(im, 'cut', S.trFig || S.tr, PP); s = fs; x = fx + cb.x * fs; y = fy + cb.y * fs; w = cb.w * fs; h = cb.h * fs; }
     else if (useCut) { src = this.treated(im, 'cut', S.trFig || S.tr, PP);
       if (S.echo === 'copies') { // the whole group (person + copies) is fitted into the slot and centred, front copy last
@@ -389,7 +401,7 @@ export class Poster {
         s = Math.min(b.w / gw, b.h / gh) * .96 * pan.z; w = src.width * s; h = src.height * s; const gx = b.x + (b.w - gw * s) / 2, gy = b.y + (b.h - gh * s) / 2;
         x = gx + (fx < 0 ? N * -fx * w : 0) + pan.x * b.w + dx; y = gy + (fy < 0 ? N * -fy * h : 0) + pan.y * b.h; }
       else { s = Math.min(b.w / src.width, b.h / src.height) * pan.z; w = src.width * s; h = src.height * s; x = b.x + (b.w - w) / 2 + pan.x * b.w + dx; y = b.y + b.h - h + pan.y * b.h; } }
-    else { src = this.treated(im, 'frame', S.tr, PP); s = Math.max(b.w / src.width, b.h / src.height) * pan.z; w = src.width * s; h = src.height * s; x = b.x + (b.w - w) / 2 + pan.x * b.w + dx; y = b.y + (b.h - h) / 2 + pan.y * b.h; }
+    else { src = this.treated(im, 'frame', S.tr, PP); const fr = this.frameRect(im, b, src.width, src.height); s = fr.s; w = src.width * s; h = src.height * s; x = fr.x + dx; y = fr.y; }
     const look = useCut || el.inplace ? (S.trFig || S.tr) : S.tr;
     if (useCut || el.inplace) this.figs.push({ idx, x, y, w, h, rot: el.rot || 0, box: b });
     if (!el.inplace) this.hits.push({ idx, box: b, layer: el.layer });

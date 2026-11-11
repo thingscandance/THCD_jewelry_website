@@ -8,7 +8,7 @@ const P = new Poster();
 const S = {
   fmt: '4x5', layout: 'stack', mode: 'frame', font: 'anton', font2: 'barlow', info: 'space', labels: true, scatter: false, fx: .45, caps: true, customFont: null,
   pal: { ...PALETTES.find(p => p.id === 'acid') }, palId: 'acid', tr: 'original', tstyle: 'mix', track: -0.01, lead: .04, side: false, grain: true, trFig: '', contour: 'off', contourColor: 'acc',
-  outline: true, outlineColor: '#ffffff', outlineW: 12, contourW: 3, contourN: 5, contourGap: 1, ptOn: false, ptDark: '#0A0A08', ptMid: '#5F6F22', ptLight: '#E4F7A0', shadow: false, echo: '', echoN: 3, echoDir: 'auto', stretch: true, motion: 'build', loop: 6, bpm: 120, feel: 0, cycle: true, shotBeats: 2, seed: 1,
+  fit: 'person', autoFrame: true, outline: true, outlineColor: '#ffffff', outlineW: 12, contourW: 3, contourN: 5, contourGap: 1, ptOn: false, ptDark: '#0A0A08', ptMid: '#5F6F22', ptLight: '#E4F7A0', shadow: false, echo: '', echoN: 3, echoDir: 'auto', stretch: true, motion: 'build', loop: 6, bpm: 120, feel: 0, cycle: true, shotBeats: 2, seed: 1,
   images: [],
   text: { title: 'GRAVITY', name: '', sub: 'night session 01', lines: '21.11 | stairwell jumps\n22.11 | concrete gaps\n23.11 | no net, no lights', date: '21.11', time: '23:00', place: 'Tbilisi · Vake 14', footer: 'things can dance · thcd.monster' },
 };
@@ -35,7 +35,7 @@ function syncUI() {
   $('format').value = S.fmt; $('font').value = S.font; $('font2').value = S.font2; $('info').value = S.info; $('caps').checked = S.caps;
   $('c_bg').value = S.pal.bg; $('c_ink').value = S.pal.ink; $('c_acc').value = S.pal.acc;
   for (const k of ['tr', 'trFig', 'contour', 'loop', 'bpm', 'feel', 'shotBeats', 'tstyle', 'track', 'lead', 'fx', 'echo']) $(k).value = S[k];
-  $('echoN').value = S.echoN; $('echoDir').value = S.echoDir; $('outlineColor').value = S.outlineColor; $('outlineW').value = S.outlineW;
+  $('fit').value = S.fit; $('autoFrame').checked = S.autoFrame; $('echoN').value = S.echoN; $('echoDir').value = S.echoDir; $('outlineColor').value = S.outlineColor; $('outlineW').value = S.outlineW;
   const cc = S.contourColor || 'acc'; $('contourSel').value = cc[0] === '#' ? 'custom' : cc; $('contourHex').value = cc[0] === '#' ? cc : (cc === 'ink' ? S.pal.ink : cc === 'white' ? '#ffffff' : S.pal.acc);
   for (const k of ['contourW', 'contourN', 'contourGap']) $(k).value = S[k]; $('ptOn').checked = S.ptOn; for (const k of ['ptDark', 'ptMid', 'ptLight']) $(k).value = S[k];
   for (const k of ['outline', 'shadow', 'cycle', 'stretch', 'side', 'grain', 'labels', 'scatter']) $(k).checked = S[k];
@@ -54,7 +54,7 @@ function rebuild() {
 }
 const set = (k, v) => { S[k] = v; syncUI(); rebuild(); };
 document.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.mode) { set('mode', b.dataset.mode); if (S.mode === 'cut') runCuts(); }
+  if (b.dataset.mode) { set('mode', b.dataset.mode); if (S.mode === 'cut' || S.autoFrame) runCuts(); }
   else if (b.dataset.layout) set('layout', b.dataset.layout);
   else if (b.dataset.motion) { set('motion', b.dataset.motion); t0 = performance.now(); }
   else if (b.dataset.pal) { const p = PALETTES.find(x => x.id === b.dataset.pal); S.palId = p.id; S.pal = { ...p }; P.cache.clear(); syncUI(); rebuild(); } });
@@ -65,6 +65,8 @@ $('font2').onchange = e => set('font2', e.target.value);
 $('echo').onchange = e => set('echo', e.target.value);
 $('echoN').onchange = e => set('echoN', +e.target.value);
 $('echoDir').onchange = e => set('echoDir', e.target.value);
+$('fit').onchange = e => set('fit', e.target.value);
+$('autoFrame').onchange = e => { set('autoFrame', e.target.checked); if (S.autoFrame) runCuts(); };
 $('outlineColor').oninput = e => { S.outline = true; set('outlineColor', e.target.value); };
 $('outlineW').oninput = e => { S.outline = true; set('outlineW', +e.target.value); };
 $('contourSel').onchange = e => { const v = e.target.value; if (S.contour === 'off') S.contour = 'still'; set('contourColor', v === 'custom' ? $('contourHex').value : v); };
@@ -96,12 +98,12 @@ async function addFiles(files) {
     const im = { id: 'i' + nextId++, name: f.name, src: c, cut: null, cutBox: null, pan: { x: 0, y: 0, z: 1 }, state: 'frame' };
     const a = f.type === 'image/png' || f.type === 'image/webp' ? alphaOf(c) : null; if (a) { Object.assign(im, fromAlpha(c, a)); im.state = 'ready'; im.ownAlpha = true; }
     S.images.push(im); } catch (err) { status(`${f.name} could not be opened.`, true); } }
-  tiles(); rebuild(); if (S.mode === 'cut') runCuts();
+  tiles(); rebuild(); if (S.mode === 'cut' || S.autoFrame) runCuts();
 }
 function tiles() {
   const box = $('tiles'); box.innerHTML = ''; $('photoinfo').textContent = S.images.length ? `${S.images.length} photo${S.images.length > 1 ? 's' : ''}` : 'no photos';
   S.images.forEach((im, i) => { const t = document.createElement('div'); t.className = 'tile'; const th = document.createElement('div'); th.className = 'th'; const c = document.createElement('canvas'); const s = im.cut && S.mode === 'cut' ? im.cut : im.src, k = 220 / Math.max(s.width, s.height); c.width = Math.max(1, s.width * k); c.height = Math.max(1, s.height * k); c.getContext('2d').drawImage(s, 0, 0, c.width, c.height); th.appendChild(c);
-    const st = im.state === 'ready' ? (im.ownAlpha ? 'own cut-out' : 'cut out ✓') : im.state === 'busy' ? 'cutting…' : im.state === 'failed' ? 'no person found' : 'frame';
+    const st = im.state === 'ready' ? (im.ownAlpha ? 'own cut-out' : S.mode === 'cut' ? 'cut out ✓' : 'person found ✓') : im.state === 'busy' ? 'cutting…' : im.state === 'failed' ? 'no person found' : 'frame';
     t.innerHTML = `<div class="meta"><b>${String(i + 1).padStart(2, '0')}</b><span class="s ${im.state}">${st}</span></div>`; t.prepend(th);
     if (im.cut) { const fx = document.createElement('div'); fx.className = 'ctl'; fx.innerHTML = `<button type="button">${erasing === i ? 'erasing…' : 'erase'}</button><button type="button" ${im.cutBackup ? '' : 'disabled'}>undo</button>`; const [eb, ub] = fx.children;
       eb.onclick = () => startErase(erasing === i ? -1 : i); ub.onclick = () => { if (!im.cutBackup) return; im.cut = im.cutBackup; im.cutBackup = null; im.dist = null; P.forget(im.id); tiles(); rebuild(); }; t.appendChild(fx); }
@@ -114,7 +116,7 @@ function tiles() {
 let cutting = false;
 async function runCuts() {
   if (cutting) return; cutting = true; const todo = () => S.images.filter(im => im.state === 'frame');
-  try { while (todo().length && S.mode === 'cut') { const im = todo()[0], left = todo().length; im.state = 'busy'; tiles(); $('cutwrap').hidden = false;
+  try { while (todo().length && (S.mode === 'cut' || S.autoFrame)) { const im = todo()[0], left = todo().length; im.state = 'busy'; tiles(); $('cutwrap').hidden = false;
       try { const r = await cutOut(im.src, (s, p) => { $('cuttxt').textContent = s; $('cutbar').style.width = Math.round((p || 0) * 100) + '%'; });
         if (r && r.cutBox.w * r.cutBox.h > im.src.width * im.src.height * .01) { Object.assign(im, r); im.state = 'ready'; im.dist = null; P.forget(im.id); } else im.state = 'failed';
         $('cuttxt').textContent = `cut-out: ${left - 1} left`; }
@@ -157,15 +159,15 @@ $('scrub').oninput = e => { playing = false; $('play').textContent = 'play'; tNo
 // ---------- presets ----------
 const NOT_LOOK = new Set(['images', 'text', 'customFont']);
 const BUILTIN = {
-  'echo · b/w cut-outs': { layout: 'split', mode: 'cut', fmt: '4x5', palId: 'concrete', tr: 'original', trFig: 'mono', outline: true, outlineColor: '#ffffff', outlineW: 12, contourW: 3, contourN: 5, contourGap: 1, ptOn: false, ptDark: '#0A0A08', ptMid: '#5F6F22', ptLight: '#E4F7A0', echo: 'copies', echoN: 3, echoDir: 'auto', contour: 'off', tstyle: 'fill', motion: 'build', feel: 12, grain: true },
+  'echo · b/w cut-outs': { layout: 'split', mode: 'cut', fmt: '4x5', palId: 'concrete', tr: 'original', trFig: 'mono', fit: 'person', autoFrame: true, outline: true, outlineColor: '#ffffff', outlineW: 12, contourW: 3, contourN: 5, contourGap: 1, ptOn: false, ptDark: '#0A0A08', ptMid: '#5F6F22', ptLight: '#E4F7A0', echo: 'copies', echoN: 3, echoDir: 'auto', contour: 'off', tstyle: 'fill', motion: 'build', feel: 12, grain: true },
   'acid figure': { layout: 'figure', mode: 'cut', fmt: '4x5', palId: 'acid', tr: 'grade', trFig: 'flash', outline: false, echo: '', contour: 'move', contourColor: 'acc', tstyle: 'fill', motion: 'letters', feel: 0, grain: true },
-  'riso collage': { layout: 'collage', mode: 'cut', fmt: '4x5', palId: 'bleach', tr: 'riso', trFig: '', fx: .45, outline: true, outlineColor: '#ffffff', echo: '', contour: 'off', tstyle: 'mix', motion: 'boil', feel: 12, grain: true },
+  'riso collage': { layout: 'collage', mode: 'cut', fmt: '4x5', palId: 'bleach', tr: 'riso', trFig: '', fx: .45, fit: 'person', autoFrame: true, outline: true, outlineColor: '#ffffff', echo: '', contour: 'off', tstyle: 'mix', motion: 'boil', feel: 12, grain: true },
   'mono stack': { layout: 'stack', mode: 'frame', fmt: '4x5', palId: 'acid', tr: 'mono', tstyle: 'mix', motion: 'cut', feel: 0, grain: true },
 };
 const store = { get() { try { return JSON.parse(localStorage.getItem('thcd-poster-presets') || '{}'); } catch (e) { return {}; } }, set(v) { try { localStorage.setItem('thcd-poster-presets', JSON.stringify(v)); return true; } catch (e) { return false; } } };
 function snapshot(withText) { const o = {}; for (const k in S) if (!NOT_LOOK.has(k)) o[k] = JSON.parse(JSON.stringify(S[k])); if (withText) o.text = { ...S.text }; return o; }
 function apply(p) { const pal = p.palId && PALETTES.find(x => x.id === p.palId); for (const k in p) if (k !== 'text' && k !== 'images') S[k] = JSON.parse(JSON.stringify(p[k])); if (pal && !p.pal) S.pal = { ...pal };
-  if (p.text) { Object.assign(S.text, p.text); FIELDS.forEach(f => $('t_' + f).value = S.text[f]); } P.cache.clear(); syncUI(); rebuild(); tiles(); if (S.mode === 'cut') runCuts(); t0 = performance.now(); }
+  if (p.text) { Object.assign(S.text, p.text); FIELDS.forEach(f => $('t_' + f).value = S.text[f]); } P.cache.clear(); syncUI(); rebuild(); tiles(); if (S.mode === 'cut' || S.autoFrame) runCuts(); t0 = performance.now(); }
 function presetList() { const sel = $('presetSel'), mine = store.get(); sel.innerHTML = ''; const g1 = document.createElement('optgroup'); g1.label = 'yours'; for (const k of Object.keys(mine)) g1.appendChild(new Option(k, 'u:' + k));
   const g2 = document.createElement('optgroup'); g2.label = 'built in'; for (const k of Object.keys(BUILTIN)) g2.appendChild(new Option(k, 'b:' + k)); if (g1.children.length) sel.appendChild(g1); sel.appendChild(g2); }
 $('presetSave').onclick = () => { const name = $('presetName').value.trim() || `look ${new Date().toLocaleString()}`, all = store.get(); all[name] = snapshot($('presetText').checked); if (store.set(all)) { presetList(); $('presetSel').value = 'u:' + name; status(`preset "${name}" saved in this browser.`); } else status('This browser does not allow saving here. Use "save file" instead.', true); };
