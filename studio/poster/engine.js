@@ -75,6 +75,8 @@ const hash = (...a) => rng(a.reduce((h, x) => Math.imul(h ^ Math.round(x * 997),
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const easeOut = p => 1 - Math.pow(1 - p, 3);
 const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+// contrast with a soft shoulder: lights roll off towards white instead of clipping
+const cs = (v, k) => { const x = (v - .5) * k + .5; return x <= 0 ? 0 : x < .78 ? x : .78 + .22 * (1 - Math.exp(-(x - .78) / .22)); };
 const luma = h => { const [r, g, b] = hex(h); return (r * .3 + g * .59 + b * .11) / 255; };
 
 export class Poster {
@@ -85,7 +87,7 @@ export class Poster {
     for (const k of ['diag', 'side', 'up']) { const [fx, fy] = ECHO_DIRS[k], sc = Math.min(b.w / (src.width * (1 + N * Math.abs(fx))), b.h / (src.height * (1 + N * Math.abs(fy)))); if (sc > bs * 1.08) { bs = sc; best = ECHO_DIRS[k]; } } return best; }
   // eraser: remove a round patch from a cut-out and from every cached copy of it, so the change shows at once
   erase(im, u, v, r) { const hit = c => { const x = c.getContext('2d'); x.save(); x.globalCompositeOperation = 'destination-out'; x.beginPath(); x.arc(u * c.width / im.cut.width, v * c.height / im.cut.height, r * c.width / im.cut.width, 0, 7); x.fill(); x.restore(); };
-    hit(im.cut); for (const [k, c] of [...this.cache]) { if (!k.startsWith(im.id + '|')) continue; if (k.includes('|ring|')) { this.cache.delete(k); continue; } if (k.includes('|cut|') || k.includes('|sil|')) { if (c.a) { hit(c.a); hit(c.b); } else if (c.getContext) hit(c); } } im.dist = null; }
+    hit(im.cut); for (const [k, c] of [...this.cache]) { if (!k.startsWith(im.id + '|')) continue; if (k.includes('|ring|') || k.includes('|stk|')) { this.cache.delete(k); continue; } if (k.includes('|cut|') || k.includes('|sil|')) { if (c.a) { hit(c.a); hit(c.b); } else if (c.getContext) hit(c); } } im.dist = null; }
   forget(id) { for (const k of this.cache.keys()) if (k.startsWith(id + '|')) this.cache.delete(k); }
 
   // ---------- images ----------
@@ -95,8 +97,9 @@ export class Poster {
     const L = new Float32Array(w * h), A = new Uint8Array(w * h), hist = new Uint32Array(256); let n = 0;
     for (let i = 0; i < L.length; i++) { L[i] = (d[i * 4] * .3 + d[i * 4 + 1] * .59 + d[i * 4 + 2] * .11) / 255; A[i] = d[i * 4 + 3]; if (A[i] > 128) { hist[Math.min(255, L[i] * 255 | 0)]++; n++; } }
     // auto levels: night flash photos are mostly dark, so stretch the 1%..99% range to full before any print look
-    let lo = 0, hi = 255, acc = 0; for (let k = 0; k < 256; k++) { acc += hist[k]; if (acc > n * .01) { lo = k; break; } } acc = 0; for (let k = 255; k >= 0; k--) { acc += hist[k]; if (acc > n * .01) { hi = k; break; } }
-    const a = lo / 255, span = Math.max(.08, (hi - lo) / 255), mid = (() => { let c = 0; for (let k = 0; k < 256; k++) { c += hist[k]; if (c > n / 2) return (k / 255 - a) / span; } return .5; })(), gam = Math.log(.5) / Math.log(clamp(mid, .05, .95));
+    // the white point is never pulled down (no blown highlights), and the gamma lift is capped
+    let lo = 0, hi = 255, acc = 0; for (let k = 0; k < 256; k++) { acc += hist[k]; if (acc > n * .005) { lo = k; break; } } acc = 0; for (let k = 255; k >= 0; k--) { acc += hist[k]; if (acc > n * .002) { hi = k; break; } }
+    hi = Math.max(hi, 235); const a = lo / 255, span = Math.max(.2, (hi - lo) / 255), mid = (() => { let c = 0; for (let k = 0; k < 256; k++) { c += hist[k]; if (c > n / 2) return (k / 255 - a) / span; } return .5; })(), gam = clamp(Math.log(.45) / Math.log(clamp(mid, .05, .95)), .7, 1.15);
     for (let i = 0; i < L.length; i++) L[i] = Math.pow(clamp((L[i] - a) / span), gam);
     return { L, A, w, h };
   }
@@ -123,16 +126,16 @@ export class Poster {
     const nz = tr === 'xerox' ? (() => { const n = new Float32Array(w * h); for (let i = 0; i < n.length; i++) n[i] = R(); return n; })() : null, px = Math.max(1, Math.round(Math.max(w, h) / 700));
     const lerp = (p, q, k) => [p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k, p[2] + (q[2] - p[2]) * k], S3 = v => v * v * (3 - 2 * v);
     // continuous tone in the palette: darkest colour to lightest colour
-    const tone = v => lerp(dk, lt, S3(clamp((v - .5) * 1.15 + .5)));
+    const tone = v => lerp(dk, lt, cs(v, 1.1));
     for (let y = 0; y < h; y++) for (let q = 0; q < w; q++) { const j = y * w + q, i = j * 4, v = L[j], r0 = s0[i], g0 = s0[i + 1], b0 = s0[i + 2]; let out;
-      if (tr === 'flash') { const k = c0 => 255 * S3(clamp(((c0 / 255 - .5) * 1.3 + .52))); const m = (r0 + g0 + b0) / 3; out = [k(m + (r0 - m) * 1.2), k(m + (g0 - m) * 1.2), k(m + (b0 - m) * 1.2)]; }
-      else if (tr === 'grade') { const t = tone(v), o = [r0, g0, b0].map(c0 => 255 * S3(clamp((c0 / 255 - .5) * 1.15 + .5))); out = lerp(o, t, .55); }
-      else if (tr === 'mono') { const g = 255 * S3(clamp((v - .5) * 1.1 + .5)); out = [g, g, g]; }
-      else if (tr === 'bw') { const g = 255 * S3(clamp((v - .5) * 1.6 + .5)); out = [g, g, g]; }
+      if (tr === 'flash') { const k = c0 => 255 * cs(clamp(c0 / 255), 1.22); const m = (r0 + g0 + b0) / 3; out = [k(m + (r0 - m) * 1.18), k(m + (g0 - m) * 1.18), k(m + (b0 - m) * 1.18)]; }
+      else if (tr === 'grade') { const t = tone(v), o = [r0, g0, b0].map(c0 => 255 * cs(c0 / 255, 1.1)); out = lerp(o, t, .5); }
+      else if (tr === 'mono') { const g = 255 * cs(v, 1.08); out = [g, g, g]; }
+      else if (tr === 'bw') { const g = 255 * cs(v, 1.45); out = [g, g, g]; }
       else if (tr === 'duo') out = tone(v);
-      else if (tr === 'tint') out = lerp([8, 8, 8], ink, S3(clamp((v - .5) * 1.2 + .5)));
+      else if (tr === 'tint') out = lerp([8, 8, 8], ink, cs(v, 1.12));
       else if (tr === 'burn') { let u = clamp((v - .42) * 1.6 + .42); u = u * u; u = clamp(u + (R() - .5) * .09); out = lerp([0, 0, 0], [236, 232, 222], u); }
-      else if (tr === 'tone3') { const u = clamp((v - .5) * 1.2 + .5), hard = u < .36 ? P3[0] : u < .66 ? P3[1] : P3[2], soft = u < .5 ? lerp(P3[0], P3[1], S3(u / .5)) : lerp(P3[1], P3[2], S3((u - .5) / .5)); out = lerp(soft, hard, fx); }
+      else if (tr === 'tone3') { const u = cs(v, 1.12), hard = u < .36 ? P3[0] : u < .66 ? P3[1] : P3[2], soft = u < .5 ? lerp(P3[0], P3[1], S3(u / .5)) : lerp(P3[1], P3[2], S3((u - .5) / .5)); out = lerp(soft, hard, fx); }
       else if (tr === 'xerox') { const u = clamp((v - .5) * 1.8 + .55), bit = (u + (nz[j] - .5) * .3 + (nz[(j * 7) % nz.length] - .5) * .15 < .5) !== inv ? ink : paper; out = lerp(tone(v), bit, fx * .85); }
       else if (tr === 'dither') { const sx = Math.floor(q / px), sy = Math.floor(y / px), u = clamp((v - .5) * 1.2 + .5), bit = (u * 16 > B4[(sy & 3) * 4 + (sx & 3)] + .5) !== inv ? paper : ink; out = lerp(tone(v), bit, fx); }
       else out = tone(v); // halftone / riso base
@@ -141,6 +144,13 @@ export class Poster {
     if (tr === 'halftone') { x.globalAlpha = fx; x.drawImage(this.screen(Lm, u => Math.pow(inv ? clamp((u - .5) * 1.3 + .5) : 1 - clamp((u - .5) * 1.3 + .5), 1.3), 45, Math.max(3, Math.round(Math.max(w, h) / 300)), hex(inv ? pal.ink : sorted[0])), 0, 0); x.globalAlpha = 1; if (which === 'cut') { x.globalCompositeOperation = 'destination-in'; x.drawImage(src, 0, 0); x.globalCompositeOperation = 'source-over'; } }
     this.cache.set(key, c); return c;
   }
+  // sticker edge: the silhouette grown by r pixels and smoothed (blur + threshold), so a ragged cut gets an even edge
+  sticker(im, r, color) { const key = `${im.id}|stk|${r}|${color}`; let o = this.cache.get(key); if (o) return o; const c0 = im.cut, pad = r + 4, W2 = c0.width + 2 * pad, H2 = c0.height + 2 * pad, k = Math.min(1, 1000 / Math.max(W2, H2)), w = Math.max(4, Math.round(W2 * k)), h = Math.max(4, Math.round(H2 * k));
+    const t = document.createElement('canvas'); t.width = w; t.height = h; const x = t.getContext('2d'); x.drawImage(c0, pad * k, pad * k, c0.width * k, c0.height * k); const d = x.getImageData(0, 0, w, h), A = new Float32Array(w * h); for (let i = 0; i < A.length; i++) A[i] = d.data[i * 4 + 3] / 255;
+    const rad = Math.max(1, Math.round(r * k)), tmp = new Float32Array(w * h), blur = (src, dst, horiz) => { for (let a = 0; a < (horiz ? h : w); a++) { let acc = 0; const len = horiz ? w : h, at = i => horiz ? a * w + i : i * w + a; for (let i = -rad; i <= rad; i++) acc += src[at(Math.min(len - 1, Math.max(0, i)))]; for (let i = 0; i < len; i++) { dst[at(i)] = acc / (2 * rad + 1); acc += src[at(Math.min(len - 1, i + rad + 1))] - src[at(Math.max(0, i - rad))]; } } };
+    blur(A, tmp, true); blur(tmp, A, false); blur(A, tmp, true); blur(tmp, A, false);
+    const [cr, cg, cb] = hex(color); for (let i = 0; i < A.length; i++) { const v = A[i], al = v <= .1 ? 0 : v >= .16 ? 1 : (v - .1) / .06; d.data[i * 4] = cr; d.data[i * 4 + 1] = cg; d.data[i * 4 + 2] = cb; d.data[i * 4 + 3] = al * 255; } x.putImageData(d, 0, 0);
+    const out = document.createElement('canvas'); out.width = W2; out.height = H2; const ox = out.getContext('2d'); ox.imageSmoothingQuality = 'high'; ox.drawImage(t, 0, 0, W2, H2); o = { c: out, pad }; if (this.cache.size > 300) this.cache.clear(); this.cache.set(key, o); return o; }
   // moving paper grain: 6 noise tiles cycled at 12 fps, so it boils without breaking the loop
   grain() { if (this._grain) return this._grain; const R = rng(99); this._grain = Array.from({ length: 6 }, () => { const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d'), d = x.createImageData(256, 256); for (let i = 0; i < d.data.length; i += 4) { const v = R() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } x.putImageData(d, 0, 0); return c; }); return this._grain; }
   sil(im, color) { const key = `${im.id}|sil|${color}`; let c = this.cache.get(key); if (c) return c; const s = im.cut;
@@ -300,7 +310,6 @@ export class Poster {
     for (const el of this.els) { const A = this.anim(el, t); if (!A.show) continue;
       const core = dx => this.core(el, A, dx, P, t);
       if (A.slice) this.sliced(el, A.slice, core); else core(0); }
-    if (S.grain) { const tiles = this.grain(), k = (((Math.floor(t * 12) % tiles.length) + tiles.length) % tiles.length) || 0; g.save(); g.globalAlpha = .13; g.globalCompositeOperation = 'overlay'; const pat = g.createPattern(tiles[k], 'repeat'); g.fillStyle = pat; g.fillRect(0, 0, W, H); g.restore(); }
     if (ov.frames) this.overlayFrames(); if (ov.safe && this.fmt === '9x16') this.overlaySafe();
     return this.c;
   }
@@ -364,11 +373,11 @@ export class Poster {
     if (useCut || el.inplace) this.figs.push({ idx, x, y, w, h, rot: el.rot || 0, box: b });
     if (!el.inplace) this.hits.push({ idx, box: b, layer: el.layer });
     const u = this.W / 1080;
-    if (el.card) { const p = 14 * u, sh = 16 * u; g.fillStyle = P.ink; g.fillRect(b.x + dx + sh, b.y + sh, b.w, b.h); g.fillStyle = S.outline ? '#fff' : P.acc; g.fillRect(b.x + dx - p, b.y - p, b.w + 2 * p, b.h + 2 * p); }
+    if (el.card) { const p = 14 * u, sh = 16 * u; g.fillStyle = P.ink; g.fillRect(b.x + dx + sh, b.y + sh, b.w, b.h); g.fillStyle = S.outline ? (S.outlineColor || '#ffffff') : P.acc; g.fillRect(b.x + dx - p, b.y - p, b.w + 2 * p, b.h + 2 * p); }
     if (el.clip) { g.beginPath(); g.rect(b.x + dx, b.y, b.w, b.h); g.clip(); }
     if (useCut) {
       if (S.contour && S.contour !== 'off') { const F = this.field(im), sc = w / F.cw, ph = S.contour === 'move' && S.motion !== 'still' ? (t / S.loop * Math.max(1, Math.round(S.loop / 2))) % 1 : 0; g.save(); g.imageSmoothingEnabled = true; g.drawImage(this.contour(im, ph, S.contourColor === 'ink' ? P.ink : S.contourColor === 'white' ? '#ffffff' : P.acc), x - F.pad * sc, y - F.pad * sc, F.w * sc, F.h * sc); g.restore(); }
-      const ring = (ox, oy) => { if (!S.outline) return; const sil = this.sil(im, '#ffffff'), r = 9 * u; for (let a = 0; a < 16; a++) g.drawImage(sil, ox + Math.cos(a / 16 * 6.283) * r, oy + Math.sin(a / 16 * 6.283) * r, w, h); };
+      const ring = (ox, oy) => { if (!S.outline) return; const rPx = (S.outlineW ?? 12) * u; if (rPx < .5) return; const st = this.sticker(im, Math.max(1, Math.round(rPx / s)), S.outlineColor || '#ffffff'), k = w / im.cut.width; g.drawImage(st.c, ox - st.pad * k, oy - st.pad * k, st.c.width * k, st.c.height * k); };
       if (S.echo === 'flat') { const ph = S.motion === 'still' ? 1 : .55 + .45 * Math.sin(2 * Math.PI * t / S.loop * 2); for (let k = 3; k >= 1; k--) g.drawImage(this.sil(im, k % 2 ? P.acc : P.ink), x - k * 34 * u * ph, y - k * 10 * u * ph, w, h); }
       if (S.echo === 'copies' && !el.inplace) { // the person repeated, each copy whole and with its own edge, stepping away and back over the loop
         const N = S.echoN || 3, ph = S.motion === 'still' ? 1 : .35 + .65 * (.5 - .5 * Math.cos(2 * Math.PI * t / S.loop * 2)), [fx, fy] = this.echoDir(src, b), sx = fx * w * ph, sy = fy * h * ph;
@@ -380,6 +389,11 @@ export class Poster {
       g.drawImage(this.treated(im, useCut || el.inplace ? 'cut' : 'frame', 'riso', P), x, y, w, h); // readable tone base
       g.globalAlpha = S.fx ?? .5; g.globalCompositeOperation = R.dark ? 'screen' : 'multiply'; g.drawImage(R.b, x - ax, y - ay, w, h); g.drawImage(R.a, x + ax, y + ay, w, h); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; }
     else g.drawImage(src, x, y, w, h);
+    // grain sits only on the photo, never on the type
+    if (S.grain) { const tiles = this.grain(), k = (((Math.floor(t * 12) % tiles.length) + tiles.length) % tiles.length) || 0, T2 = this.gtmp || (this.gtmp = document.createElement('canvas')), iw = Math.max(1, Math.ceil(w)), ih = Math.max(1, Math.ceil(h));
+      if (T2.width < iw || T2.height < ih) { T2.width = Math.max(T2.width, iw); T2.height = Math.max(T2.height, ih); } const tg = T2.getContext('2d'); tg.setTransform(1, 0, 0, 1, 0, 0); tg.globalCompositeOperation = 'source-over'; tg.clearRect(0, 0, iw, ih);
+      tg.fillStyle = tg.createPattern(tiles[k], 'repeat'); tg.fillRect(0, 0, iw, ih); tg.globalCompositeOperation = 'destination-in'; tg.drawImage(useCut || el.inplace ? im.cut : src, 0, 0, iw, ih);
+      g.save(); g.globalAlpha = .14; g.globalCompositeOperation = 'overlay'; g.drawImage(T2, 0, 0, iw, ih, x, y, iw, ih); g.restore(); }
   }
   overlayFrames() { const g = this.g, c = { ok: '#00d084', tight: '#ffb000', cut: '#ff2a2a', empty: '#888' }; g.save(); g.lineWidth = 3; g.setLineDash([10, 8]);
     for (const e of this.els) if (e.kind === 'text') { g.strokeStyle = c[e.fit.state]; g.strokeRect(e.box.x, e.box.y, e.box.w, e.box.h); } g.restore(); }

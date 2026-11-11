@@ -8,7 +8,7 @@ const P = new Poster();
 const S = {
   fmt: '4x5', layout: 'stack', mode: 'frame', font: 'anton', font2: 'barlow', info: 'space', labels: true, scatter: false, fx: .45, caps: true, customFont: null,
   pal: { ...PALETTES.find(p => p.id === 'acid') }, palId: 'acid', tr: 'original', tstyle: 'mix', track: -0.01, lead: .04, side: false, grain: true, trFig: '', contour: 'off', contourColor: 'acc',
-  outline: false, shadow: false, echo: '', echoN: 3, echoDir: 'auto', stretch: true, motion: 'build', loop: 6, bpm: 120, feel: 0, cycle: true, shotBeats: 2, seed: 1,
+  outline: true, outlineColor: '#ffffff', outlineW: 12, shadow: false, echo: '', echoN: 3, echoDir: 'auto', stretch: true, motion: 'build', loop: 6, bpm: 120, feel: 0, cycle: true, shotBeats: 2, seed: 1,
   images: [],
   text: { title: 'GRAVITY', name: '', sub: 'night session 01', lines: '21.11 | stairwell jumps\n22.11 | concrete gaps\n23.11 | no net, no lights', date: '21.11', time: '23:00', place: 'Tbilisi · Vake 14', footer: 'things can dance · thcd.monster' },
 };
@@ -35,7 +35,7 @@ function syncUI() {
   $('format').value = S.fmt; $('font').value = S.font; $('font2').value = S.font2; $('info').value = S.info; $('caps').checked = S.caps;
   $('c_bg').value = S.pal.bg; $('c_ink').value = S.pal.ink; $('c_acc').value = S.pal.acc;
   for (const k of ['tr', 'trFig', 'contour', 'contourColor', 'loop', 'bpm', 'feel', 'shotBeats', 'tstyle', 'track', 'lead', 'fx', 'echo']) $(k).value = S[k];
-  $('echoN').value = S.echoN; $('echoDir').value = S.echoDir;
+  $('echoN').value = S.echoN; $('echoDir').value = S.echoDir; $('outlineColor').value = S.outlineColor; $('outlineW').value = S.outlineW;
   for (const k of ['outline', 'shadow', 'cycle', 'stretch', 'side', 'grain', 'labels', 'scatter']) $(k).checked = S[k];
   $('fmtinfo').textContent = `${FORMATS[S.fmt][0]}×${FORMATS[S.fmt][1]} · ${FORMATS[S.fmt][2]}`;
   $('safewrap').hidden = S.fmt !== '9x16';
@@ -63,6 +63,8 @@ $('font2').onchange = e => set('font2', e.target.value);
 $('echo').onchange = e => set('echo', e.target.value);
 $('echoN').onchange = e => set('echoN', +e.target.value);
 $('echoDir').onchange = e => set('echoDir', e.target.value);
+$('outlineColor').oninput = e => { S.outline = true; set('outlineColor', e.target.value); };
+$('outlineW').oninput = e => { S.outline = true; set('outlineW', +e.target.value); };
 $('fx').oninput = e => { S.fx = +e.target.value; P.cache.clear(); rebuild(); };
 $('caps').onchange = e => set('caps', e.target.checked);
 ['c_bg', 'c_ink', 'c_acc'].forEach(id => $(id).oninput = e => { S.pal[id.slice(2)] = e.target.value; S.palId = ''; syncUI(); rebuild(); });
@@ -144,6 +146,28 @@ function tick(now) { if (playing && !exporting) { tNow = ((now - t0) / 1000) % S
 $('play').onclick = () => { playing = !playing; $('play').textContent = playing ? 'pause' : 'play'; if (playing) t0 = performance.now() - tNow * 1000; };
 $('scrub').oninput = e => { playing = false; $('play').textContent = 'play'; tNow = e.target.value / 1000 * S.loop * .999; draw(); };
 ['frames', 'safe'].forEach(k => $(k).onchange = () => { if (!playing) draw(); });
+
+// ---------- presets ----------
+const NOT_LOOK = new Set(['images', 'text', 'customFont']);
+const BUILTIN = {
+  'echo · b/w cut-outs': { layout: 'split', mode: 'cut', fmt: '4x5', palId: 'concrete', tr: 'original', trFig: 'mono', outline: true, outlineColor: '#ffffff', outlineW: 12, echo: 'copies', echoN: 3, echoDir: 'auto', contour: 'off', tstyle: 'fill', motion: 'build', feel: 12, grain: true },
+  'acid figure': { layout: 'figure', mode: 'cut', fmt: '4x5', palId: 'acid', tr: 'grade', trFig: 'flash', outline: false, echo: '', contour: 'move', contourColor: 'acc', tstyle: 'fill', motion: 'letters', feel: 0, grain: true },
+  'riso collage': { layout: 'collage', mode: 'cut', fmt: '4x5', palId: 'bleach', tr: 'riso', trFig: '', fx: .45, outline: true, outlineColor: '#ffffff', echo: '', contour: 'off', tstyle: 'mix', motion: 'boil', feel: 12, grain: true },
+  'mono stack': { layout: 'stack', mode: 'frame', fmt: '4x5', palId: 'acid', tr: 'mono', tstyle: 'mix', motion: 'cut', feel: 0, grain: true },
+};
+const store = { get() { try { return JSON.parse(localStorage.getItem('thcd-poster-presets') || '{}'); } catch (e) { return {}; } }, set(v) { try { localStorage.setItem('thcd-poster-presets', JSON.stringify(v)); return true; } catch (e) { return false; } } };
+function snapshot(withText) { const o = {}; for (const k in S) if (!NOT_LOOK.has(k)) o[k] = JSON.parse(JSON.stringify(S[k])); if (withText) o.text = { ...S.text }; return o; }
+function apply(p) { const pal = p.palId && PALETTES.find(x => x.id === p.palId); for (const k in p) if (k !== 'text' && k !== 'images') S[k] = JSON.parse(JSON.stringify(p[k])); if (pal && !p.pal) S.pal = { ...pal };
+  if (p.text) { Object.assign(S.text, p.text); FIELDS.forEach(f => $('t_' + f).value = S.text[f]); } P.cache.clear(); syncUI(); rebuild(); tiles(); if (S.mode === 'cut') runCuts(); t0 = performance.now(); }
+function presetList() { const sel = $('presetSel'), mine = store.get(); sel.innerHTML = ''; const g1 = document.createElement('optgroup'); g1.label = 'yours'; for (const k of Object.keys(mine)) g1.appendChild(new Option(k, 'u:' + k));
+  const g2 = document.createElement('optgroup'); g2.label = 'built in'; for (const k of Object.keys(BUILTIN)) g2.appendChild(new Option(k, 'b:' + k)); if (g1.children.length) sel.appendChild(g1); sel.appendChild(g2); }
+$('presetSave').onclick = () => { const name = $('presetName').value.trim() || `look ${new Date().toLocaleString()}`, all = store.get(); all[name] = snapshot($('presetText').checked); if (store.set(all)) { presetList(); $('presetSel').value = 'u:' + name; status(`preset "${name}" saved in this browser.`); } else status('This browser does not allow saving here. Use "save file" instead.', true); };
+$('presetLoad').onclick = () => { const v = $('presetSel').value; if (!v) return; const p = v.startsWith('b:') ? BUILTIN[v.slice(2)] : store.get()[v.slice(2)]; if (p) { apply(p); status(`preset "${v.slice(2)}" loaded.`); } };
+$('presetDel').onclick = () => { const v = $('presetSel').value; if (!v.startsWith('u:')) { status('Built-in presets cannot be deleted.', true); return; } const all = store.get(); delete all[v.slice(2)]; store.set(all); presetList(); status('preset deleted.'); };
+$('presetFile').onclick = async () => { const name = $('presetName').value.trim() || 'poster-look', blob = new Blob([JSON.stringify({ poster: 1, name, look: snapshot($('presetText').checked) }, null, 2)], { type: 'application/json' }); await save(blob, name.replace(/[^\w.-]+/g, '_') + '.json'); status('preset file saved.'); };
+$('presetPick').onclick = () => $('presetImp').click();
+$('presetImp').onchange = async e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; try { const j = JSON.parse(await f.text()), look = j.look || j; apply(look); const name = j.name || f.name.replace(/\.json$/, ''), all = store.get(); all[name] = look; store.set(all); presetList(); status(`preset "${name}" loaded from file.`); } catch (err) { status('That file is not a POSTER preset.', true); } };
+presetList();
 
 // ---------- export ----------
 async function save(blob, name) {
