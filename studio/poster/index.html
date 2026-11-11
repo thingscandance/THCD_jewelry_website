@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="POSTER: club-poster typography, cut-out figures and motion collage, exported as PNG or a looping MP4. Runs in your browser. THCD video_studio.">
+<title>POSTER · THCD video_studio</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&family=Doto:wght@700;900&family=Anton&family=Big+Shoulders+Display:wght@300;900&family=League+Gothic&family=Oswald:wght@300;500;700&family=Bebas+Neue&family=Six+Caps&family=Instrument+Serif&family=Barlow+Condensed:wght@500;600;800;900&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --canvas:#000; --paper:#0B0C0D; --ink:#E9ECEA; --muted:#8D9493; --edge:rgba(233,236,234,.28); --grid:rgba(233,236,234,.11); --accent:#E61E9C;
+  --f-display:"Doto","Geist Mono",ui-monospace,monospace; --f-ui:"Geist Mono",ui-monospace,Menlo,monospace; --f-body:"Geist",ui-sans-serif,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--canvas); color:var(--ink); font-family:var(--f-ui); font-size:12px; line-height:1.55;
+  background-image:radial-gradient(circle,var(--grid) 1px,transparent 1.4px); background-size:24px 24px;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:0 64px}
+a{color:inherit}
+button,input,textarea,select{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+[hidden]{display:none !important}
+.page{max-width:1280px; margin:0 auto; display:flex; flex-direction:column; gap:48px}
+.nav{display:flex; justify-content:space-between; align-items:center; gap:16px; padding-block:22px 14px; border-bottom:1px solid var(--edge); flex-wrap:wrap}
+.nav a{text-decoration:none} .nav a:hover{color:var(--accent)}
+.nav .thcd-logo{width:clamp(90px,8vw,120px); height:auto; display:block}
+.nav .r{display:flex; gap:16px; flex-wrap:wrap; align-items:center; font-size:11px; letter-spacing:.06em}
+.nav span{color:var(--muted)}
+.head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:32px; align-items:end}
+.title{font-family:var(--f-display); font-weight:900; font-size:clamp(64px,13vw,200px); line-height:.8; margin:0; letter-spacing:-.03em}
+.lede{font-family:var(--f-body); font-weight:300; letter-spacing:-.02em; font-size:clamp(22px,2.6vw,34px); line-height:1.12; margin:0; text-wrap:balance}
+.facts{display:grid; grid-template-columns:auto 1fr; gap:6px 18px; margin:20px 0 0}
+.facts dt{color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-size:10px; padding-top:2px}
+.facts dd{margin:0; font-family:var(--f-body); font-weight:300; font-size:14px}
+.app{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,460px); gap:16px; align-items:start}
+.col{display:flex; flex-direction:column; gap:16px; min-width:0}
+.win{background:var(--paper); border:1px solid var(--edge); display:flex; flex-direction:column; min-width:0; position:relative}
+.bar{height:28px; display:flex; align-items:center; gap:10px; padding:0 8px; border-bottom:1px solid var(--edge); font-size:10.5px; white-space:nowrap}
+.bar i{width:9px; height:9px; border:1px solid var(--edge); flex:none}
+.bar .r{margin-left:auto; color:var(--muted)}
+.body{padding:12px; display:flex; flex-direction:column; gap:10px}
+.help{position:relative; display:inline-grid; place-items:center; width:16px; height:16px; border:1px solid var(--edge); border-radius:50%; font-size:10px; color:var(--muted); cursor:help; flex:none}
+.help:hover,.help:focus{color:var(--ink); border-color:var(--accent); outline:none}
+.help .tip{position:absolute; left:-8px; top:24px; z-index:20; width:min(360px,80vw); white-space:normal; padding:10px 12px; background:#111214; border:1px solid var(--accent); color:var(--ink); font-family:var(--f-body); font-weight:300; font-size:13px; line-height:1.45; opacity:0; pointer-events:none; transition:opacity .15s; text-transform:none; letter-spacing:0}
+.help:hover .tip,.help:focus .tip{opacity:1}
+.btn{background:transparent; border:1px solid var(--edge); padding:7px 12px; cursor:pointer; text-transform:lowercase; letter-spacing:.04em}
+.btn:hover{border-color:var(--ink)} .btn.on{border-color:var(--ink); background:var(--ink); color:#000} .btn.main{border-color:var(--accent); color:var(--accent)} .btn:disabled{opacity:.4; cursor:wait}
+.row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.muted{color:var(--muted)}
+input[type=text],input[type=number],textarea,select{background:#000; border:1px solid var(--edge); padding:8px 10px; width:100%; min-width:0}
+textarea{resize:vertical; font-family:var(--f-ui); line-height:1.5}
+input[type=range]{width:100%; accent-color:var(--accent)}
+.grid2{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
+.grid3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
+label.f{display:flex; flex-direction:column; gap:4px; font-size:10.5px; color:var(--muted)}
+label.f .lab{display:flex; align-items:center; gap:8px}
+label.ck{display:flex; align-items:center; gap:6px; color:var(--ink); font-size:11px}
+.st{margin-left:auto; font-size:9.5px; padding:0 6px; border:1px solid var(--grid); color:var(--muted); text-transform:lowercase}
+.st.ok{color:#00d084; border-color:rgba(0,208,132,.45)} .st.tight{color:#ffb000; border-color:rgba(255,176,0,.5)} .st.cut{color:#fff; background:#c81e1e; border-color:#c81e1e} .st.empty{opacity:.5}
+
+#drop{border:1px dashed var(--edge); padding:18px; text-align:center; color:var(--muted); transition:border-color .2s}
+#drop.over{border-color:var(--accent); color:var(--ink)}
+#tiles{display:grid; grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); gap:10px}
+.tile{border:1px solid var(--edge); display:flex; flex-direction:column; min-width:0; position:relative}
+.tile .th{aspect-ratio:4/5; background:#111 repeating-conic-gradient(#1a1a1a 0 25%,#111 0 50%) 0 0/16px 16px; position:relative; overflow:hidden}
+.tile .th canvas{position:absolute; inset:0; width:100%; height:100%; object-fit:contain}
+.tile .meta{display:flex; gap:4px; padding:4px 5px; font-size:9.5px; color:var(--muted); align-items:center}
+.tile .meta b{font-weight:500; color:var(--ink)}
+.tile .meta .s{margin-left:auto} .tile .meta .s.ready{color:#00d084} .tile .meta .s.busy{color:var(--accent)}
+.tile .ctl{display:flex; border-top:1px solid var(--grid)}
+.tile .ctl button{flex:1; background:none; border:0; border-right:1px solid var(--grid); padding:4px 0; cursor:pointer; color:var(--muted)}
+.tile .ctl button:last-child{border-right:0} .tile .ctl button:hover{color:var(--accent)}
+.seg{display:flex; flex-wrap:wrap; gap:6px}
+.lay{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:6px}
+.lay .btn{text-align:left; text-transform:none; padding:8px 10px; display:flex; flex-direction:column; gap:2px; line-height:1.3}
+.lay .btn b{font-weight:500; letter-spacing:.06em} .lay .btn span{font-size:10px; color:var(--muted)} .lay .btn.on span{color:#333}
+#pals,#palsref{display:flex; flex-wrap:wrap; gap:6px; align-items:center} #palsref::before{content:'from the reference'; color:var(--muted); font-size:10px; margin-right:4px}
+.pal{width:46px; height:30px; border:1px solid var(--edge); cursor:pointer; padding:0; display:grid; grid-template-columns:1fr 1fr; background:none; position:relative}
+.pal.on{outline:2px solid var(--ink); outline-offset:2px}
+.pal i{display:block} .pal em{position:absolute; right:3px; bottom:3px; width:8px; height:8px; border-radius:50%}
+.colors{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.colors label{display:flex; align-items:center; gap:6px; font-size:10.5px; color:var(--muted)}
+.colors input[type=color]{width:34px; height:26px; padding:0; border:1px solid var(--edge); background:none; cursor:pointer}
+.prevwin{position:sticky; top:16px}
+.screen{background:#000; position:relative; touch-action:none}
+.screen canvas{display:block; width:100%; height:auto; cursor:grab}
+.screen canvas.drag{cursor:grabbing}
+.prog{height:2px; background:var(--grid)} .prog b{display:block; height:100%; width:0; background:var(--accent); transition:width .1s}
+#status{min-height:1.5em; font-size:11px}
+.warn{color:#ffb000}
+@media (max-width:980px){ .app{grid-template-columns:1fr} .prevwin{position:static} .head{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="nav">
+    <a href="https://thcd.monster/" aria-label="Things Can Dance, home"><img class="thcd-logo" src="/studio/img/thcd_logo.png" alt="Things Can Dance"></a>
+    <div class="r"><a href="/studio/">← video_studio</a><a href="/studio/tools/">tools</a><span>POSTER / type machine</span></div>
+  </nav>
+  <header class="head">
+    <h1 class="title">POSTER</h1>
+    <div>
+      <p class="lede">Club-poster type that always fits its frame, people cut out of your photos, printed in riso, xerox or halftone, and a collage that moves in a seamless loop.</p>
+      <dl class="facts"><dt>runs</dt><dd>entirely in your browser; nothing is uploaded</dd><dt>best with</dt><dd>photos with one clear person</dd><dt>out</dt><dd>a seamless looping MP4, or a PNG · 4:5, 9:16 or 1:1</dd></dl>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="col">
+      <section class="win"><div class="bar"><i></i><span>poster/photos</span><span class="r" id="photoinfo">no photos</span></div>
+        <div class="body">
+          <div class="seg" role="group" aria-label="How photos are used">
+            <button class="btn" type="button" data-mode="frame">full frame</button>
+            <button class="btn" type="button" data-mode="cut">cut out the person</button>
+            <span class="help" tabindex="0" aria-label="About the two modes">?<span class="tip"><b>Full frame</b> uses each photo whole. <b>Cut out the person</b> finds the person in every photo and lifts them off the background, so type can go behind them, contour lines can follow the body and pieces can be collaged. The first cut-out downloads a model once (about 45 MB); after that it is quick. A PNG that already has a transparent background is used as it is.</span></span>
+          </div>
+          <div id="drop">drop photos here, or <button class="btn" id="pick" type="button">choose files</button><input id="file" type="file" accept="image/*" multiple hidden></div>
+          <div id="tiles"></div>
+          <div id="cutwrap" hidden><div class="prog"><b id="cutbar"></b></div><span class="muted" id="cuttxt"></span></div>
+          <p class="muted" style="margin:0">In the preview: drag a photo to move it, scroll to zoom it, double-click to reset. The order here is the order on the poster. If a cut-out caught a piece of wall or floor, press <b>erase</b> on its tile and paint over that piece in the preview; <b>undo</b> brings the original back.</p>
+          <div class="row" id="erasebar" hidden><span class="warn" id="erasetxt"></span><label class="f" style="flex-direction:row;align-items:center;gap:6px;min-width:200px">brush<input type="range" id="brush" min="10" max="120" value="40"></label><button class="btn main" id="erasedone" type="button">done</button></div>
+        </div></section>
+
+      <section class="win"><div class="bar"><i></i><span>poster/text</span><span class="r" id="fitsum">—</span>
+        <span class="help" tabindex="0" aria-label="How the text is fitted">?<span class="tip">Every piece of text has its own frame on the poster and is sized to fill it, so nothing runs off the edge. Big lines grow to the full width. <i>fits</i>: all good. <i>at minimum</i>: the frame made it as small as it may go, a shorter text will look better. <i>cut</i>: it did not fit even condensed, the end is hidden with "…". Switch on "show text frames" under the preview to see the frames.</span></span></div>
+        <div class="body">
+          <label class="f"><span class="lab">headline · one line per row <span class="st" data-st="title"></span></span><textarea id="t_title" rows="2"></textarea></label>
+          <div class="grid2">
+            <label class="f"><span class="lab">name / second headline <span class="st" data-st="name"></span></span><input type="text" id="t_name"></label>
+            <label class="f"><span class="lab">subline <span class="st" data-st="sub"></span></span><input type="text" id="t_sub"></label>
+          </div>
+          <label class="f"><span class="lab">list · one item per line; "21.11 | text" makes a dated row in LINEUP <span class="st" data-st="lines"></span></span><textarea id="t_lines" rows="4"></textarea></label>
+          <div class="grid3">
+            <label class="f"><span class="lab">date <span class="st" data-st="date"></span></span><input type="text" id="t_date"></label>
+            <label class="f"><span class="lab">time</span><input type="text" id="t_time"></label>
+            <label class="f"><span class="lab">place <span class="st" data-st="place"></span></span><input type="text" id="t_place"></label>
+          </div>
+          <label class="f"><span class="lab">small print <span class="st" data-st="footer"></span></span><input type="text" id="t_footer"></label>
+        </div></section>
+
+      <section class="win"><div class="bar"><i></i><span>poster/layout</span><span class="r" id="fmtinfo"></span></div>
+        <div class="body">
+          <div class="lay" id="layouts"></div>
+          <div class="grid2">
+            <label class="f">format<select id="format"><option value="4x5">4:5 · 1080×1350 · feed, safest</option><option value="3x4">3:4 · 1080×1440 · feed, fills the grid</option><option value="9x16">9:16 · 1080×1920 · reels</option><option value="1x1">1:1 · 1080×1080</option></select></label>
+            <label class="f">headline font<select id="font"></select></label>
+            <label class="f">second level font<select id="font2"></select></label>
+            <label class="f">small type font<select id="info"></select></label>
+          </div>
+          <div class="row"><label class="ck"><input type="checkbox" id="caps" checked> all caps</label><label class="ck"><input type="checkbox" id="stretch" checked> stretch tall</label><span class="help" tabindex="0" aria-label="About stretch">?<span class="tip">When a big word is too short to fill its frame, its letters grow taller (up to about two times), like stretched type on club posters. Off keeps the font's own proportions.</span></span>
+            <button class="btn" id="fontpick" type="button">your own font</button><input id="fontfile" type="file" accept=".ttf,.otf,.woff,.woff2,font/*" hidden><span class="muted" id="fontname"></span><button class="btn" id="fontclear" type="button" hidden>remove</button></div>
+          <div class="grid3">
+            <label class="f"><span class="lab">headline style <span class="help" tabindex="0" aria-label="About headline styles">?<span class="tip"><b>outline</b> draws only the edge of the letters. <b>solid and outline</b> alternates them in repeated rows, so a wall of type gets a rhythm. <b>photo inside the letters</b> fills the headline with your photo.</span></span></span><select id="tstyle"></select></label>
+            <label class="f"><span class="lab">letter spacing <span class="help" tabindex="0" aria-label="About letter spacing">?<span class="tip">Big type usually looks best a little tighter than the font's default; small caps a little looser (the small type is opened automatically). The frame still decides the size, so spacing never pushes text out of it.</span></span></span><input type="range" id="track" min="-0.06" max="0.25" step="0.01"></label>
+            <label class="f"><span class="lab">line spacing <span class="help" tabindex="0" aria-label="About line spacing">?<span class="tip">The gap between stacked headline rows. Display type wants it tight: around zero, so rows almost touch.</span></span></span><input type="range" id="lead" min="-0.06" max="0.35" step="0.01"></label>
+          </div>
+          <div class="row"><label class="ck"><input type="checkbox" id="labels"> small labels (when, where, what)</label><label class="ck"><input type="checkbox" id="scatter"> scatter words</label><label class="ck"><input type="checkbox" id="side"> text up the sides</label><span class="help" tabindex="0" aria-label="About side text">?<span class="tip"><b>Small labels</b> put a tiny dim word above each piece of small print, like a form. <b>Scatter words</b> drops a few faint mono words into empty space, the THCD annotation texture; they never cover real text. <b>Text up the sides</b> turns place, date and small print into thin vertical lines along the edges.</span></span></div>
+          <label class="f">colours</label>
+          <div id="pals"></div>
+          <div id="palsref"></div>
+          <div class="colors"><label><input type="color" id="c_bg"> paper</label><label><input type="color" id="c_ink"> ink</label><label><input type="color" id="c_acc"> accent</label></div>
+        </div></section>
+
+      <section class="win"><div class="bar"><i></i><span>poster/photo look</span></div>
+        <div class="body">
+          <div class="grid2">
+            <label class="f">photo<select id="tr"></select></label>
+            <label class="f">cut-out person<select id="trFig"><option value="">same as the photo</option></select></label>
+            <label class="f"><span class="lab">contour lines around the person <span class="help" tabindex="0" aria-label="About contour lines">?<span class="tip">Lines that follow the outline of the cut-out person, like a hand-drawn halo. <b>moving</b> lets them flow outwards in the loop. Only in cut-out mode.</span></span></span><select id="contour"><option value="off">off</option><option value="still">still</option><option value="move">moving</option></select></label>
+            <label class="f"><span class="lab">print strength <span class="help" tabindex="0" aria-label="About print strength">?<span class="tip">How much of the print texture (dots, photocopy, pixels, riso inks) goes over the photo. Low keeps the photo clear and only adds texture; high gives the full print look.</span></span></span><input type="range" id="fx" min="0" max="1" step="0.05"></label>
+            <label class="f">contour colour<select id="contourColor"><option value="acc">accent</option><option value="ink">ink</option><option value="white">white</option></select></label>
+          </div>
+          <div class="row"><label class="ck"><input type="checkbox" id="outline"> white sticker edge</label><label class="ck"><input type="checkbox" id="shadow"> hard shadow</label><label class="ck">echo <select id="echo" style="width:auto;padding:3px 6px"><option value="">off</option><option value="copies">copies of the person</option><option value="flat">flat colour shadows</option></select></label><label class="ck">direction <select id="echoDir" style="width:auto;padding:3px 6px"><option value="auto">auto, biggest</option><option value="diag">diagonal</option><option value="side">sideways</option><option value="up">up</option><option value="down">down</option></select></label><label class="ck">copies <select id="echoN" style="width:auto;padding:3px 6px"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select></label><label class="ck"><input type="checkbox" id="grain"> moving paper grain</label></div>
+          <p class="muted" style="margin:0">Every print look keeps a clear version of the photo underneath; print strength sets how much texture goes on top. In riso the two inks drift out of register and back over the loop.</p>
+        </div></section>
+
+      <section class="win"><div class="bar"><i></i><span>poster/motion</span><span class="r" id="loopinfo"></span></div>
+        <div class="body">
+          <div class="lay" id="motions"></div>
+          <div class="grid3">
+            <label class="f">loop length<select id="loop"><option value="4">4 s</option><option value="6" selected>6 s</option><option value="8">8 s</option><option value="12">12 s</option></select></label>
+            <label class="f">tempo, bpm<input type="number" id="bpm" min="60" max="200" value="120"></label>
+            <label class="f">feel<select id="feel"><option value="0">smooth, 30 fps</option><option value="12">stop-motion, 12 fps</option><option value="8">rough, 8 fps</option></select></label>
+          </div>
+          <div class="row"><label class="ck"><input type="checkbox" id="cycle"> change photos on the beat</label>
+            <label class="f" style="flex-direction:row;align-items:center;gap:6px">every<select id="shotBeats" style="width:auto"><option value="1">1 beat</option><option value="2" selected>2 beats</option><option value="4">4 beats</option></select></label>
+            <span class="help" tabindex="0" aria-label="About changing photos">?<span class="tip">With two or more photos, FIGURE, BEHIND, SPLIT and STACK cut from one photo to the next on the beat while the type stays where it is.</span></span>
+            <button class="btn" id="seed" type="button">another arrangement</button></div>
+        </div></section>
+    </div>
+
+    <div class="col prevwin">
+      <section class="win"><div class="bar"><i></i><span>poster/preview</span><span class="r" id="tinfo">—</span></div>
+        <div class="screen" id="screen"></div>
+        <div class="body">
+          <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Time in the loop">
+          <div class="row"><button class="btn" id="play" type="button">pause</button>
+            <label class="ck"><input type="checkbox" id="frames"> show text frames</label>
+            <label class="ck" id="safewrap"><input type="checkbox" id="safe"> instagram safe zone</label></div>
+          <div class="row"><button class="btn main" id="png" type="button">save this frame · png</button><button class="btn main" id="mp4" type="button">save the loop · mp4</button></div>
+          <div class="prog"><b id="expbar"></b></div>
+          <div id="status" class="muted" role="status"></div>
+        </div></section>
+    </div>
+  </div>
+</div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
