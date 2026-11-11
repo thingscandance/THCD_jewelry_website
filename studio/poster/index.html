@@ -119,6 +119,10 @@ label.ck{display:flex; align-items:center; gap:6px; color:var(--ink); font-size:
             <button class="btn" type="button" data-mode="cut">cut out the person</button>
             <span class="help" tabindex="0" aria-label="About the two modes">?<span class="tip"><b>Full frame</b> uses each photo whole. <b>Cut out the person</b> finds the person in every photo and lifts them off the background, so type can go behind them, contour lines can follow the body and pieces can be collaged. The first cut-out downloads a model once (about 45 MB); after that it is quick. A PNG that already has a transparent background is used as it is.</span></span>
           </div>
+          <div class="grid2">
+            <label class="f"><span class="lab">framing of whole photos <span class="help" tabindex="0" aria-label="About framing">?<span class="tip">When a photo has a different shape from its frame, part of it has to be cropped. <b>Keep the person</b> moves the crop so the whole person stays in, or, if they are too tall for the frame, keeps everything from the top of the head down. <b>Whole photo</b> crops nothing and leaves empty space around it. <b>Centre</b> is a plain centred crop. You can still drag the photo in the preview to adjust.</span></span></span><select id="fit"><option value="person">keep the person in frame</option><option value="whole">whole photo, no crop</option><option value="center">centre crop</option></select></label>
+            <label class="ck" style="align-self:end;padding-bottom:8px"><input type="checkbox" id="autoFrame"> find the person in full-frame mode too</label>
+          </div>
           <div id="drop">drop photos here, or <button class="btn" id="pick" type="button">choose files</button><input id="file" type="file" accept="image/*" multiple hidden></div>
           <div id="tiles"></div>
           <div id="cutwrap" hidden><div class="prog"><b id="cutbar"></b></div><span class="muted" id="cuttxt"></span></div>
