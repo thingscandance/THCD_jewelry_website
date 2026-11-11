@@ -80,15 +80,17 @@ const cs = (v, k) => { const x = (v - .5) * k + .5; return x <= 0 ? 0 : x < .78 
 const luma = h => { const [r, g, b] = hex(h); return (r * .3 + g * .59 + b * .11) / 255; };
 
 export class Poster {
-  constructor() { this.c = document.createElement('canvas'); this.g = this.c.getContext('2d'); this.els = []; this.cache = new Map(); this.setFormat('4x5'); }
+  constructor() { this.c = document.createElement('canvas'); this.g = this.c.getContext('2d'); this.els = []; this.cache = new Map(); this.pcache = new Map(); this.setFormat('4x5'); }
   setFormat(f) { const [w, h] = FORMATS[f]; this.fmt = f; this.W = this.c.width = w; this.H = this.c.height = h; }
   // auto: the direction that lets the person be biggest in this slot
   echoDir(src, b) { const S = this.S, N = S.echoN || 3; if (S.echoDir && S.echoDir !== 'auto') return ECHO_DIRS[S.echoDir] || ECHO_DIRS.diag; let best = ECHO_DIRS.diag, bs = 0;
     for (const k of ['diag', 'side', 'up']) { const [fx, fy] = ECHO_DIRS[k], sc = Math.min(b.w / (src.width * (1 + N * Math.abs(fx))), b.h / (src.height * (1 + N * Math.abs(fy)))); if (sc > bs * 1.08) { bs = sc; best = ECHO_DIRS[k]; } } return best; }
   // eraser: remove a round patch from a cut-out and from every cached copy of it, so the change shows at once
   erase(im, u, v, r) { const hit = c => { const x = c.getContext('2d'); x.save(); x.globalCompositeOperation = 'destination-out'; x.beginPath(); x.arc(u * c.width / im.cut.width, v * c.height / im.cut.height, r * c.width / im.cut.width, 0, 7); x.fill(); x.restore(); };
-    hit(im.cut); for (const [k, c] of [...this.cache]) { if (!k.startsWith(im.id + '|')) continue; if (k.includes('|ring|') || k.includes('|stk|')) { this.cache.delete(k); continue; } if (k.includes('|cut|') || k.includes('|sil|')) { if (c.a) { hit(c.a); hit(c.b); } else if (c.getContext) hit(c); } } im.dist = null; }
-  forget(id) { for (const k of this.cache.keys()) if (k.startsWith(id + '|')) this.cache.delete(k); }
+    for (const k of [...this.pcache.keys()]) if (k.startsWith(im.id + '|')) this.pcache.delete(k); hit(im.cut); for (const [k, c] of [...this.cache]) { if (!k.startsWith(im.id + '|')) continue; if (k.includes('|ring|') || k.includes('|stk|') || k.includes('|cpath|')) { this.cache.delete(k); continue; } if (k.includes('|cut|') || k.includes('|sil|')) { if (c.a) { hit(c.a); hit(c.b); } else if (c.getContext) hit(c); } } im.dist = null; }
+  put(k, v) { this.cache.set(k, v); while (this.cache.size > 70) this.cache.delete(this.cache.keys().next().value); return v; }
+  forget(id) { for (const k of [...this.pcache.keys()]) if (k.startsWith(id + '|')) this.pcache.delete(k); this.forget0(id); }
+  forget0(id) { for (const k of this.cache.keys()) if (k.startsWith(id + '|')) this.cache.delete(k); }
 
   // ---------- images ----------
   lum(src) { // luminance 0..1 per pixel, plus alpha
@@ -112,13 +114,12 @@ export class Poster {
   // riso: two ink layers kept apart so their register can drift in the loop
   riso(im, which, pal) { const key = `${im.id}|${which}|riso|${pal.ink}|${pal.acc}`; let r = this.cache.get(key); if (r) return r; const src = which === 'cut' ? im.cut : im.src, Lm = this.lum(src), cell = Math.max(3, Math.round(Math.max(src.width, src.height) / 320)), con = v => clamp((v - .5) * 1.5 + .5);
     const dark = luma(pal.bg) < .45, tone = v => dark ? con(v) : 1 - con(v); // on dark paper the inks print the light parts
-    r = { dark, a: this.screen(Lm, v => Math.pow(tone(v), dark ? 2.2 : 1.6), 15, cell, hex(pal.ink)), b: this.screen(Lm, v => { const k = tone(v); return k * (1 - k) * 3.2 + k * .25; }, 75, cell * 1.08, hex(pal.acc)) }; this.cache.set(key, r); return r; }
+    r = { dark, a: this.screen(Lm, v => Math.pow(tone(v), dark ? 2.2 : 1.6), 15, cell, hex(pal.ink)), b: this.screen(Lm, v => { const k = tone(v); return k * (1 - k) * 3.2 + k * .25; }, 75, cell * 1.08, hex(pal.acc)) }; this.put(key, r); return r; }
   // every print look sits on a continuous-tone version of the photo, so the picture stays readable;
   // strength (S.fx, 0..1) decides how much of the print texture is laid over it
   treated(im, which, tr, pal) {
     const src = which === 'cut' ? im.cut : im.src; if (tr === 'original' || !src) return src;
     const fx = this.S.fx ?? .5, key = `${im.id}|${which}|${tr}|${pal.bg}|${pal.ink}|${pal.acc}|${fx}`; let c = this.cache.get(key); if (c) return c;
-    if (this.cache.size > 300) this.cache.clear();
     const Lm = this.lum(src), { L, A, w, h } = Lm; c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
     const sorted = [pal.ink, pal.acc, pal.bg].sort((p, q) => luma(p) - luma(q)), dk = hex(luma(sorted[0]) < .3 ? sorted[0] : '#0a0a0a'), lt = hex(sorted[2]), inv = luma(pal.bg) < .45;
     const sd = x.getContext ? null : null, s0 = (() => { const t = document.createElement('canvas'); t.width = w; t.height = h; const g = t.getContext('2d'); g.drawImage(src, 0, 0); return g.getImageData(0, 0, w, h).data; })();
@@ -142,7 +143,7 @@ export class Poster {
       D[i] = out[0]; D[i + 1] = out[1]; D[i + 2] = out[2]; D[i + 3] = A[j]; }
     x.putImageData(d, 0, 0);
     if (tr === 'halftone') { x.globalAlpha = fx; x.drawImage(this.screen(Lm, u => Math.pow(inv ? clamp((u - .5) * 1.3 + .5) : 1 - clamp((u - .5) * 1.3 + .5), 1.3), 45, Math.max(3, Math.round(Math.max(w, h) / 300)), hex(inv ? pal.ink : sorted[0])), 0, 0); x.globalAlpha = 1; if (which === 'cut') { x.globalCompositeOperation = 'destination-in'; x.drawImage(src, 0, 0); x.globalCompositeOperation = 'source-over'; } }
-    this.cache.set(key, c); return c;
+    this.put(key, c); return c;
   }
   // sticker edge: the silhouette grown by r pixels and smoothed (blur + threshold), so a ragged cut gets an even edge
   sticker(im, r, color) { const key = `${im.id}|stk|${r}|${color}`; let o = this.cache.get(key); if (o) return o; const c0 = im.cut, pad = r + 4, W2 = c0.width + 2 * pad, H2 = c0.height + 2 * pad, k = Math.min(1, 1000 / Math.max(W2, H2)), w = Math.max(4, Math.round(W2 * k)), h = Math.max(4, Math.round(H2 * k));
@@ -150,11 +151,11 @@ export class Poster {
     const rad = Math.max(1, Math.round(r * k)), tmp = new Float32Array(w * h), blur = (src, dst, horiz) => { for (let a = 0; a < (horiz ? h : w); a++) { let acc = 0; const len = horiz ? w : h, at = i => horiz ? a * w + i : i * w + a; for (let i = -rad; i <= rad; i++) acc += src[at(Math.min(len - 1, Math.max(0, i)))]; for (let i = 0; i < len; i++) { dst[at(i)] = acc / (2 * rad + 1); acc += src[at(Math.min(len - 1, i + rad + 1))] - src[at(Math.max(0, i - rad))]; } } };
     blur(A, tmp, true); blur(tmp, A, false); blur(A, tmp, true); blur(tmp, A, false);
     const [cr, cg, cb] = hex(color); for (let i = 0; i < A.length; i++) { const v = A[i], al = v <= .1 ? 0 : v >= .16 ? 1 : (v - .1) / .06; d.data[i * 4] = cr; d.data[i * 4 + 1] = cg; d.data[i * 4 + 2] = cb; d.data[i * 4 + 3] = al * 255; } x.putImageData(d, 0, 0);
-    const out = document.createElement('canvas'); out.width = W2; out.height = H2; const ox = out.getContext('2d'); ox.imageSmoothingQuality = 'high'; ox.drawImage(t, 0, 0, W2, H2); o = { c: out, pad }; if (this.cache.size > 300) this.cache.clear(); this.cache.set(key, o); return o; }
+    const out = document.createElement('canvas'); out.width = W2; out.height = H2; const ox = out.getContext('2d'); ox.imageSmoothingQuality = 'high'; ox.drawImage(t, 0, 0, W2, H2); o = { c: out, pad }; this.put(key, o); return o; }
   // moving paper grain: 6 noise tiles cycled at 12 fps, so it boils without breaking the loop
   grain() { if (this._grain) return this._grain; const R = rng(99); this._grain = Array.from({ length: 6 }, () => { const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d'), d = x.createImageData(256, 256); for (let i = 0; i < d.data.length; i += 4) { const v = R() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } x.putImageData(d, 0, 0); return c; }); return this._grain; }
   sil(im, color) { const key = `${im.id}|sil|${color}`; let c = this.cache.get(key); if (c) return c; const s = im.cut;
-    c = document.createElement('canvas'); c.width = s.width; c.height = s.height; const x = c.getContext('2d'); x.drawImage(s, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = color; x.fillRect(0, 0, c.width, c.height); this.cache.set(key, c); return c; }
+    c = document.createElement('canvas'); c.width = s.width; c.height = s.height; const x = c.getContext('2d'); x.drawImage(s, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = color; x.fillRect(0, 0, c.width, c.height); this.put(key, c); return c; }
 
   // ---------- layout ----------
   build(S) {
@@ -306,7 +307,7 @@ export class Poster {
     const { beat } = this.timing(), flipNow = S.motion === 'flip' && Math.floor(t / beat) % 2 === 1;
     const P = flipNow ? { bg: S.pal.ink, ink: S.pal.bg, acc: S.pal.acc } : S.pal; this.P = P;
     g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.fillStyle = P.bg; g.fillRect(0, 0, W, H); this.hits = []; this.figs = [];
-    this.photoSrc = null; if (S.tstyle === 'photo' && S.images.length) { const n = S.images.length, im = S.images[(this.shot(t) + (n > 1 ? 1 : 0)) % n]; this.photoSrc = this.treated(im, 'frame', S.tr === 'riso' ? 'duo' : S.tr, P); }
+    this.photoSrc = null; if (S.tstyle === 'photo' && S.images.length) { const n = S.images.length, im = S.images[(this.shot(t) + (n > 1 ? 1 : 0)) % n]; this.photoSrc = this.treated(im, 'frame', S.tr === 'riso' ? 'duo' : S.tr, this.photoPal(P)); }
     for (const el of this.els) { const A = this.anim(el, t); if (!A.show) continue;
       const core = dx => this.core(el, A, dx, P, t);
       if (A.slice) this.sliced(el, A.slice, core); else core(0); }
@@ -344,31 +345,51 @@ export class Poster {
   // photo changes: the number of shots in a loop is rounded to a multiple of the photo count, so the loop closes on the first photo
   shot(t) { const S = this.S, n = S.images.length; if (!S.cycle || n < 2 || S.motion === 'still') return 0; const { beat, L } = this.timing(), ns = n * Math.max(1, Math.round(L / (beat * (S.shotBeats || 2)) / n)); return Math.floor((((t % L) + L) % L) / (L / ns) + 1e-6); }
   // distance from the figure, on a small grid around the cut-out: used to draw contour lines that follow the body
-  field(im) { if (im.dist) return im.dist; const c = im.cut, k = 260 / Math.max(c.width, c.height), cw = Math.max(4, Math.round(c.width * k)), ch = Math.max(4, Math.round(c.height * k)), pad = Math.round(Math.max(cw, ch) * .45), w = cw + 2 * pad, h = ch + 2 * pad;
-    const t = document.createElement('canvas'); t.width = cw; t.height = ch; const x = t.getContext('2d'); x.drawImage(c, 0, 0, cw, ch); const a = x.getImageData(0, 0, cw, ch).data, d = new Float32Array(w * h).fill(1e6);
-    for (let y = 0; y < ch; y++) for (let q = 0; q < cw; q++) if (a[(y * cw + q) * 4 + 3] > 110) d[(y + pad) * w + q + pad] = 0;
-    const D1 = 1, D2 = 1.414; for (let y = 0; y < h; y++) for (let q = 0; q < w; q++) { const i = y * w + q; let v = d[i]; if (q) v = Math.min(v, d[i - 1] + D1); if (y) { v = Math.min(v, d[i - w] + D1); if (q) v = Math.min(v, d[i - w - 1] + D2); if (q < w - 1) v = Math.min(v, d[i - w + 1] + D2); } d[i] = v; }
-    for (let y = h - 1; y >= 0; y--) for (let q = w - 1; q >= 0; q--) { const i = y * w + q; let v = d[i]; if (q < w - 1) v = Math.min(v, d[i + 1] + D1); if (y < h - 1) { v = Math.min(v, d[i + w] + D1); if (q < w - 1) v = Math.min(v, d[i + w + 1] + D2); if (q) v = Math.min(v, d[i + w - 1] + D2); } d[i] = v; }
-    return im.dist = { d, w, h, pad, k, cw, ch };
+  // distance from the figure: exact (Euclidean) on a grid around the cut-out, then lightly smoothed
+  field(im) { if (im.dist) return im.dist; const c = im.cut, k = 420 / Math.max(c.width, c.height), cw = Math.max(4, Math.round(c.width * k)), ch = Math.max(4, Math.round(c.height * k)), pad = Math.round(Math.max(cw, ch) * .5), w = cw + 2 * pad, h = ch + 2 * pad;
+    const t = document.createElement('canvas'); t.width = cw; t.height = ch; const x = t.getContext('2d'); x.drawImage(c, 0, 0, cw, ch); const a = x.getImageData(0, 0, cw, ch).data, INF = 1e12, f = new Float64Array(w * h).fill(INF);
+    for (let y = 0; y < ch; y++) for (let q = 0; q < cw; q++) if (a[(y * cw + q) * 4 + 3] > 120) f[(y + pad) * w + q + pad] = 0;
+    const edt1 = (get, set, n) => { const v = new Int32Array(n), z = new Float64Array(n + 1), d = new Float64Array(n), fv = new Float64Array(n); for (let i = 0; i < n; i++) fv[i] = get(i); let kk = 0; v[0] = 0; z[0] = -INF; z[1] = INF;
+      for (let q = 1; q < n; q++) { let s2; while (true) { const p = v[kk]; s2 = ((fv[q] + q * q) - (fv[p] + p * p)) / (2 * q - 2 * p); if (s2 <= z[kk] && kk > 0) kk--; else break; } kk++; v[kk] = q; z[kk] = s2; z[kk + 1] = INF; }
+      kk = 0; for (let q = 0; q < n; q++) { while (z[kk + 1] < q) kk++; const p = v[kk]; d[q] = (q - p) * (q - p) + fv[p]; } for (let i = 0; i < n; i++) set(i, d[i]); };
+    for (let q = 0; q < w; q++) edt1(i => f[i * w + q], (i, v) => f[i * w + q] = v, h);
+    for (let y = 0; y < h; y++) edt1(i => f[y * w + i], (i, v) => f[y * w + i] = v, w);
+    let d = new Float32Array(w * h); for (let i = 0; i < d.length; i++) d[i] = Math.sqrt(Math.min(f[i], 1e9));
+    const tmp = new Float32Array(w * h), r = 3, pass = (src, dst, hz) => { for (let A = 0; A < (hz ? h : w); A++) { const L = hz ? w : h, at = i => hz ? A * w + i : i * w + A; let acc = 0; for (let i = -r; i <= r; i++) acc += src[at(Math.min(L - 1, Math.max(0, i)))]; for (let i = 0; i < L; i++) { dst[at(i)] = acc / (2 * r + 1); acc += src[at(Math.min(L - 1, i + r + 1))] - src[at(Math.max(0, i - r))]; } } };
+    pass(d, tmp, true); pass(tmp, d, false); pass(d, tmp, true); pass(tmp, d, false);
+    return im.dist = { d, w, h, pad, cw, ch };
   }
-  contour(im, ph, color) { const key = `${im.id}|ring|${Math.round(ph * 24) % 24}|${color}`; let c = this.cache.get(key); if (c) return c; const F = this.field(im), { w, h } = F, sp = Math.max(F.cw, F.ch) * .075, lw = sp * .32, n = 5, [r, gg, b] = hex(color);
-    c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'), im2 = x.createImageData(w, h), D = im2.data, p0 = (Math.round(ph * 24) % 24) / 24 * sp;
-    for (let y = 0; y < h; y++) for (let q = 0; q < w; q++) { const dd = F.d[y * w + q]; if (dd <= sp * .35 || dd > sp * n) continue; const v = dd + Math.sin(q * .09 + y * .021) * sp * .14 + Math.cos(y * .07 - q * .03) * sp * .12 - p0, m = ((v % sp) + sp) % sp, e = Math.min(m, lw - m); if (e <= 0) continue; const i = (y * w + q) * 4; D[i] = r; D[i + 1] = gg; D[i + 2] = b; D[i + 3] = Math.min(255, e * 255 / 1.2) * (1 - dd / (sp * n) * .35); }
-    x.putImageData(im2, 0, 0); if (this.cache.size > 400) this.cache.clear(); this.cache.set(key, c); return c; }
+  // contour lines: iso-lines of the distance field (marching squares), joined and smoothed into vector paths
+  contourPaths(im, ph) { const S = this.S, n = S.contourN || 5, gapK = S.contourGap || 1, key = `${im.id}|cpath|${Math.round(ph * 48) % 48}|${n}|${gapK}`; let P0 = this.pcache.get(key); if (P0) return P0;
+    const F = this.field(im), { d, w, h } = F, sp = Math.max(F.cw, F.ch) * .055 * gapK, off = (Math.round(ph * 48) % 48) / 48, paths = [];
+    for (let k = 0; k < n + 1; k++) { const L = sp * (k + .45 + off); if (L > Math.min(F.pad * .95, sp * (n + .45))) break; const fade = 1 - Math.max(0, (L - sp * (n - .55)) / sp);
+      const pt = new Map(), nb = new Map(), link = (e1, e2) => { (nb.get(e1) || nb.set(e1, []).get(e1)).push(e2); (nb.get(e2) || nb.set(e2, []).get(e2)).push(e1); };
+      const ep = (x, y, e) => { const id = e === 0 ? 2 * (y * w + x) : e === 3 ? 2 * (y * w + x) + 1 : e === 1 ? 2 * (y * w + x + 1) + 1 : 2 * ((y + 1) * w + x); if (!pt.has(id)) { const va = d[y * w + x], vb = d[y * w + x + 1], vc = d[(y + 1) * w + x + 1], vd = d[(y + 1) * w + x], it = (p, q) => (L - p) / ((q - p) || 1e-9);
+          pt.set(id, e === 0 ? [x + it(va, vb), y] : e === 1 ? [x + 1, y + it(vb, vc)] : e === 2 ? [x + it(vd, vc), y + 1] : [x, y + it(va, vd)]); } return id; };
+      const T = [[], [[3, 2]], [[2, 1]], [[3, 1]], [[0, 1]], [[3, 0], [2, 1]], [[0, 2]], [[3, 0]], [[3, 0]], [[0, 2]], [[0, 1], [3, 2]], [[0, 1]], [[3, 1]], [[2, 1]], [[3, 2]], []];
+      for (let y = 0; y < h - 1; y++) for (let x = 0; x < w - 1; x++) { const c = (d[y * w + x] >= L ? 8 : 0) | (d[y * w + x + 1] >= L ? 4 : 0) | (d[(y + 1) * w + x + 1] >= L ? 2 : 0) | (d[(y + 1) * w + x] >= L ? 1 : 0); if (c === 0 || c === 15) continue; for (const [e1, e2] of T[c]) link(ep(x, y, e1), ep(x, y, e2)); }
+      const seen = new Set(), walk = st => { const out = [pt.get(st)]; seen.add(st); let prev = -1, cur = st; while (true) { const nx = (nb.get(cur) || []).find(e => e !== prev && !seen.has(e)); if (nx == null) { if ((nb.get(cur) || []).includes(st) && out.length > 2) out.closed = true; break; } seen.add(nx); out.push(pt.get(nx)); prev = cur; cur = nx; } return out; };
+      for (const [e, l] of nb) if (l.length === 1 && !seen.has(e)) { const p = walk(e); if (p.length > 6) paths.push({ p: smooth(p), a: fade }); }
+      for (const e of nb.keys()) if (!seen.has(e)) { const p = walk(e); if (p.length > 6) paths.push({ p: smooth(p, true), a: fade }); } }
+    function smooth(p, closed) { // drop every other point, then two rounds of corner cutting
+      let q = p.filter((_, i) => i % 2 === 0); for (let r = 0; r < 2; r++) { const o = []; const m = q.length; for (let i = 0; i < (closed ? m : m - 1); i++) { const A = q[i], B = q[(i + 1) % m]; o.push([A[0] * .75 + B[0] * .25, A[1] * .75 + B[1] * .25], [A[0] * .25 + B[0] * .75, A[1] * .25 + B[1] * .75]); } if (!closed) { o.unshift(q[0]); o.push(q[m - 1]); } q = o; } q.closed = closed; return q; }
+    if (this.pcache.size > 600) this.pcache.clear(); this.pcache.set(key, paths); return paths; }
+  photoPal(P) { const S = this.S; return S.ptOn ? { bg: S.ptLight || '#E8F5B0', ink: S.ptDark || '#0A0A08', acc: S.ptMid || '#6B7A2A' } : P; }
   drawImg(el, A, dx, P, t) {
+    const PP = this.photoPal(P); // photo tint colours: the poster palette, or the photo's own
     const S = this.S, g = this.g, n = S.images.length; if (!n) return; const idx = el.cycle ? (el.idx + this.shot(t)) % n : el.idx, im = S.images[idx]; if (!im) return;
     const b = el.box, useCut = el.cut && im.cut, pan = im.pan; if (el.inplace && !im.cut) return;
     if (el.rot) { const cx = b.x + b.w / 2, cy = b.y + b.h / 2; g.translate(cx, cy); g.rotate(el.rot * Math.PI / 180); g.translate(-cx, -cy); }
     let s, w, h, x, y, src;
     if (el.inplace) { const f = im.src, fs = Math.max(b.w / f.width, b.h / f.height) * pan.z, fx = b.x + (b.w - f.width * fs) / 2 + pan.x * b.w + dx, fy = b.y + (b.h - f.height * fs) / 2 + pan.y * b.h, cb = im.cutBox;
-      src = this.treated(im, 'cut', S.trFig || S.tr, P); s = fs; x = fx + cb.x * fs; y = fy + cb.y * fs; w = cb.w * fs; h = cb.h * fs; }
-    else if (useCut) { src = this.treated(im, 'cut', S.trFig || S.tr, P);
+      src = this.treated(im, 'cut', S.trFig || S.tr, PP); s = fs; x = fx + cb.x * fs; y = fy + cb.y * fs; w = cb.w * fs; h = cb.h * fs; }
+    else if (useCut) { src = this.treated(im, 'cut', S.trFig || S.tr, PP);
       if (S.echo === 'copies') { // the whole group (person + copies) is fitted into the slot and centred, front copy last
         const N = S.echoN || 3, [fx, fy] = this.echoDir(src, b), gw = src.width * (1 + N * Math.abs(fx)), gh = src.height * (1 + N * Math.abs(fy));
         s = Math.min(b.w / gw, b.h / gh) * .96 * pan.z; w = src.width * s; h = src.height * s; const gx = b.x + (b.w - gw * s) / 2, gy = b.y + (b.h - gh * s) / 2;
         x = gx + (fx < 0 ? N * -fx * w : 0) + pan.x * b.w + dx; y = gy + (fy < 0 ? N * -fy * h : 0) + pan.y * b.h; }
       else { s = Math.min(b.w / src.width, b.h / src.height) * pan.z; w = src.width * s; h = src.height * s; x = b.x + (b.w - w) / 2 + pan.x * b.w + dx; y = b.y + b.h - h + pan.y * b.h; } }
-    else { src = this.treated(im, 'frame', S.tr, P); s = Math.max(b.w / src.width, b.h / src.height) * pan.z; w = src.width * s; h = src.height * s; x = b.x + (b.w - w) / 2 + pan.x * b.w + dx; y = b.y + (b.h - h) / 2 + pan.y * b.h; }
+    else { src = this.treated(im, 'frame', S.tr, PP); s = Math.max(b.w / src.width, b.h / src.height) * pan.z; w = src.width * s; h = src.height * s; x = b.x + (b.w - w) / 2 + pan.x * b.w + dx; y = b.y + (b.h - h) / 2 + pan.y * b.h; }
     const look = useCut || el.inplace ? (S.trFig || S.tr) : S.tr;
     if (useCut || el.inplace) this.figs.push({ idx, x, y, w, h, rot: el.rot || 0, box: b });
     if (!el.inplace) this.hits.push({ idx, box: b, layer: el.layer });
@@ -376,17 +397,19 @@ export class Poster {
     if (el.card) { const p = 14 * u, sh = 16 * u; g.fillStyle = P.ink; g.fillRect(b.x + dx + sh, b.y + sh, b.w, b.h); g.fillStyle = S.outline ? (S.outlineColor || '#ffffff') : P.acc; g.fillRect(b.x + dx - p, b.y - p, b.w + 2 * p, b.h + 2 * p); }
     if (el.clip) { g.beginPath(); g.rect(b.x + dx, b.y, b.w, b.h); g.clip(); }
     if (useCut) {
-      if (S.contour && S.contour !== 'off') { const F = this.field(im), sc = w / F.cw, ph = S.contour === 'move' && S.motion !== 'still' ? (t / S.loop * Math.max(1, Math.round(S.loop / 2))) % 1 : 0; g.save(); g.imageSmoothingEnabled = true; g.drawImage(this.contour(im, ph, S.contourColor === 'ink' ? P.ink : S.contourColor === 'white' ? '#ffffff' : P.acc), x - F.pad * sc, y - F.pad * sc, F.w * sc, F.h * sc); g.restore(); }
+      if (S.contour && S.contour !== 'off') { const F = this.field(im), sc = w / F.cw, ph = S.contour === 'move' && S.motion !== 'still' ? (t / S.loop * Math.max(1, Math.round(S.loop / 2))) % 1 : 0, cc = S.contourColor, col = cc === 'ink' ? P.ink : cc === 'white' ? '#ffffff' : cc === 'acc' || !cc ? P.acc : cc;
+        g.save(); g.translate(x - F.pad * sc, y - F.pad * sc); g.scale(sc, sc); g.strokeStyle = col; g.lineWidth = (S.contourW ?? 3) * u / sc; g.lineJoin = 'round'; g.lineCap = 'round';
+        for (const c of this.contourPaths(im, ph)) { g.globalAlpha = Math.max(0, Math.min(1, c.a)); g.beginPath(); c.p.forEach((q, i) => i ? g.lineTo(q[0] + .5, q[1] + .5) : g.moveTo(q[0] + .5, q[1] + .5)); if (c.p.closed) g.closePath(); g.stroke(); } g.restore(); }
       const ring = (ox, oy) => { if (!S.outline) return; const rPx = (S.outlineW ?? 12) * u; if (rPx < .5) return; const st = this.sticker(im, Math.max(1, Math.round(rPx / s)), S.outlineColor || '#ffffff'), k = w / im.cut.width; g.drawImage(st.c, ox - st.pad * k, oy - st.pad * k, st.c.width * k, st.c.height * k); };
       if (S.echo === 'flat') { const ph = S.motion === 'still' ? 1 : .55 + .45 * Math.sin(2 * Math.PI * t / S.loop * 2); for (let k = 3; k >= 1; k--) g.drawImage(this.sil(im, k % 2 ? P.acc : P.ink), x - k * 34 * u * ph, y - k * 10 * u * ph, w, h); }
       if (S.echo === 'copies' && !el.inplace) { // the person repeated, each copy whole and with its own edge, stepping away and back over the loop
         const N = S.echoN || 3, ph = S.motion === 'still' ? 1 : .35 + .65 * (.5 - .5 * Math.cos(2 * Math.PI * t / S.loop * 2)), [fx, fy] = this.echoDir(src, b), sx = fx * w * ph, sy = fy * h * ph;
-        for (let k = N; k >= 1; k--) { const ox = x + sx * k, oy = y + sy * k; if (S.shadow) g.drawImage(this.sil(im, P.ink === P.bg ? '#000' : P.ink), ox + 18 * u, oy + 14 * u, w, h); ring(ox, oy); g.drawImage(look === 'riso' ? this.treated(im, 'cut', 'riso', P) : src, ox, oy, w, h); } }
+        for (let k = N; k >= 1; k--) { const ox = x + sx * k, oy = y + sy * k; if (S.shadow) g.drawImage(this.sil(im, P.ink === P.bg ? '#000' : P.ink), ox + 18 * u, oy + 14 * u, w, h); ring(ox, oy); g.drawImage(look === 'riso' ? this.treated(im, 'cut', 'riso', PP) : src, ox, oy, w, h); } }
       if (S.shadow) g.drawImage(this.sil(im, P.ink === P.bg ? '#000' : P.ink), x + 18 * u, y + 14 * u, w, h);
       ring(x, y);
     }
-    if (look === 'riso') { const R = this.riso(im, useCut || el.inplace ? 'cut' : 'frame', P), ph = 2 * Math.PI * t / S.loop, m = this.W * .007 * (S.motion === 'still' ? .6 : 1), ax = Math.cos(ph) * m, ay = Math.sin(ph * 2) * m * .6;
-      g.drawImage(this.treated(im, useCut || el.inplace ? 'cut' : 'frame', 'riso', P), x, y, w, h); // readable tone base
+    if (look === 'riso') { const R = this.riso(im, useCut || el.inplace ? 'cut' : 'frame', PP), ph = 2 * Math.PI * t / S.loop, m = this.W * .007 * (S.motion === 'still' ? .6 : 1), ax = Math.cos(ph) * m, ay = Math.sin(ph * 2) * m * .6;
+      g.drawImage(this.treated(im, useCut || el.inplace ? 'cut' : 'frame', 'riso', PP), x, y, w, h); // readable tone base
       g.globalAlpha = S.fx ?? .5; g.globalCompositeOperation = R.dark ? 'screen' : 'multiply'; g.drawImage(R.b, x - ax, y - ay, w, h); g.drawImage(R.a, x + ax, y + ay, w, h); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; }
     else g.drawImage(src, x, y, w, h);
     // grain sits only on the photo, never on the type
